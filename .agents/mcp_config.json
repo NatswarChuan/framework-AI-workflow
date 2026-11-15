@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "sonarqube": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "sonarqube-mcp-server"],
+      "env": {
+        "SONAR_MCP_BASE_URL": "http://localhost:9000",
+        "SONAR_MCP_TOKEN": "squ_default_token"
+      }
+    }
+  }
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.5</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.example</groupId>
+    <artifactId>controller-to-api-implementation</artifactId>
+    <version>0.0.1</version>
+    <name>Spring-NWVMC Implementation Showcase (Enterprise Multi-Domain)</name>
+    <description>Enterprise reference implementation powered by Spring-NWVMC and Java 21 Virtual Threads</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- NHÚNG FRAMEWORK PUBLIC TRỰC TIẾP TỪ JITPACK -->
+        <dependency>
+            <groupId>com.github.NatswarChuan</groupId>
+            <artifactId>Spring-NWVMC</artifactId>
+            <version>v0.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!-- Apache JMeter Performance Testing Plugin -->
+            <plugin>
+                <groupId>com.lazerycode.jmeter</groupId>
+                <artifactId>jmeter-maven-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>configuration</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>configure</goal>
+                            <goal>jmeter</goal>
+                            <goal>results</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <resultsFileFormat>csv</resultsFileFormat>
+                    <generateReports>true</generateReports>
+                    <ignoreResultFailures>false</ignoreResultFailures>
+                    <cleanReportDir>true</cleanReportDir>
+                    <cleanResultsDir>true</cleanResultsDir>
+                    <testFilesIncluded>
+                        <jMeterTestFile>implementation_load_test.jmx</jMeterTestFile>
+                    </testFilesIncluded>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

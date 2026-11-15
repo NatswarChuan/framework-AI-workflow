@@ -1,0 +1,161 @@
+import { FilterOperatorSpec } from '../types/docs';
+
+export const OPERATORS_DATA: FilterOperatorSpec[] = [
+  {
+    operator: 'eq',
+    syntax: 'field=value or field.eq=value',
+    description: {
+      en: 'Exact equality match',
+      vi: 'So khớp bằng chính xác',
+      ja: '完全一致照合',
+      zh: '精准等值匹配',
+    },
+    sqlEquivalent: 'field = :val',
+    exampleUrl: '/api/v1/customer-orders?orderStatus.eq=PAID',
+  },
+  {
+    operator: 'ne',
+    syntax: 'field.ne=value',
+    description: {
+      en: 'Not equal comparison',
+      vi: 'So sánh khác giá trị',
+      ja: '不一致照合',
+      zh: '不等于判断',
+    },
+    sqlEquivalent: 'field != :val',
+    exampleUrl: '/api/v1/customer-orders?orderStatus.ne=CANCELLED',
+  },
+  {
+    operator: 'like',
+    syntax: 'field.like=keyword',
+    description: {
+      en: 'Case-insensitive substring search (contains)',
+      vi: 'Tìm kiếm chứa chuỗi con không phân biệt hoa thường',
+      ja: '大文字小文字を区別しない部分一致検索',
+      zh: '不区分大小写的包含模糊检索',
+    },
+    sqlEquivalent: 'LOWER(field) LIKE LOWER(%:val%)',
+    exampleUrl: '/api/v1/products?productName.like=macbook',
+  },
+  {
+    operator: 'in',
+    syntax: 'field.in=val1,val2,val3',
+    description: {
+      en: 'Matches any value in comma-separated list',
+      vi: 'Thuộc một trong các giá trị phân tách bằng dấu phẩy',
+      ja: 'カンマ区切りリストのいずれかに一致',
+      zh: '匹配逗号分隔数组内的任意值',
+    },
+    sqlEquivalent: 'field IN (:val1, :val2, :val3)',
+    exampleUrl: '/api/v1/clinical-appointments?appointmentStatus.in=CONFIRMED,CHECKED_IN',
+  },
+  {
+    operator: 'notIn',
+    syntax: 'field.notIn=val1,val2',
+    description: {
+      en: 'Excludes all values in comma-separated list',
+      vi: 'Không thuộc các giá trị trong danh sách',
+      ja: 'カンマ区切りリストのすべてに一致しない',
+      zh: '排除逗号分隔集合内的所有值',
+    },
+    sqlEquivalent: 'field NOT IN (:val1, :val2)',
+    exampleUrl: '/api/v1/inventory-stocks?warehouseCode.notIn=WH-OBSOLETE,WH-DEPRECATED',
+  },
+  {
+    operator: 'gte',
+    syntax: 'field.gte=numberOrDate',
+    description: {
+      en: 'Greater than or equal to comparison',
+      vi: 'Lớn hơn hoặc bằng',
+      ja: '以上（>=）の比較',
+      zh: '大于等于数值或时间比对',
+    },
+    sqlEquivalent: 'field >= :val',
+    exampleUrl: '/api/v1/customer-orders?grossAmount.gte=100.00',
+  },
+  {
+    operator: 'lte',
+    syntax: 'field.lte=numberOrDate',
+    description: {
+      en: 'Less than or equal to comparison',
+      vi: 'Nhỏ hơn hoặc bằng',
+      ja: '以下（<=）の比較',
+      zh: '小于等于数值或时间比对',
+    },
+    sqlEquivalent: 'field <= :val',
+    exampleUrl: '/api/v1/customer-orders?grossAmount.lte=5000.00',
+  },
+  {
+    operator: 'gt',
+    syntax: 'field.gt=numberOrDate',
+    description: {
+      en: 'Strictly greater than comparison',
+      vi: 'Lớn hơn tuyệt đối',
+      ja: 'より大きい（>）比較',
+      zh: '严格大于比对',
+    },
+    sqlEquivalent: 'field > :val',
+    exampleUrl: '/api/v1/inventory-stocks?availableQuantity.gt=0',
+  },
+  {
+    operator: 'lt',
+    syntax: 'field.lt=numberOrDate',
+    description: {
+      en: 'Strictly less than comparison',
+      vi: 'Nhỏ hơn tuyệt đối',
+      ja: 'より小さい（<）比較',
+      zh: '严格小于比对',
+    },
+    sqlEquivalent: 'field < :val',
+    exampleUrl: '/api/v1/inventory-stocks?availableQuantity.lt=5',
+  },
+  {
+    operator: 'null',
+    syntax: 'field.null=true (or false)',
+    description: {
+      en: 'Checks whether field is NULL (true) or NOT NULL (false)',
+      vi: 'Kiểm tra trường mang giá trị NULL (true) hoặc NOT NULL (false)',
+      ja: 'フィールドがNULL（true）またはNOT NULL（false）か判定',
+      zh: '判断字段是否为空 NULL（true）或非空（false）',
+    },
+    sqlEquivalent: 'field IS NULL / field IS NOT NULL',
+    exampleUrl: '/api/v1/loan-applications?creditScore.null=true',
+  },
+  {
+    operator: 'startsWith',
+    syntax: 'field.startsWith=prefix',
+    description: {
+      en: 'Case-insensitive prefix substring matching',
+      vi: 'Khớp tiền tố chuỗi ký tự không phân biệt hoa thường',
+      ja: '大文字小文字を区別しない前方一致検索',
+      zh: '不区分大小写的前缀匹配查询',
+    },
+    sqlEquivalent: 'LOWER(field) LIKE LOWER(:val%)',
+    exampleUrl: '/api/v1/products?productCode.startsWith=PRD-',
+  },
+  {
+    operator: 'between',
+    syntax: 'field.between=val1,val2',
+    description: {
+      en: 'Inclusive range comparison between two bounds',
+      vi: 'Trong khoảng giá trị từ A đến B (bao gồm 2 đầu)',
+      ja: '2つの境界値を含む範囲指定照合',
+      zh: '闭区间范围比对（包含上下界）',
+    },
+    sqlEquivalent: 'field BETWEEN :val1 AND :val2',
+    exampleUrl: '/api/v1/orders?createdAt.between=2026-01-01T00:00:00Z,2026-12-31T23:59:59Z',
+  },
+  {
+    operator: 'endsWith',
+    syntax: 'field.endsWith=suffix',
+    description: {
+      en: 'Case-insensitive suffix substring matching',
+      vi: 'Khớp hậu tố chuỗi ký tự không phân biệt hoa thường',
+      ja: '大文字小文字を区別しない後方一致検索',
+      zh: '不区分大小写的后缀匹配查询',
+    },
+    sqlEquivalent: 'LOWER(field) LIKE LOWER(%:val)',
+    exampleUrl: '/api/v1/customers?email.endsWith=@enterprise.io',
+  },
+];
+

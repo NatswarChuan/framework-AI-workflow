@@ -1,4 +1,4 @@
-# 03. Dynamic Query Engine, Keyset O(1) & GraphQL SDL
+# 03. 13 Dynamic Filter Operators, Query Guardrails, Keyset O(1) & GraphQL SDL (`1.0.0`)
 
 > **Language**: English | [Tiếng Việt](../03_QUERY_AND_DATA_ACCESS.md) | [Complete Manual](../GUIDE_EN.md)
 
@@ -6,7 +6,7 @@
 
 ## 1. 13 Dynamic Filter Operators (`FilterOperatorConstant`)
 
-All filter predicates compile to parameterized JPA Criteria queries validated through `QueryFilterParameterUtil`.
+All filter query parameters compile to parameterized JPA Criteria queries validated by `QueryFilterParameterUtil` (`PATTERN_MALICIOUS_SQL`, `PATTERN_XSS`, `PATTERN_SAFE_FIELD_PATH`):
 
 | Operator | URL Syntax | SQL Semantics |
 | :--- | :--- | :--- |
@@ -24,19 +24,23 @@ All filter predicates compile to parameterized JPA Criteria queries validated th
 | `between` | `price.between=100,500` | `BETWEEN 100 AND 500` |
 | `null` | `deletedAt.null=true` | `IS NULL` (or `IS NOT NULL` when `false`) |
 
-**Anti-Exhaustion & Anti-Injection Bounds (`QueryFilterParameterUtil`)**:
-- Maximum dynamic predicates per query: `MAX_DYNAMIC_FILTERS=30`.
-- Maximum relation sort traversal depth: `MAX_SORT_RELATION_DEPTH=4`.
-- SQLi keywords and XSS patterns reject immediately with `error.security.malicious.query` (`HTTP 400`).
+### Query DoS Guardrails (`QueryGuardrailProperties` — `app.framework.query-guardrails`)
+
+`QueryGuardrailEnforcerUtil` validates incoming query criteria and sorting paths prior to JPA execution:
+
+- `max-join-depth` (default `3`): Caps dot-separated association traversal depth.
+- `max-filter-criteria` (default `25`): Caps total predicates per request.
+- `max-page-size` (default `200`): Caps per-page record limit.
+- `allowed-filter-fields` & `allowed-sort-fields`: Optional strict allowlists restricting queryable/sortable fields.
 
 ---
 
 ## 2. O(1) Cursor Keyset Pagination (`GET /keyset`)
 
-Traditional `OFFSET` queries degrade linearly ($O(N)$) on large tables. Because entity identifiers are monotonic timestamp-ordered **UUIDv7** values, `/keyset` jumps straight to the cursor boundary on the primary B-Tree index in $O(1)$ seek time:
+Because primary keys use monotonic timestamp-ordered **UUIDv7** identifiers, `/keyset` jumps straight to the cursor boundary on the primary B-Tree index in $O(1)$ seek time:
 
 ```bash
-curl "http://localhost:8080/api/v1/commercial-products/keyset?afterId=019a0b12-3456-7000-8000-000000000001&size=20&fields=id,name,price" \
+curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&size=20&fields=id,name,price" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -44,8 +48,8 @@ curl "http://localhost:8080/api/v1/commercial-products/keyset?afterId=019a0b12-3
 
 ## 3. Eager Loading & Sparse Fieldsets
 
-- **`include=...` & `eager-fetch-singular-relations: true`**: Generates `JOIN FETCH` plans on `@ManyToOne` / `@OneToOne` relationships inside a single SQL query while keeping `spring.jpa.open-in-view=false`.
-- **`fields=id,name,price`**: Restricts serialized response attributes via `DynamicSchemaProjectionHelper`.
+- **`include=...` & `eager-fetch-singular-relations: true`**: Generates `JOIN FETCH` plans on `@ManyToOne` / `@OneToOne` relationships inside a single SQL query while maintaining `spring.jpa.open-in-view=false`.
+- **`fields=id,name,price`**: Restricts serialized output properties via `DynamicSchemaProjectionHelper`.
 
 ---
 
@@ -55,4 +59,4 @@ curl "http://localhost:8080/api/v1/commercial-products/keyset?afterId=019a0b12-3
 | :--- | :--- | :--- |
 | `/api/v1/graphql/schema` | `GET` | Exports synthesized GraphQL SDL (`get<Entity>`, `list<Entity>`, `count<Entity>`) |
 | `/api/v1/graphql` | `POST` | Unified query and mutation execution endpoint |
-| `/api/v1/graphql/explorer` | `GET` (`@Hidden`) | Browser GraphiQL playground |
+| `/api/v1/graphql/explorer` | `GET` (`@Hidden`) | Interactive GraphiQL playground |

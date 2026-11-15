@@ -1,0 +1,9 @@
+app:
+  framework:
+    security:
+      fail-fast-weak-jwt-secret: false
+    studio:
+      enabled: true
+      demo-token-endpoint-enabled: true
+      show-i18n-diagnostics: true
+      hide-framework-fingerprint: true

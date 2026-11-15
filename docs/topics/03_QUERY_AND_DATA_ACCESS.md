@@ -1,14 +1,14 @@
-# 03. Động Cơ Truy Vấn Động, Keyset O(1) & GraphQL SDL
+# 03. Truy Vấn Động 13 Toán Tử, Query Guardrails, Keyset $O(1)$ & GraphQL SDL (`1.0.0`)
 
-> **Ngôn ngữ**: Tiếng Việt | [English](en/03_QUERY_AND_DATA_ACCESS.md) | [Tổng hợp](../GUIDE_VI.md)
+> **Ngôn ngữ**: Tiếng Việt | [English](en/03_QUERY_AND_DATA_ACCESS.md) | [Sổ Tay Đầy Đủ](../GUIDE_VI.md)
 
 ---
 
 ## 1. 13 Toán Tử Lọc Động (`FilterOperatorConstant`)
 
-Mọi yêu cầu lọc đều biên dịch qua JPA Criteria API có tham số hóa (Parameterized Predicates) thông qua `QueryFilterParameterUtil`, chặn hoàn toàn tiêm nhiễm SQL.
+Mọi tham số lọc HTTP được biên dịch sang JPA Criteria có tham số hóa qua `QueryFilterParameterUtil` (chặn từ khóa SQLi qua `PATTERN_MALICIOUS_SQL` và XSS qua `PATTERN_XSS`):
 
-| Toán Tử | Cú Pháp URL | Phép So Sánh SQL |
+| Toán Tử | Cú Pháp URL | Ngữ Nghĩa SQL |
 | :--- | :--- | :--- |
 | `eq` | `status.eq=ACTIVE` | `= 'ACTIVE'` |
 | `ne` | `status.ne=ARCHIVED` | `!= 'ARCHIVED'` |
@@ -24,28 +24,32 @@ Mọi yêu cầu lọc đều biên dịch qua JPA Criteria API có tham số h�
 | `between` | `price.between=100,500` | `BETWEEN 100 AND 500` |
 | `null` | `deletedAt.null=true` | `IS NULL` (hoặc `IS NOT NULL` với `false`) |
 
-**Ràng buộc chống cạn tài nguyên (`QueryFilterParameterUtil`)**:
-- Tối đa `30` điều kiện lọc mỗi truy vấn (`MAX_DYNAMIC_FILTERS=30`).
-- Độ sâu sắp xếp qua quan hệ lồng nhau tối đa `4` cấp (`MAX_SORT_RELATION_DEPTH=4`).
-- Từ khóa SQLi / thẻ XSS trong chuỗi truy vấn bị chặn ngay với mã lỗi `error.security.malicious.query` (`HTTP 400`).
+### Kiểm Soát Tải Truy Vấn (`QueryGuardrailProperties` — `app.framework.query-guardrails`)
+
+`QueryGuardrailEnforcerUtil` thực thi các ngưỡng bảo vệ trước khi sinh câu lệnh JPA Criteria:
+
+- `max-join-depth` (mặc định `3`): Giới hạn số cấp lồng quan hệ dấu chấm khi lọc hoặc sắp xếp.
+- `max-filter-criteria` (mặc định `25`): Giới hạn tổng số điều kiện lọc động trong một truy vấn.
+- `max-page-size` (mặc định `200`): Giới hạn kích thước trang tối đa chống cạn kiệt bộ nhớ.
+- `allowed-filter-fields` & `allowed-sort-fields`: Danh sách trắng các trường được phép lọc/sắp xếp theo cấu hình.
 
 ---
 
-## 2. Phân Trang Keyset Con Trỏ $O(1)$ (`GET /keyset`)
+## 2. Phân Trang Con Trỏ Keyset $O(1)$ (`GET /keyset`)
 
-Với bảng hàng triệu dòng, truy vấn `OFFSET` truyền thống tăng độ phức tạp tuyến tính $O(N)$ do DB phải quét và loại bỏ bản ghi cũ. Endpoint `/keyset` sử dụng khóa chính **UUIDv7** tăng đơn điệu theo thời gian để nhảy trực tiếp trên chỉ mục B-Tree với chi phí $O(1)$:
+Phân trang `OFFSET` truyền thống có chi phí quét tuyến tính $O(N)$ khi đi sâu vào các trang cuối. Vì khóa chính của thực thể dùng **UUIDv7 (RFC 9562)** tăng dần đơn điệu theo dấu thời gian 48-bit, endpoint `/keyset` truy cập trực tiếp qua chỉ mục B-Tree với chi phí seek $O(1)$:
 
 ```bash
-curl "http://localhost:8080/api/v1/commercial-products/keyset?afterId=019a0b12-3456-7000-8000-000000000001&size=20&fields=id,name,price" \
+curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&size=20&fields=id,name,price" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
 ---
 
-## 3. Tối Ưu Eager Loading, Batch Fetch & Sparse Fieldsets
+## 3. Nạp Chủ Động Eager Loading & Sparse Fieldsets
 
-- **`include=...` & `eager-fetch-singular-relations: true`**: Chủ động tạo `JOIN FETCH` trên quan hệ `@ManyToOne` / `@OneToOne` để nạp toàn bộ dữ liệu trong một truy vấn SQL duy nhất khi `spring.jpa.open-in-view=false`.
-- **`fields=id,name,price`**: Sparse Fieldsets trả về tập trường tối thiểu nhằm giảm băng thông JSON và chi phí serialize.
+- **`include=...` & `eager-fetch-singular-relations: true`**: Tự động tạo `JOIN FETCH` trên quan hệ `@ManyToOne` / `@OneToOne` trong duy nhất 1 truy vấn SQL, giữ nguyên `spring.jpa.open-in-view=false`.
+- **`fields=id,name,price`**: Lọc thuộc tính đầu ra tại `DynamicSchemaProjectionHelper`.
 
 ---
 
@@ -53,6 +57,6 @@ curl "http://localhost:8080/api/v1/commercial-products/keyset?afterId=019a0b12-3
 
 | Endpoint | HTTP | Chức Năng |
 | :--- | :--- | :--- |
-| `/api/v1/graphql/schema` | `GET` | Xuất toàn bộ định nghĩa Schema SDL (`get<Entity>`, `list<Entity>`, `count<Entity>`) |
-| `/api/v1/graphql` | `POST` | Thực thi truy vấn và đột biến GraphQL thống nhất |
-| `/api/v1/graphql/explorer` | `GET` (`@Hidden`) | Giao diện GraphiQL tương tác trong trình duyệt |
+| `/api/v1/graphql/schema` | `GET` | Xuất GraphQL Schema SDL (`get<Entity>`, `list<Entity>`, `count<Entity>`) |
+| `/api/v1/graphql` | `POST` | Thực thi Query & Mutation theo trường chọn |
+| `/api/v1/graphql/explorer` | `GET` (`@Hidden`) | Giao diện GraphiQL kiểm thử trực tiếp trên trình duyệt |

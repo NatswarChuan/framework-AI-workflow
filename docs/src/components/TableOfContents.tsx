@@ -1,74 +1,89 @@
-import React from 'react';
-import { TocHeading } from '../types/docs';
+import React, { useEffect, useState } from 'react';
+import { SupportedLanguage, TocHeading } from '../types/docs';
+import { UI_LABELS, pickText } from '../data/locales';
 
 interface TableOfContentsProps {
-  headings: TocHeading[];
-  activeHeadingId?: string;
-  title?: string;
+  activeTopicId: string;
+  currentLang: SupportedLanguage;
 }
 
 export const TableOfContents: React.FC<TableOfContentsProps> = ({
-  headings,
-  activeHeadingId,
-  title = 'ON THIS PAGE',
+  activeTopicId,
+  currentLang,
 }) => {
-  if (headings.length === 0) return null;
+  const [headings, setHeadings] = useState<TocHeading[]>([]);
+  const [activeId, setActiveId] = useState<string>('');
 
-  const scrollToHeading = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+  useEffect(() => {
+    const collectHeadings = () => {
+      const container = document.getElementById('doc-reading-canvas');
+      if (!container) {
+        return;
+      }
+      const elements = Array.from(container.querySelectorAll('h2[id], h3[id]'));
+      const collected: TocHeading[] = elements.map((el) => ({
+        id: el.id,
+        title: (el.textContent ?? '').trim(),
+        level: el.tagName === 'H3' ? 3 : 2,
+      }));
+      setHeadings(collected);
+      if (collected.length > 0) {
+        setActiveId(collected[0].id);
+      }
+    };
+
+    const timer = window.setTimeout(collectHeadings, 40);
+    return () => window.clearTimeout(timer);
+  }, [activeTopicId, currentLang]);
+
+  useEffect(() => {
+    if (headings.length === 0) {
+      return;
     }
-  };
+
+    const onScroll = () => {
+      const scrollY = window.scrollY + 120;
+      let current = headings[0].id;
+      for (const h of headings) {
+        const el = document.getElementById(h.id);
+        if (el && el.offsetTop <= scrollY) {
+          current = h.id;
+        }
+      }
+      setActiveId(current);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [headings]);
+
+  if (headings.length === 0) {
+    return null;
+  }
 
   return (
-    <aside className="toc-nav">
-      <div
-        style={{
-          fontSize: '0.71rem',
-          fontWeight: 800,
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          color: 'var(--text-primary)',
-          marginBottom: '0.85rem',
-        }}
-      >
-        {title}
-      </div>
-
-      <ul style={{ listStyle: 'none', borderLeft: '1px solid var(--border-color)', paddingLeft: '0.75rem' }}>
-        {headings.map((h) => {
-          const isActive = activeHeadingId === h.id;
-          return (
-            <li
-              key={h.id}
-              style={{
-                marginBottom: '0.5rem',
-                paddingLeft: h.level === 3 ? '0.65rem' : '0rem',
-              }}
-            >
-              <a
-                href={`#${h.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToHeading(h.id);
-                }}
-                style={{
-                  color: isActive ? 'var(--brand-primary)' : 'var(--text-muted)',
-                  textDecoration: 'none',
-                  fontSize: '0.81rem',
-                  fontWeight: isActive ? 700 : 500,
-                  display: 'block',
-                  lineHeight: 1.45,
-                  transition: 'color 0.15s ease',
-                }}
-              >
-                {h.title}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
+    <aside className="doc-toc" aria-label={pickText(UI_LABELS.onThisPage, currentLang)}>
+      <div className="toc-heading">{pickText(UI_LABELS.onThisPage, currentLang)}</div>
+      <nav className="toc-list">
+        {headings.map((item) => (
+          <a
+            key={item.id}
+            href={`#${item.id}`}
+            className={`toc-link level-${item.level} ${activeId === item.id ? 'active' : ''}`}
+            onClick={(event) => {
+              event.preventDefault();
+              const target = document.getElementById(item.id);
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setActiveId(item.id);
+              }
+            }}
+          >
+            {item.title}
+          </a>
+        ))}
+      </nav>
     </aside>
   );
 };

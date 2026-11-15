@@ -1,46 +1,50 @@
-export type SupportedLanguage = 'en' | 'vi' | 'ja' | 'zh';
+export type SupportedLanguage =
+  | 'en'
+  | 'zh'
+  | 'hi'
+  | 'es'
+  | 'fr'
+  | 'ar'
+  | 'bn'
+  | 'pt'
+  | 'ru'
+  | 'ur'
+  | 'id'
+  | 'de'
+  | 'ja'
+  | 'vi'
+  | 'ko'
+  | 'tr'
+  | 'it'
+  | 'th'
+  | 'fa'
+  | 'pl';
+
+export interface LanguageMeta {
+  code: SupportedLanguage;
+  nativeName: string;
+  englishName: string;
+  rtl: boolean;
+}
+
+export type LocalizedText = Partial<Record<SupportedLanguage, string>> & {
+  en: string;
+};
 
 export interface NavItem {
   id: string;
-  title: Record<SupportedLanguage, string>;
-  category: string;
+  stageId: string;
+  label: LocalizedText;
+  summary: LocalizedText;
+  keywords: string[];
   badge?: string;
-  badgeType?: 'blue' | 'emerald' | 'amber' | 'rose' | 'purple';
 }
 
-export interface NavCategory {
+export interface NavStage {
   id: string;
-  title: Record<SupportedLanguage, string>;
+  stageNumber: number;
+  title: LocalizedText;
   items: NavItem[];
-}
-
-export interface EndpointSpec {
-  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  path: string;
-  summary: Record<SupportedLanguage, string>;
-  description: Record<SupportedLanguage, string>;
-  requiredRole: string;
-  requestBodySample?: string;
-  responseSample: string;
-}
-
-export interface AnnotationSpec {
-  name: string;
-  target: string;
-  purpose: Record<SupportedLanguage, string>;
-  rationale: Record<SupportedLanguage, string>;
-  applicability: Record<SupportedLanguage, string>;
-  usage: Record<SupportedLanguage, string>;
-  syntaxSample: string;
-  explanation: Record<SupportedLanguage, string>;
-}
-
-export interface FilterOperatorSpec {
-  operator: string;
-  syntax: string;
-  description: Record<SupportedLanguage, string>;
-  sqlEquivalent: string;
-  exampleUrl: string;
 }
 
 export interface TocHeading {
@@ -49,3 +53,40 @@ export interface TocHeading {
   level: number;
 }
 
+export interface CodeTab {
+  id: string;
+  label: string;
+  language: string;
+  fileName?: string;
+  code: string;
+  highlightLines?: number[];
+}
+
+export interface EndpointSpec {
+  id: string;
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  path: string;
+  methodName: string;
+  group: 'read' | 'write' | 'enterprise';
+  hiddenInSwagger?: boolean;
+  summary: LocalizedText;
+  sampleRequest: string;
+  sampleResponse: string;
+}
+
+export interface AnnotationSpec {
+  name: string;
+  category: 'routing' | 'bean' | 'entity' | 'resilience';
+  target: string;
+  purpose: LocalizedText;
+  attributes: string;
+  syntaxSample: string;
+  runtimeBehavior: LocalizedText;
+}
+
+export interface FilterOperatorSpec {
+  operator: string;
+  syntax: string;
+  sqlEquivalent: string;
+  description: LocalizedText;
+}

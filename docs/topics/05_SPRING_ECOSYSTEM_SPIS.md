@@ -1,31 +1,31 @@
-# 05. 8 Giao Diện SPI Customizer, `@CustomEndpoint` & Kết Nối Ngoài
+# 05. 8 Interface SPI Tùy Biến, `@CustomEndpoint` & `@ServiceOverride` (`1.0.0`)
 
-> **Ngôn ngữ**: Tiếng Việt | [English](en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tổng hợp](../GUIDE_VI.md)
+> **Ngôn ngữ**: Tiếng Việt | [English](en/05_SPRING_ECOSYSTEM_SPIS.md) | [Sổ Tay Đầy Đủ](../GUIDE_VI.md)
 
 ---
 
-## 1. Kiến Trúc Mở Rộng Không Sửa Mã Nguồn Lõi (8 SPI Interfaces)
+## 1. 8 Interface SPI Mở Rộng Không Xâm Lấn (`*Customizer`)
 
-Toàn bộ các điểm mở rộng trong package `io.github.natswarchuan.customization.customizer` sử dụng `interface` kết hợp `default` method để triển khai từng phần theo nhu cầu dự án:
+Mọi điểm mở rộng trong `io.github.natswarchuan.customization.customizer` dùng `interface` kèm phương thức `default`, cho phép đăng ký Spring Bean chọn lọc mà không sửa mã nguồn lõi:
 
-| # | SPI Interface | Context DTO | Phạm Vi Can Thiệp |
+| # | SPI Interface | Context DTO | Phạm Vi Tùy Biến |
 | :-: | :--- | :--- | :--- |
-| 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Core Container, `TaskExecutor`, bộ lập lịch tác vụ |
-| 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` prompt, Vector Store, quy trình RAG |
-| 3 | `SecurityIdentityCustomizer` | `SecurityCustomizerContextDto` | Mở rộng RBAC, ánh xạ claim OAuth2, luật che mờ dữ liệu |
-| 4 | `DataAccessCustomizer` | `DataCustomizerContextDto` | Can thiệp JPA Criteria, định tuyến multi-datasource & tenant |
-| 5 | `SpringCloudCustomizer` | `CloudCustomizerContextDto` | Khóa phân tán, Circuit Breaker, Retry & CloudEvents |
-| 6 | `MessagingIntegrationCustomizer` | `MessagingCustomizerContextDto` | Ký Webhook, WebSocket STOMP, Interceptor gọi HTTP ngoài |
-| 7 | `ArchitectureExtensionCustomizer` | `ArchitectureCustomizerContextDto` | Custom Endpoint Registry, GraphQL SDL & mở rộng i18n |
-| 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Cấu hình bucket, pre-signed URL & quy tắc tải tệp |
+| 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Container Bean, `TaskExecutor`, lập lịch |
+| 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Prompt Spring AI `ChatClient`, Vector Store, RAG |
+| 3 | `SecurityIdentityCustomizer` | `SecurityCustomizerContextDto` | Evaluator RBAC, ánh xạ claim OAuth2, luật masking |
+| 4 | `DataAccessCustomizer` | `DataCustomizerContextDto` | Hook JPA Criteria, định tuyến đa datasource & multi-tenant |
+| 5 | `SpringCloudCustomizer` | `CloudCustomizerContextDto` | Khóa phân tán, Resilience4j Circuit Breaker, Retry & CloudEvents |
+| 6 | `MessagingIntegrationCustomizer` | `MessagingCustomizerContextDto` | Ký Webhook HMAC, WebSocket STOMP, interceptor HTTP outbound |
+| 7 | `ArchitectureExtensionCustomizer` | `ArchitectureCustomizerContextDto` | Endpoint tùy biến, mở rộng GraphQL & i18n |
+| 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Chính sách bucket `LOCAL`/`S3`/`GCS`, pre-signed URL |
 
-Kiểm tra danh sách Bean Customizer đang nạp tại runtime: `GET /api/v1/system/customizers`.
+Kiểm tra danh sách bean đang kích hoạt qua `GET /api/v1/system/customizers`.
 
 ---
 
-## 2. Ủy Quyền Endpoint Nghiệp Vụ (`@CustomEndpoint`)
+## 2. Endpoint Tùy Biến (`@CustomEndpoint`) & Thoát Proxy (`@ServiceOverride`)
 
-Gắn `@CustomEndpoint` trực tiếp lên phương thức tùy biến trong interface mở rộng `AutoApiController<E>` để trỏ về lớp `@AutoService` / `@AutoComponent` `Helper` (không dùng hàm `private` hay `static`):
+### `@CustomEndpoint` Cho Nghiệp Vụ Đặc Thù
 
 ```java
 @AutoRestController(path = "/api/v1/advanced-enterprise")
@@ -42,8 +42,24 @@ public interface AdvancedEnterpriseBusinessController extends AutoApiController<
 }
 ```
 
+### `@ServiceOverride` Ghi Đè Một Contract Sinh Tự Động
+
+```java
+@AutoRestController(path = "/api/v1/tags")
+public interface TagController extends AutoApiController<Tag> {
+
+  @ServiceOverride(
+      beanName = "tagCustomOverrideService",
+      methodName = "getCustomTagStats",
+      bypassAutoDispatch = true
+  )
+  @AutoGet("/showcase/escape-hatch-stats")
+  ApiResponse<String> getCustomTagStats();
+}
+```
+
 ---
 
-## 3. Giao Tiếp Ngoài Qua `ThirdPartyRestClientHelper`
+## 3. HTTP Client Outbound (`ThirdPartyRestClientHelper`)
 
-`ThirdPartyRestClientHelper` thực hiện lệnh gọi REST đồng bộ ra hệ thống đối tác qua Spring 6 `RestClient` (phản chiếu runtime) hoặc tự động dùng Java 21 `java.net.http.HttpClient`, bảo toàn truyền tiếp `X-Request-ID` và W3C `traceparent` qua MDC.
+`ThirdPartyRestClientHelper` gọi HTTP ra bên ngoài qua Spring `RestClient` hoặc fallback chuẩn Java 21 `java.net.http.HttpClient`, tự động truyền tiếp `X-Request-ID` và W3C `traceparent` từ SLF4J MDC.

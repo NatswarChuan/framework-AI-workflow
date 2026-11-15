@@ -1,53 +1,56 @@
-# 04. Anti-Scanner Security, Multilingual `/system/studio`, Virtual Threads & Multi-Cloud Storage
+# 04. Security, Multi-Cloud Storage, `@ServiceOverride`, Metrics & 20-Language i18n (`1.0.0`)
 
 > **Language**: English | [Tiếng Việt](../04_ADVANCED_ENTERPRISE_FEATURES.md) | [Complete Manual](../GUIDE_EN.md)
 
 ---
 
-## 1. Adversarial Security & Anti-AI-Scanner Hardening
+## 1. NIST Level 2 Security, Surface Lockdown & Anti-Scanner Protection
 
-| Defense Mechanism | Enforcing Class | Configuration / Bound |
-| :--- | :--- | :--- |
-| **Default-Locked Studio & Demo Auth** | `DevStudioController`, `AuthController`, `SecurityExposurePolicyBridge` | Defaults `app.framework.studio.enabled=false` & `demo-token-endpoint-enabled=false`; returns HTTP `404` and omits `/system/**` from public Ant matchers |
-| **64-Byte CSPRNG Key Rotation** | `StartupDiagnosticsUtil.validateAndHardenSecurity` | When demo auth is disabled and placeholder JWT key remains unchanged, generates an ephemeral 64-byte `SecureRandom` secret at startup |
-| **Weak JWT Secret Blocking** | `StartupDiagnosticsUtil.assertJwtSecretEntropy` | `fail-fast-weak-jwt-secret=true` rejects custom secrets `< 32` UTF-8 bytes |
-| **Constant-Time Verification** | `ConstantTimeComparisonUtil` | Wraps `MessageDigest.isEqual` for `@Idempotent` payload hashes and `@EntityWebhook` HMAC-SHA256 signatures (`WebhookHmacSignerHelper`) |
-| **Sliding-Window Rate Limiting** | `RateLimitingFilter` | Bounded `10,000`-entry Caffeine cache: default `1,000 req/s`, tightened `20 req/s` on `/api/v1/auth/**` |
-| **Path Traversal Blocking (`CWE-22`)** | `StoragePathSanitizerHelper` | Strips null bytes (`\0`), normalizes segments, and confines paths inside storage root |
-| **OWASP HTTP Response Headers** | `SecurityHeadersPolicyBridge` | Enforces `X-Frame-Options: DENY`, `Content-Security-Policy`, `Permissions-Policy`, `Referrer-Policy`, and `Strict-Transport-Security` |
+- **`@EntitySecurity`, `@FieldSecurity` & `@MultiTenant`**: Declarative table RBAC (`readRoles`, `writeRoles`, `deleteRoles`), ownership guards (`ownerField`), column masking/nullification (`viewRoles`, `maskPattern`, `nullifyInsteadOfMask`), and multi-tenant isolation (`tenantField`).
+- **Secure-by-Default Surface Lockdown (`DevStudioProperties` + `SurfaceAccessGuardrailUtil`)**: When `app.framework.studio.enabled=false` (default), `/system/studio` and `/system/studio/eject` return HTTP `401 Unauthorized`; when `demo-token-endpoint-enabled=false`, `POST /api/v1/auth/token` returns HTTP `404 Not Found`.
+- **Anti-Fingerprinting & Error Masking**: `hide-framework-fingerprint=true` suppresses technical version badges, while `ExceptionCauseUnwrapperUtil` logs full internal causes server-side and returns sanitized `ApiResponse<Void>` responses to callers.
+- **SPA & Idempotency CORS (`SecurityFilterChainBridge`)**: Permits configurable origin patterns (`*`) with `Authorization`, `Idempotency-Key`, `X-Idempotency-Key`, `X-Language`, `X-Tenant-ID`, `traceparent`, and `X-Request-ID`.
 
 ---
 
-## 2. Multilingual `i18n`, `/system/studio` & Host Bundle Extension
+## 2. `@ServiceOverride` Escape Hatch & Standard MVC Ejection (`GET /system/studio/eject`)
 
-1. **20 Built-In Locales (`I18nLocalizationProperties`)**: `en`, `zh`, `hi`, `es`, `fr`, `ar` (RTL), `bn`, `pt`, `ru`, `ur` (RTL), `id`, `de`, `ja`, `vi`, `ko`, `tr`, `it`, `th`, `fa` (RTL), `pl`. RTL (`dir="rtl"`) activates automatically in `/system/studio` for `ar`, `ur`, `fa`.
-2. **Resolution Chain (`LocaleResolutionUtil.resolveBestMatchLocale`)**:
-   `?lang=` -> `X-Language` header -> `NWVMC_LANG` cookie -> `Accept-Language` header (`MAX_ACCEPT_HEADER_LENGTH=256`, `MAX_ACCEPT_RANGES=8`) -> `app.framework.i18n.default-locale` (`en`).
-3. **Key Validation & Bounded Diagnostics (`LocaleResolutionUtil` / `DevStudioDiagnosticsUtil`)**:
-   - Enforces `^[A-Za-z0-9._-]+$` and max length `128` (`MAX_MESSAGE_CODE_LENGTH`); rejects `..` segments. Malformed tags such as `?lang=../../etc/passwd` normalize cleanly to `en`.
-   - Translation cache caps at `8192` (`MAX_TRANSLATION_CACHE_SIZE`), and missing key diagnostics cap at `128` entries (`MAX_MISSING_KEY_RECORDS`) displayed in `#studioI18nDiagBar` when `show-i18n-diagnostics=true`.
-4. **Extending in Host Applications**:
-   - Define `src/main/resources/i18n/messages_{lang}.properties` entries to extend or override `/system/studio`, `error.*`, or `{validation...}` strings.
-   - Construct `new MessageHelper(hostMessageSource)` in custom beans when integrating application-specific Spring `MessageSource` bundles.
+When individual endpoints outgrow dynamic CRUD semantics:
+
+1. **In-Place `@ServiceOverride`**: Annotate any method on an `AutoApiController<E>` interface with `@ServiceOverride(targetBean, beanName, methodName, bypassAutoDispatch)` so `EscapeHatchDispatchHelper` routes invocation directly via `MethodHandleCacheUtil`.
+2. **Standard Code Ejection (`/system/studio/eject`)**: Invoke `GET /system/studio/eject?target=<EntityOrControllerName>` to export decoupled Spring MVC `Controller`, `Service`, `ServiceImpl`, and `Repository` code via `ControllerEjectionHelper`.
 
 ---
 
-## 3. Unified Multi-Cloud Storage (`FileStorageController`)
+## 3. Micrometer Observability (`DynamicEntityMetricsHelper` & `MetricConstant`)
 
-Configured via `app.framework.storage.provider` (`LOCAL`, `S3`, `GCS`), max payload `max-file-size` (`52428800` bytes = 50 MB):
-
-- `POST /api/v1/storage/upload`
-- `GET /api/v1/storage/download/{fileId}`
-- `GET /api/v1/storage/metadata/{fileId}`
-- `DELETE /api/v1/storage/{fileId}`
-- `POST /api/v1/storage/presigned-url`
-- `GET /api/v1/storage/exists/{fileId}`
+| Metric | Type | Tags | Scope |
+| :--- | :--- | :--- | :--- |
+| `dynamic.entity.requests.total` | Counter | `entity`, `operation`, `status` | Dynamic entity CRUD invocations |
+| `dynamic.entity.duration.seconds` | Timer | `entity`, `operation`, `status` | End-to-end execution latency |
+| `nwvmc.proxy.request.duration` | Timer | `entity`, `operation`, `status` | Dynamic proxy controller latency |
+| `nwvmc.cache.http.requests` | Counter | `outcome` (`HIT` / `MISS`) | `@HttpCacheable` ETag evaluation outcome |
+| `nwvmc.outbox.pending.events` | Gauge | — | Queued transactional outbox backlog |
+| `nwvmc.outbox.dispatch.duration` | Timer | — | Outbox batch dispatch latency |
+| `nwvmc.resilience.circuitbreaker.state` | Gauge | `circuit` | State code (`0=CLOSED`, `1=HALF_OPEN`, `2=OPEN`) |
+| `nwvmc.ratelimit.rejected.total` | Counter | `partition` | Rejected requests exceeding sliding-window quota |
+| `framework.datasource.routing.total` | Counter | `datasource` | Primary / Replica / Tenant routing counts |
 
 ---
 
-## 4. Java 21 Virtual Threads, ETag & CDC Time-Travel
+## 4. 20-Language `/system/studio`, RTL Support & Host Localization (`i18n/`)
 
-- **Virtual Threads + HikariCP**: Combining `spring.threads.virtual.enabled: true` with `spring.jpa.open-in-view: false` returns JDBC connections immediately after query execution prior to HTTP response serialization.
-- **SSE Streaming & `RealtimeStreamingProperties`**: `@Hidden @AutoGet("/events")` governed by `heartbeat-seconds=15` and `max-emitters-per-entity=1000`.
-- **HTTP ETag (`@HttpCacheable`) & `@Idempotent`**: Cuts redundant bandwidth via `304 Not Modified` and enforces atomic duplicate-request replay protection via `Idempotency-Key`.
-- **Audit Time-Travel**: `GET /api/v1/system/time-travel/{entityName}/{id}?timestamp=...` reconstructs historical state in $O(K)$ via reverse CDC delta playback.
+- **20 Built-In Locales (`I18nConstant`)**: `en, zh, hi, es, fr, ar, bn, pt, ru, ur, id, de, ja, vi, ko, tr, it, th, fa, pl` (`ar`, `fa`, `ur` enable `dir="rtl"`).
+- **Deterministic Locale Resolution (`LocaleResolutionUtil` & `HeaderLocaleResolver`)**: `?lang=` query param -> `NWVMC_LANG` cookie -> `X-Language` header -> `Accept-Language` header -> `app.framework.i18n.default-locale` (`en`). Unrecognized locale tags fall back safely to `en`.
+- **Host Application Customization**: `I18nConfig` configures UTF-8 `ReloadableResourceBundleMessageSource` (`classpath:i18n/messages`, `cacheSeconds=3600`). Enabling `app.framework.studio.show-i18n-diagnostics=true` displays `#studioI18nDiagBar` inside `/system/studio` with active locale, text direction, and missing-key diagnostics.
+
+---
+
+## 5. JMH `1.37` Microbenchmark Throughput (`DynamicProxyThroughputBenchmarkTest`)
+
+| Dispatch Path (`ops/ms`) | Measured Mean Throughput |
+| :--- | :--- |
+| `measureVanillaDirectDispatch` | `1457.171 ops/ms` |
+| `measureCachedMethodHandleDispatch` | `1029.464 ops/ms` |
+| `measureDynamicProxyServiceOverrideDispatch` | `528.621 ops/ms` |
+| `measureDynamicProxyDefaultDispatch` | `195.486 ops/ms` |

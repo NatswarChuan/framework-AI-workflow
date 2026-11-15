@@ -31,11 +31,11 @@
     </repositories>
 
     <dependencies>
-        <!-- NHÚNG FRAMEWORK PUBLIC TRỰC TIẾP TỪ JITPACK -->
+        <!-- Spring-NWVMC 0.0.3 Framework Artifact -->
         <dependency>
-            <groupId>com.github.NatswarChuan</groupId>
-            <artifactId>Spring-NWVMC</artifactId>
-            <version>v0.0.2</version>
+            <groupId>io.github.natswarchuan</groupId>
+            <artifactId>spring-nwvmc</artifactId>
+            <version>0.0.3</version>
         </dependency>
 
         <dependency>
@@ -84,6 +84,8 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <wait>1000</wait>
+                    <maxAttempts>90</maxAttempts>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

@@ -1,79 +1,82 @@
-# 02. 38-Endpoint Catalog & Built-In Platform Controllers
+# 02. Catalog of 40 Auto-Generated REST Contracts & Platform Controllers (`1.0.0`)
 
 > **Language**: English | [Tiếng Việt](../02_REST_API_CATALOG.md) | [Complete Manual](../GUIDE_EN.md)
 
 ---
 
-## 1. Complete 38-Contract `@Auto*` Interface Breakdown
+## 1. 40 Declared `@Auto*` Contracts per Entity (`38` Exposed by Default)
 
-Extending `AutoApiController<E>` triggers `DynamicControllerProxyRegistrarHelper` and `SpringMvcEndpointBridge` to bind **38 endpoint contracts** (**36** visible by default in Swagger UI and `/system/studio`; `/events` carries `@Hidden` and `/{id}/**` is opt-in via `enableNestedSubResources`).
+Extending `AutoApiController<E>` triggers `DynamicControllerProxyRegistrarHelper` and `SpringMvcEndpointBridge` to bind **40** contracts (`17` Read + `11` Write + `12` Enterprise; **`38`** visible by default in Swagger UI and `/system/studio` badge because `/events` is `@Hidden` and `/{id}/**` requires `enableNestedSubResources = true`).
 
-### 1.1 Read, Analytics, Streaming & Schema (`AutoApiReadController<E>` — 15 Endpoints)
+### Group 1: Query, Analytics & Client Codegen (`AutoApiReadController` — 17 Contracts)
 
-| # | HTTP | Path | Method Name | Technical Behavior |
+| # | HTTP | Sub-Path | Method | Behavior |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `/` | `getPage` | Offset pagination (`page`, `size`), `sort`, `dir`, `search`, `fields`, 13 filter operators |
-| 2 | `GET` | `/keyset` | `getKeysetPage` | O(1) cursor pagination using monotonic UUIDv7 `afterId` |
-| 3 | `GET` | `/all` | `getAll` | Filtered full collection query |
-| 4 | `GET` | `/count` | `count` | `Long` count matching active criteria |
-| 5 | `GET` | `/exists` | `exists` | `Boolean` existence predicate |
-| 6 | `GET` | `/aggregate` | `aggregate` | Executes `COUNT`, `SUM`, `AVG`, `MIN`, `MAX` against `field` |
-| 7 | `GET` | `/distinct` | `findDistinctValues` | Distinct scalar values for `field` |
-| 8 | `GET` | `/top` | `findTopRecords` | Bounded top-N records (`limit`, `sort`, `dir`) |
-| 9 | `GET` | `/group-by` | `groupByAnalytics` | Bucketed analytics grouped by `groupField` over `valueField` |
-| 10 | `GET` | `/export/csv` | `exportCsv` | O(1)-memory chunked RFC-4180 CSV stream |
-| 11 | `GET` | `/export/jsonl` | `exportJsonl` | O(1)-memory NDJSON (`application/x-ndjson`) stream |
-| 12 | `GET` | `/metadata` | `getMetadata` | Field descriptors and active `@StateMachine` definition |
-| 13 | `GET` | `/schema/typescript` | `generateTypeScript` | Dynamic TypeScript `interface` generation |
-| 14 | `GET` | `/schema/json` | `getJsonSchema` | Dynamic JSON Schema Draft-07 generation |
-| 15 | `GET` | `/{id}` | `getById` | Single UUIDv7 lookup with `include` eager graph & `@FieldSecurity` masking |
+| 1 | `GET` | `""` | `getPage` | Offset pagination with 13-operator filtering, multi-field sorting, `include=...`, `fields=...` |
+| 2 | `GET` | `/keyset` | `getKeysetPage` | $O(1)$ UUIDv7 cursor keyset pagination (`afterId`, `size`) |
+| 3 | `GET` | `/all` | `getAll` | Filtered collection response without page envelope |
+| 4 | `GET` | `/count` | `count` | Total record count matching dynamic predicates |
+| 5 | `GET` | `/exists` | `exists` | Fast existence probe against dynamic predicates |
+| 6 | `GET` | `/aggregate` | `aggregate` | Numeric `COUNT`, `SUM`, `AVG`, `MIN`, `MAX` statistics |
+| 7 | `GET` | `/distinct` | `findDistinctValues` | Distinct non-null values for target attribute |
+| 8 | `GET` | `/top` | `findTopRecords` | Top-N ordered slice by target field |
+| 9 | `GET` | `/group-by` | `groupByAnalytics` | Aggregated `GROUP BY` metrics for reporting |
+| 10 | `GET` | `/export/csv` | `exportCsv` | Chunked RFC-4180 CSV export |
+| 11 | `GET` | `/export/jsonl` | `exportJsonl` | Newline-delimited JSON (`application/x-ndjson`) stream |
+| 12 | `GET` | `/metadata` | `getMetadata` | Entity fields, Jakarta validation rules, and RBAC descriptors |
+| 13 | `GET` | `/schema/typescript` | `generateTypeScript` | Emits TypeScript `interface` definitions |
+| 14 | `GET` | `/schema/json` | `getJsonSchema` | Emits JSON Schema metadata |
+| 15 | `GET` | `/schema/zod` | `generateZodSchema` | Emits Zod runtime validation schema (`ZodAndClientGeneratorUtil`) |
+| 16 | `GET` | `/schema/client` | `generateTypedApiClient` | Emits typed TypeScript Fetch client with Zod schemas |
+| 17 | `GET` | `/{id}` | `getById` | Fetch entity by UUIDv7 (`@HttpCacheable` ETag / `304`) |
 
-### 1.2 Write, Upsert & Chunked Batch (`AutoApiController<E>` — 11 Endpoints)
+### Group 2: Mutation, Batch, Upsert, Patch, Delete & Restore (`AutoApiController` — 11 Contracts)
 
-| # | HTTP | Path | Method Name | Technical Behavior |
+| # | HTTP | Sub-Path | Method | Behavior |
 | :-: | :--- | :--- | :--- | :--- |
-| 16 | `POST` | `/` | `create` | Validates payload and applies `@UniqueField`, `@AutoCode`, `@AutoSlug`, `@ComputedField` |
-| 17 | `POST` | `/batch` | `createBatch` | Single-transaction list insert |
-| 18 | `POST` | `/upsert` | `upsert` | Updates on `@UniqueField` match or inserts otherwise |
-| 19 | `POST` | `/upsert-batch` | `upsertBatch` | Batch upsert collection |
-| 20 | `POST` | `/batch-chunked` | `batchChunked` | Slices payloads across `chunkSize` (default `100`) commits |
-| 21 | `PATCH` | `/{id}/increment` | `adjustNumericField` | Atomic numeric delta (`?field=...&delta=...`) |
-| 22 | `PATCH` | `/batch-update` | `updateBatchByFilter` | Bulk partial updates for filter matches |
-| 23 | `PUT` | `/{id}` | `update` | Full replacement by UUIDv7 `id` |
-| 24 | `PATCH` | `/{id}` | `patch` | Partial attribute patch |
-| 25 | `DELETE` | `/{id}` | `deleteById` | Soft-delete guarded by `@StateMachine.deletableStates` |
-| 26 | `POST` | `/{id}/restore` | `restoreById` | Restores soft-deleted entity |
+| 18 | `POST` | `""` | `create` | Creates entity with `@AutoCode`, `@AutoSlug`, `@ComputedField`, `@UniqueField` |
+| 19 | `POST` | `/batch` | `createBatch` | Transactional batch insert |
+| 20 | `POST` | `/upsert` | `upsert` | Idempotent create-or-update by unique business key |
+| 21 | `POST` | `/upsert-batch` | `upsertBatch` | Batch upsert mutation |
+| 22 | `POST` | `/batch-chunked` | `batchChunked` | Partial-failure isolated chunked batch processor (`BatchExecutionResultDto`) |
+| 23 | `PATCH` | `/{id}/increment` | `adjustNumericField` | Atomic numeric counter delta adjustment |
+| 24 | `PATCH` | `/batch-update` | `updateBatchByFilter` | Bulk attribute update matching query predicates |
+| 25 | `PUT` | `/{id}` | `update` | Full entity replacement |
+| 26 | `PATCH` | `/{id}` | `patch` | Partial non-null field merge |
+| 27 | `DELETE` | `/{id}` | `deleteById` | Soft delete guarded by `@StateMachine` `deletableStates` |
+| 28 | `POST` | `/{id}/restore` | `restoreById` | Restores a soft-deleted record |
 
-### 1.3 Workflow, AI, Bulk Import, Diff & Sub-Resources (`AutoApiEnterpriseController<E>` — 12 Endpoints)
+### Group 3: Enterprise Lifecycle, AI, RFC 6902 Patch & Streaming (`AutoApiEnterpriseController` — 12 Contracts)
 
-| # | HTTP | Path | Method Name | Technical Behavior |
+| # | HTTP | Sub-Path | Method | Behavior |
 | :-: | :--- | :--- | :--- | :--- |
-| 27 | `POST` | `/{id}/transition` | `transitionState` | Validates `?targetState=...` against `@StateMachine` (`HTTP 422` if disallowed) |
-| 28 | `POST` | `/{id}/clone` | `cloneEntity` | Clones record with fresh UUIDv7 and `@AutoCode` |
-| 29 | `GET` | `/events` | `streamEvents` | Real-time SSE stream (`@Hidden` from Swagger UI) |
-| 30 | `GET` | `/ai/context` | `getAiContext` | Structured schema context for Spring AI `ChatClient` |
-| 31 | `POST` | `/ai/query` | `queryAi` | Safe Criteria-backed natural language query execution |
-| 32 | `GET` | `/human-policy` | `getPolicySummary` | Active parsed `@HumanPolicy` / YAML policy view |
-| 33 | `GET` | `/health` | `getEntityHealth` | Entity circuit breaker health telemetry |
-| 34 | `POST` | `/import/csv` | `importCsv` | Streaming multipart RFC-4180 CSV import |
-| 35 | `POST` | `/import/jsonl` | `importJsonl` | Streaming NDJSON bulk import |
-| 36 | `PATCH` | `/{id}/patch-rfc6902` | `patchRfc6902` | Applies RFC 6902 JSON Patch operations (`add`/`replace`/`remove`) |
-| 37 | `GET` | `/{id}/diff` | `compareEntityDiff` | Compares `{id}` against `?targetId={uuid}` (`MODIFIED`, `ADDED`, `REMOVED`) |
-| 38 | `GET` | `/{id}/**` | `navigateSubResources` | Recursive relation traversal (requires `enableNestedSubResources=true`) |
+| 29 | `POST` | `/{id}/transition` | `transitionState` | Directed `@StateMachine` state transition (`targetState`) |
+| 30 | `POST` | `/{id}/clone` | `cloneEntity` | Deep entity clone issuing new UUIDv7 and `@AutoCode` |
+| 31 | `GET` | `/events` (`@Hidden`) | `streamEvents` | Real-time Server-Sent Events (SSE) entity stream |
+| 32 | `GET` | `/ai/context` | `getAiContext` | JSON Tool Schema payload for LLM function calling |
+| 33 | `POST` | `/ai/query` | `queryByNaturalLanguage` | Translates natural language prompts into parameterized JPA Criteria |
+| 34 | `GET` | `/human-policy` | `getPolicySummary` | Returns active `@HumanPolicy` lifecycle/RBAC/masking rules |
+| 35 | `GET` | `/health` | `getEntityHealth` | Entity table health and record telemetry |
+| 36 | `POST` | `/import/csv` | `importCsv` | Streaming multipart RFC-4180 CSV import |
+| 37 | `POST` | `/import/jsonl` | `importJsonl` | Streaming multipart NDJSON import |
+| 38 | `PATCH` | `/{id}/patch-rfc6902` | `patchRfc6902` | RFC 6902 JSON Patch operations (`add` / `replace` / `remove`) |
+| 39 | `GET` | `/{id}/diff` | `compareEntityDiff` | Compares current entity snapshot against historical diff target |
+| 40 | `GET` | `/{id}/**` | `navigateSubResources` | Recursive sub-resource graph traversal (`enableNestedSubResources = true`) |
 
 ---
 
 ## 2. Built-In Platform Controllers
 
-| Route | Controller | Operational Notes |
+| Endpoint / Prefix | Controller | Responsibility & Production Lockdown |
 | :--- | :--- | :--- |
-| `/system/studio` (`@Hidden`) | `DevStudioController` | 20-language Live API Studio (active only when `app.framework.studio.enabled=true`) |
-| `POST /api/v1/auth/token` | `AuthController` | Demo JWT issuer (active only when `demo-token-endpoint-enabled=true`) |
-| `/api/v1/storage/*` (6 APIs) | `FileStorageController` | Upload, download, metadata, delete, presigned URL, exists (`LOCAL`/`S3`/`GCS`) |
-| `/api/v1/graphql*` | `GraphQLDynamicApiController` | `POST /graphql`, `GET /graphql/schema`, `GET /graphql/explorer` (`@Hidden`) |
-| `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Historical entity snapshot reconstruction at `?timestamp=...` |
-| `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Registered SPI Customizer Bean inventory |
-| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Entity circuit breaker telemetry |
-| `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Primary/Replica datasource pool health |
-| `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Active `X-Request-ID` / `traceparent` MDC context |
-| `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Standardizes Tomcat `400/404/405/413/431/500` responses into `ApiResponse<Void>` |
+| `GET /system/studio` (`@Hidden`) | `DevStudioController` | 20-language Developer Studio (RTL `ar`, `fa`, `ur`); returns `401` when `app.framework.studio.enabled=false` |
+| `GET /system/studio/eject` | `DevEjectionController` | Exports standard Spring MVC Controller/Service/Repository code; guarded by `SurfaceAccessGuardrailUtil` |
+| `POST /api/v1/auth/token` | `AuthController` | Mints demo HMAC-SHA512 JWT; returns `404` when `demo-token-endpoint-enabled=false` |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
+| `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Point-in-time entity reconstruction at ISO-8601 UTC timestamp |
+| `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Active SPI beans across the 8 `*Customizer` interfaces |
+| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Live Resilience4j Circuit Breaker health metrics |
+| `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Multi-datasource health inspection |
+| `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Active W3C `traceparent` and UUIDv7 `X-Request-ID` MDC context |
+| `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Converts Tomcat `400/404/405/413/431/500` container errors to `ApiResponse<Void>` |

@@ -1,60 +1,74 @@
-# 06. Declarative Annotations Specification Reference
+# 06. Specification Reference for All 42 Declarative Annotations (`1.0.0`)
 
 > **Language**: English | [Tiếng Việt](../06_DECLARATIVE_ANNOTATIONS.md) | [Complete Manual](../GUIDE_EN.md)
 
 ---
 
-## 1. Overview of Core Declarative Annotations
+## 1. Category Overview of 42 Framework Annotations
 
-The framework ships 41 Pure Java annotations under `io.github.natswarchuan.core.annotation` and `module.*.annotation`. Below are verified attributes and runtime behavior for core entity and controller annotations.
+`io.github.natswarchuan.core.annotation` and `module.*.annotation` expose **42** Pure Java annotations:
+
+- **Controller, Proxy & Escape Hatch (`13`)**: `@AutoRestController`, `@AutoGet`, `@AutoPost`, `@AutoPut`, `@AutoPatch`, `@AutoDelete`, `@AutoParam`, `@AutoVariable`, `@AutoBody`, `@CustomEndpoint`, `@ServiceOverride`, `@EnableNestedSubResource`, `@BusinessAction`.
+- **Bean & Component Wiring (`5`)**: `@AutoComponent`, `@AutoService`, `@AutoBean`, `@AutoConfigurationBean`, `@OrderPriority`.
+- **Entity, Security & Data Rules (`11`)**: `@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@HumanPolicy`, `@AuditTrail`, `@MultiTenant`, `@UniqueField`, `@AutoCode`, `@AutoSlug`, `@ComputedField`, `@CustomQuery`.
+- **Resilience, Concurrency, Caching & Events (`13`)**: `@DistributedLock`, `@Idempotent`, `@RateLimit`, `@EntityCircuitBreaker`, `@EntityRetry`, `@HttpCacheable`, `@AutoCacheable`, `@AutoCacheEvict`, `@TrackExecutionTime`, `@EntityWebhook`, `@PublishCloudEvent`, `@TargetDataSource`, `@TargetDatabasePlatform`.
 
 ---
 
-## 2. Proxy Routing Annotations (`Controller`)
+## 2. Proxy Routing & Escape Hatch (`Controller`)
 
 ### `@AutoRestController` (`ElementType.TYPE`)
 
-| Attribute | Type / Default | Behavior |
+| Attribute | Type / Default | Runtime Behavior |
 | :--- | :--- | :--- |
-| `path` | `String` (empty = inferred kebab-case) | Root resource path (e.g. `"/api/v1/commercial-products"`) |
-| `tags` | `String[]` | OpenAPI 3.0 Swagger UI tag group names |
-| `enabledEndpoints` | `String[]` | Allowlist of method names or groups via `EndpointFeatureFilterHelper` |
-| `disabledEndpoints` | `String[]` | Denylist of disabled methods or groups (e.g. `{"deleteById", "batchChunked"}`) |
-| `enableNestedSubResources` | `boolean` (`false`) | Enables recursive `GET /{id}/**` relationship traversal |
+| `path` | `String` (`""`) | Root resource URI (e.g. `"/api/v1/product-catalogs"`) |
+| `basePath` | `String` (`""`) | Alternate root URI prefix alias |
+| `entityName` | `String` (`""`) | Custom entity display identifier |
+| `enabledEndpoints` | `String[]` (`{}`) | Allowlist of method names or feature groups via `EndpointFeatureFilterHelper` |
+| `disabledEndpoints` | `String[]` (`{}`) | Denylist disabling specific endpoints or groups |
+| `enableNestedSubResources` | `boolean` (`false`) | Activates recursive `GET /{id}/**` relationship traversal |
+
+### `@ServiceOverride` (`ElementType.METHOD`)
+
+| Attribute | Type / Default | Runtime Behavior |
+| :--- | :--- | :--- |
+| `targetBean` | `Class<?>` (`Void.class`) | Target custom Spring bean class |
+| `beanName` | `String` (`""`) | Target Spring bean name when routing by bean identifier |
+| `methodName` | `String` (`""`) | Target delegate method name (defaults to annotated controller method name) |
+| `bypassAutoDispatch` | `boolean` (`true`) | Invokes the target method directly via `MethodHandleCacheUtil` |
 
 ### `@CustomEndpoint` (`ElementType.METHOD`)
 
-Attributes: `path`, `httpMethod` (`"GET"` default), `delegateBean`, `delegateMethod`, `summary`, `description`. Routes custom sub-paths directly to Spring delegate beans.
+Attributes: `path`, `httpMethod` (`"GET"`), `delegateBean`, `delegateMethod`, `summary`, `description`.
 
 ---
 
 ## 3. Security, Lifecycle & Data Integrity (`Entity`)
 
-| Annotation | Target | Core Attributes | Runtime Enforcement |
+| Annotation | Target | Attributes & Defaults | Enforcement |
 | :--- | :--- | :--- | :--- |
-| `@EntitySecurity` | `TYPE` | `readRoles`, `writeRoles`, `deleteRoles`, `ownerField`, `bypassOwnershipRoles` (`{"ROLE_ADMIN"}`) | Enforces NIST Level 2 RBAC and record ownership filtering |
-| `@FieldSecurity` | `FIELD` | `viewRoles`, `maskPattern` (`"***"`), `nullifyWhenDenied` (`false`) | Masks or nullifies privileged fields when caller roles lack access |
-| `@StateMachine` | `FIELD` / `TYPE` | `field` (`"status"`), `initial` (`"PENDING"`), `transitions`, `deletableStates` | Rejects illegal transitions and guarded soft deletes (`HTTP 422`) |
-| `@HumanPolicy` | `TYPE` | `lifecycle`, `security`, `masking`, `stateField` | Parses English policy directives into state machine, RBAC, and masking rules |
-| `@MultiTenant` | `TYPE` | `tenantField` (`"tenantId"`), `bypassTenantRoles` (`{"ROLE_SUPER_ADMIN"}`) | Isolates queries and mutations per active tenant context |
+| `@EntitySecurity` | `TYPE` | `readRoles`, `writeRoles`, `deleteRoles`, `permitAll` (`false`), `ownerField`, `bypassOwnerRoles` (`{"ROLE_ADMIN", "ROLE_SUPER_ADMIN"}`) | NIST Level 2 RBAC & ownership filtering |
+| `@FieldSecurity` | `FIELD` | `viewRoles`, `maskPattern` (`"******"`), `nullifyInsteadOfMask` (`false`) | Masks or nullifies sensitive fields when caller lacks role |
+| `@StateMachine` | `FIELD` / `TYPE` | `initial` (`"ACTIVE"`), `transitions`, `deletableStates` | Rejects illegal transitions and deletes (`HTTP 422`) |
+| `@HumanPolicy` | `TYPE` | `lifecycle`, `security`, `masking`, `stateField` | Compiles English directives into RBAC, transitions & masking |
+| `@MultiTenant` | `TYPE` | `tenantField` (`"tenantId"`), `bypassTenantRoles` (`{"ROLE_SUPER_ADMIN"}`) | Isolates queries and writes per tenant context |
 | `@UniqueField` | `FIELD` | *(marker)* | Enforces business key uniqueness before `POST`/`PUT`/`upsert` (`HTTP 409`) |
-| `@AutoCode` | `FIELD` | `prefix` (required) | Generates prefixed code identifiers (e.g. `"PRD-"`) when empty on create/clone |
+| `@AutoCode` | `FIELD` | `prefix` (required) | Generates prefixed code identifiers when empty on create/clone |
 | `@AutoSlug` | `FIELD` | `sourceField` (required) | Normalizes URL-friendly ASCII slugs from `sourceField` |
-| `@ComputedField` | `FIELD` | `operation` (`MULTIPLY` / `SUM_COLLECTION`), `sourceFields`, `collectionField`, `itemField` | Computes derived numeric totals automatically prior to persistence |
+| `@ComputedField` | `FIELD` | `operation` (`MULTIPLY`), `sourceFields`, `collectionField`, `itemField`, `subtractField`, `addField` | Computes derived numeric totals prior to persistence |
 | `@AuditTrail` | `TYPE` | `category`, `recordFieldDiffs` (`true`) | Records field-level diffs backing Time-Travel replay |
 
 ---
 
-## 4. Resilience, Concurrency & Event Annotations
+## 4. Resilience, Concurrency, Caching & Event Annotations
 
-| Annotation | Target | Attributes & Defaults | Enforcement Behavior |
+| Annotation | Target | Attributes & Defaults | Enforcement |
 | :--- | :--- | :--- | :--- |
-| `@RateLimit` | `TYPE`, `METHOD` | `requestsPerWindow` (`60`), `windowSeconds` (`60`), `partitionKey` (`"clientIp"`) | Protects endpoints via bounded sliding-window rate limits (`HTTP 429`) |
-| `@EntityCircuitBreaker` | `TYPE`, `METHOD` | `name`, `failureRateThreshold` (`50.0`), `waitDurationSeconds` (`10`), `fallbackMessage` | Opens Resilience4j circuit breaker upon sustained failures (`HTTP 503`) |
-| `@EntityRetry` | `TYPE`, `METHOD` | `name`, `maxAttempts` (`3`), `waitDurationMs` (`500L`), `backoffMultiplier` (`2.0d`) | Applies exponential backoff retry on transient errors |
-| `@DistributedLock` | `METHOD` | `key`, `waitTimeMs`, `leaseTimeMs` | Acquires cluster distributed lock via SpEL key before execution |
-| `@Idempotent` | `METHOD` | `ttlSeconds` (`3600L`), `enforcePayloadMatch` (`true`) | Enforces `Idempotency-Key` deduplication with `ConstantTimeComparisonUtil` payload hash check |
-| `@HttpCacheable` | `TYPE`, `METHOD` | `maxAgeSeconds` (`60`), `etagEnabled` (`true`), `mustRevalidate` (`false`) | Emits `Cache-Control` and `ETag` supporting HTTP `304 Not Modified` |
-| `@PublishCloudEvent` | `TYPE`, `METHOD` | `topic`, `source`, `actions` (`{"CREATED","UPDATED","DELETED"}`) | Publishes CNCF CloudEvents 1.0 envelopes on mutations |
-| `@EntityWebhook` | `TYPE` | `events`, `secretHeader` (`"X-Webhook-Signature"`), `includeFullPayload` (`true`) | Signs and dispatches outbound webhooks using HMAC-SHA256 |
-| `@TargetDatabasePlatform` | `TYPE`, `METHOD` | `platform` (`"H2"`), `cluster` (`"PRIMARY"`), `readOnly` (`false`) | Routes reads/writes across primary, replica, and multi-database clusters |
+| `@DistributedLock` | `METHOD` | `key`, `waitTimeMs`, `leaseTimeMs` | Acquires distributed lock for evaluated SpEL key (`HTTP 409`) |
+| `@Idempotent` | `METHOD` | `headerName` (`"X-Idempotency-Key"`), `ttlSeconds` (`300L`) | Enforces duplicate-request guard in Caffeine cache (`HTTP 409`) |
+| `@RateLimit` | `METHOD` | `requests`, `windowSeconds`, `partitionKey` (`"IP"`) | Sliding-window rate limiting (`HTTP 429`) |
+| `@EntityCircuitBreaker` | `TYPE`, `METHOD` | `name`, `failureRateThreshold` (`50.0f`), `waitDurationInOpenStateSeconds` (`10`), `slidingWindowSize` (`20`), `permittedNumberOfCallsInHalfOpenState` (`5`) | Resilience4j circuit breaker isolation (`HTTP 503` when `OPEN`) |
+| `@EntityRetry` | `TYPE`, `METHOD` | `name`, `maxAttempts` (`3`), `waitDurationMs` (`500L`), `backoffMultiplier` (`2.0d`) | Retry with configurable exponential backoff |
+| `@HttpCacheable` | `TYPE`, `METHOD` | `maxAgeSeconds`, `isPrivate` (`false`), `mustRevalidate` (`true`), `generateETag` (`true`) | Emits ETag, `Cache-Control`, and `304 Not Modified` |
+| `@PublishCloudEvent` | `TYPE` | `eventType`, `source`, `publishOnCreate`, `publishOnUpdate`, `publishOnDelete` | Emits CloudEvents post-commit |
+| `@EntityWebhook` | `TYPE` | `events`, `secretHeader` (`"X-Webhook-Signature"`), `includeFullPayload` (`true`) | Dispatches post-commit HMAC-SHA256 outbound webhooks |

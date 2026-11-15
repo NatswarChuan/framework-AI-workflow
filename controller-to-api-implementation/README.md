@@ -1,48 +1,42 @@
-# `controller-to-api-implementation` — Reference Application (`v0.0.2`)
+# `controller-to-api-implementation` — Reference Application (`1.0.0`)
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![JitPack](https://img.shields.io/badge/Dependency-Spring--NWVMC%3Av0.0.2-blue.svg)](https://jitpack.io/#NatswarChuan/Spring-NWVMC)
-[![JMeter](https://img.shields.io/badge/JMeter-2000%20Reqs%20%7C%200%25%20Error-emerald.svg)](src/test/jmeter/implementation_load_test.jmx)
+[![Framework](https://img.shields.io/badge/Dependency-spring--nwvmc%3A1.0.0-blue.svg)](pom.xml)
+[![License](https://img.shields.io/badge/License-Apache--2.0-lightgrey.svg)](../LICENSE)
 
-Reference enterprise Spring Boot 3.3.5 application consuming **`com.github.NatswarChuan:Spring-NWVMC:v0.0.2`** from JitPack (`https://jitpack.io`). Demonstrates the strict two-directory architecture (`entity/` + `controller/`) across 24 business entities (e-commerce, healthcare, fintech, HR, supply chain, multi-tenancy) alongside custom `@CustomEndpoint` delegate helpers and Apache JMeter load verification.
-
----
-
-## Project Layout & Dependencies
-
-- **Framework Dependency** ([`pom.xml`](pom.xml)): `com.github.NatswarChuan:Spring-NWVMC:v0.0.2`, Java 21 LTS, Virtual Threads enabled, H2 in-memory persistence (`open-in-view: false`, HikariCP pool max `30`).
-- **Controllers** (`src/main/java/com/example/implementation/controller/`): Marker interfaces extending `AutoApiController<E>` (`ProductCatalogController`, `CustomerOrderController`, `LoanApplicationController`, `BankAccountController`, `PatientRecordController`, `SubscriptionContractController`, etc.), plus `AdvancedEnterpriseBusinessController` showcasing `@CustomEndpoint` delegation.
-- **Entities** (`src/main/java/com/example/implementation/entity/`): Domain models using `@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@HumanPolicy`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@EntityWebhook`, and `@MultiTenant`.
-- **Configuration** ([`src/main/resources/application.yml`](src/main/resources/application.yml)): Enables `app.framework.studio.*` (`enabled`, `demo-token-endpoint-enabled`, `show-i18n-diagnostics`, `hide-framework-fingerprint`), local file storage (`target/uploads`), and YAML `@HumanPolicy` overrides under `spring-nwvmc.human-policies.SubscriptionContract`. Note that the framework root binding prefix is `app.framework.base-path-prefix` (defaults to `/api/v1`).
+Reference Spring Boot `3.3.5` application consuming **`io.github.natswarchuan:spring-nwvmc:1.0.0`**. Demonstrates the strict two-directory architecture (`entity/` + `controller/`) across 24 business entities (e-commerce, healthcare, fintech, HR, supply chain, multi-tenancy), custom `@CustomEndpoint` delegation, `@ServiceOverride` escape hatches (`TagController`), `@HumanPolicy` YAML rules (`SubscriptionContract`), and Apache JMeter verification.
 
 ---
 
-## Local Verification & JMeter Execution
+## Project Layout & Configuration
+
+- **Framework Dependency** ([`pom.xml`](pom.xml)): `io.github.natswarchuan:spring-nwvmc:1.0.0`, Java 21 LTS, Virtual Threads enabled, H2 in-memory persistence (`open-in-view: false`, HikariCP pool max `30`).
+- **Controllers** (`src/main/java/com/example/implementation/controller/`): Interfaces extending `AutoApiController<E>` (`ProductCatalogController`, `CustomerOrderController`, `LoanApplicationController`, `BankAccountController`, `PatientRecordController`, `SubscriptionContractController`, `TagController` with `@ServiceOverride`, and `AdvancedEnterpriseBusinessController` with `@CustomEndpoint`).
+- **Entities** (`src/main/java/com/example/implementation/entity/`): Domain models using `@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@HumanPolicy`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@EntityWebhook`, `@TargetDatabasePlatform`, and `@MultiTenant`.
+- **Configuration** ([`application.yml`](src/main/resources/application.yml) & [`application-dev.yml`](src/main/resources/application-dev.yml)):
+  - Production defaults keep `app.framework.studio.enabled: false` and `demo-token-endpoint-enabled: false` (locked via `SurfaceAccessGuardrailUtil`).
+  - Active `dev` profile unlocks `/system/studio`, `/system/studio/eject`, and `POST /api/v1/auth/token`.
+  - Query guardrails configure `max-join-depth: 3`, `max-filter-criteria: 25`, and `max-page-size: 100`.
+
+---
+
+## Verification & Runtime Commands
 
 ```bash
-# 1. Run all unit & integration tests + Apache JMeter load suite using JitPack v0.0.2
-mvn clean verify -U -f controller-to-api-implementation/pom.xml
+# 1. Run integration tests + Apache JMeter load suite (expects local 1.0.0 in ~/.m2)
+mvn clean verify -f controller-to-api-implementation/pom.xml
 
-# 2. Launch interactive runtime server on port 8080
-mvn spring-boot:run -f controller-to-api-implementation/pom.xml
+# 2. Launch application with dev profile on port 8080
+mvn spring-boot:run "-Dspring-boot.run.profiles=dev" -f controller-to-api-implementation/pom.xml
 ```
 
-### Runtime Verification Endpoints (When `app.framework.studio.enabled=true`)
+### Runtime Verification Endpoints (`dev` profile)
 
-| Interface | URL | Purpose |
+| Surface | URL | Purpose |
 | :--- | :--- | :--- |
-| **Developer Live Studio** | `http://localhost:8080/system/studio` | Interactive API tester, 1-click JWT generator, 20-language selector (including RTL `ar`), `#studioI18nDiagBar` missing-key bar |
-| **Swagger UI (OpenAPI 3.0)** | `http://localhost:8080/swagger-ui/index.html` | Interactive specification (`743` dynamic paths generated across consumer domains, `BearerAuth` security scheme) |
-| **SPI Customizer Telemetry** | `http://localhost:8080/api/v1/system/customizers` | Live inspection of registered SPI customizer beans |
-| **Database Health Telemetry** | `http://localhost:8080/api/v1/system/databases/health` | Multi-datasource health telemetry |
-| **JMeter HTML Report** | `target/jmeter/reports` | Generated load-test latency & throughput report |
-
----
-
-## Verified Acceptance Results (`v0.0.2` via JitPack)
-
-| Check | Result |
-| :--- | :--- |
-| **Automated Integration & Helper Tests** | **140 / 140 PASS** (`0 Failures, 0 Errors, 0 Skipped`) |
-| **Apache JMeter (`implementation_load_test.jmx`)** | **2,000 requests**, **0 failed (`0.0%` error rate)**, **151.0 req/s** throughput, Avg **91 ms** (Min **3 ms**, Max **2,107 ms**) |
-| **Chrome DevTools Browser Check** | Verified `/system/studio` (20 languages, `ar` RTL, `NWVMC_LANG` cookie, `?lang=../../etc/passwd` fallback, `#studioI18nDiagBar`, JWT `200`, Create `201`) & `/swagger-ui/index.html` (`@Hidden` exclusion, `Execute` HTTP `200`), `0` JS errors |
+| **Developer Live Studio** | `http://localhost:8080/system/studio` | 20-language live API inspector, JWT generator, `#studioI18nDiagBar`, Zod/TS/JSON/Client exporters |
+| **Code Ejection Endpoint** | `http://localhost:8080/system/studio/eject?target=ProductCatalog` | Exports standalone Spring MVC Controller/Service/Repository scaffold |
+| **Swagger UI (OpenAPI 3.0)** | `http://localhost:8080/swagger-ui/index.html` | Interactive specification (`BearerAuth` scheme, excludes `@Hidden` routes) |
+| **SPI Customizer Telemetry** | `http://localhost:8080/api/v1/system/customizers` | Lists active SPI customizer beans |
+| **Database Health Telemetry** | `http://localhost:8080/api/v1/system/databases/health` | Multi-datasource health status |
+| **JMeter HTML Report** | `target/jmeter/reports` | Generated Apache JMeter latency and error-rate dashboard |

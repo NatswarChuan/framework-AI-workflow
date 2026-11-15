@@ -1,9 +1,10 @@
 import React from 'react';
 import { SupportedLanguage } from '../types/docs';
-import { ENDPOINTS_DATA } from '../data/endpointsData';
+import { DocPageHeader } from '../components/DocPageHeader';
 import { InteractiveEndpointExplorer } from '../components/InteractiveEndpointExplorer';
-import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
+import { CodeBlock } from '../components/CodeBlock';
+import { UI_LABELS, pickText } from '../data/locales';
 
 interface PageProps {
   currentLang: SupportedLanguage;
@@ -11,115 +12,117 @@ interface PageProps {
 
 export const EndpointsPage: React.FC<PageProps> = ({ currentLang }) => {
   return (
-    <div className="doc-page">
-      <div className="badge-row">
-        <span className="badge badge-emerald">RESTful Specification</span>
-        <span className="badge badge-blue">38 Built-In Endpoints</span>
-        <span className="badge badge-purple">NIST RBAC & Keyset O(1)</span>
+    <article className="doc-page">
+      <DocPageHeader
+        topicId="endpoints"
+        currentLang={currentLang}
+        badges={[
+          { label: '40 Declared Contracts', tone: 'emerald' },
+          { label: '38 Default Swagger Routes', tone: 'blue' },
+          { label: '17 Read · 11 Write · 12 Enterprise', tone: 'purple' },
+        ]}
+      />
+
+      <h2 id="endpoints-goal" className="section-heading">
+        {pickText(UI_LABELS.stepGoal, currentLang)}
+      </h2>
+
+      <div className="feature-grid">
+        <div className="feature-card">
+          <h4>AutoApiReadController (17 Contracts)</h4>
+          <p>
+            Offset page, UUIDv7 Keyset cursor, full filter list, SQL aggregates, count/exists, pivot tables, full-text search, CSV/Excel/JSON/XML/Markdown exports, plus <code>/schema/json</code>, <code>/schema/typescript</code>, <code>/schema/zod</code>, and <code>/schema/client</code>.
+          </p>
+        </div>
+        <div className="feature-card">
+          <h4>AutoApiController (11 Write Contracts)</h4>
+          <p>
+            Single &amp; batch create, PUT replace, PATCH partial update, UPSERT, delete by ID, JSON Merge Patch, query-based batch patch, single transition, chunked batch execution, and <code>importData</code>.
+          </p>
+        </div>
+        <div className="feature-card">
+          <h4>AutoApiEnterpriseController (12 Contracts)</h4>
+          <p>
+            Soft delete, restore, dry-run validation, entity diff compare, batch transitions, pessimistic checkout lock, audit history, plus <code>@Hidden</code> SSE <code>/events</code> stream.
+          </p>
+        </div>
+        <div className="feature-card">
+          <h4>38 Exposed by Default in Swagger UI</h4>
+          <p>
+            Of the 40 parent contracts, <code>/events</code> carries <code>@Hidden</code> because Swagger UI cannot stream SSE, and nested sub-resources activate when <code>enableNestedSubResources = true</code>.
+          </p>
+        </div>
       </div>
 
-      <h1 className="page-title">
-        {currentLang === 'en' && 'Complete 38 Auto-Generated REST Endpoints'}
-        {currentLang === 'vi' && 'Danh Mục 38 Endpoint RESTful Tự Động Sinh Hoàn Chỉnh'}
-        {currentLang === 'ja' && '自動生成される38種類のRESTfulエンドポイント完全一覧'}
-        {currentLang === 'zh' && '38个内置自动生成RESTful端点全集'}
-      </h1>
-
-      <p className="page-lead">
-        {currentLang === 'en' && 'When you declare an interface extending AutoApiController<E>, the framework automatically synthesizes 38 production-grade REST operations (plus 6 Multi-Cloud File Storage endpoints under /api/v1/storage).'}
-        {currentLang === 'vi' && 'Khi bạn khai báo một interface kế thừa AutoApiController<E>, Spring-NWVMC tự động tổng hợp đầy đủ 38 thao tác RESTful chuẩn quốc tế (cùng 6 endpoints lưu trữ tệp tại /api/v1/storage).'}
-        {currentLang === 'ja' && 'AutoApiController<E> を継承したインターフェースを宣言するだけで、フレームワークが38種類のエンドポイントを完全自動で公開します。'}
-        {currentLang === 'zh' && '只需声明继承自 AutoApiController<E> 的接口，框架即可在运行时自动生成并发布全套 38 个生产级 RESTful 端点。'}
-      </p>
-
-      <InteractiveEndpointExplorer endpoints={ENDPOINTS_DATA} currentLang={currentLang} />
-
-      <h2 id="endpoint-table" className="section-heading">
-        {currentLang === 'en' && '1. Core Endpoint Directory'}
-        {currentLang === 'vi' && '1. Bảng Tra Cứu Toàn Bộ Endpoint Cốt Lõi'}
-        {currentLang === 'ja' && '1. エンドポイント詳細カタログ'}
-        {currentLang === 'zh' && '1. 端点全量目录表'}
+      <h2 id="endpoints-explorer" className="section-heading">
+        {pickText(UI_LABELS.stepImplementation, currentLang)}
       </h2>
 
-      <table className="doc-table">
-        <thead>
-          <tr>
-            <th>Method</th>
-            <th>Endpoint Path Pattern</th>
-            <th>Required RBAC Role</th>
-            <th>Operation Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ENDPOINTS_DATA.map((ep, idx) => (
-            <tr key={idx}>
-              <td>
-                <span className={`method-badge method-${ep.method.toLowerCase()}`}>
-                  {ep.method}
-                </span>
-              </td>
-              <td>
-                <code>{ep.path}</code>
-              </td>
-              <td>
-                <span className="badge badge-purple" style={{ fontSize: '0.7rem' }}>{ep.requiredRole}</span>
-              </td>
-              <td>
-                {ep.summary[currentLang]}
-              </td>
+      <InteractiveEndpointExplorer currentLang={currentLang} />
+
+      <h2 id="endpoints-system" className="section-heading">
+        {pickText(UI_LABELS.stepVerification, currentLang)}
+      </h2>
+
+      <div className="table-scroll">
+        <table className="doc-table">
+          <thead>
+            <tr>
+              <th>System Path</th>
+              <th>Controller Class</th>
+              <th>Access &amp; Purpose</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <Callout
-        type="info"
-        title={
-          {
-            vi: 'Tài Liệu Hóa Tự Động OpenAPI 3.0 & Cơ Chế @Hidden',
-            en: 'Automated OpenAPI 3.0 Registration & @Hidden Filtering',
-            ja: 'OpenAPI 3.0 自動登録＆ @Hidden フィルタリング',
-            zh: 'OpenAPI 3.0 自动集成与 @Hidden 隐藏机制',
-          }[currentLang]
-        }
-      >
-        {currentLang === 'vi' && '36/38 endpoint mặc định (cộng 15 built-in endpoints) tự động hiển thị trên Swagger UI (/swagger-ui/index.html) với schema ApiResponse. Riêng /events (@Hidden SSE), /system/studio và /api/v1/graphql/explorer bị ẩn khỏi Swagger UI.'}
-        {currentLang === 'en' && '36 of 38 @Auto* entity endpoints (plus built-in platform APIs) appear in Swagger UI (/swagger-ui/index.html) with ApiResponse schemas; /events (@Hidden SSE), /system/studio, and /api/v1/graphql/explorer stay hidden.'}
-        {currentLang === 'ja' && '38契約のうちデフォルト36件が ApiResponse スキーマとともに Swagger UI へ登録されます（/events SSE、/system/studio、/graphql/explorer は @Hidden により除外）。'}
-        {currentLang === 'zh' && '38 个契约中默认 36 个公开显示在 Swagger UI（携带 ApiResponse 契约）；/events (@Hidden SSE)、/system/studio 与 /graphql/explorer 默认隐藏。'}
-      </Callout>
-
-      <h2 id="endpoint-toggles" className="section-heading">
-        {currentLang === 'en' && '2. Granular Endpoint Toggles (Whitelist & Blacklist)'}
-        {currentLang === 'vi' && '2. Cơ Chế Bật/Tắt Endpoint Linh Hoạt (Whitelist & Blacklist)'}
-        {currentLang === 'ja' && '2. エンドポイントの個別有効化／無効化（ホワイトリスト＆ブラックリスト）'}
-        {currentLang === 'zh' && '2. 端点按需启闭机制（白名单与黑名单）'}
-      </h2>
-
-      <p>
-        {currentLang === 'vi' && 'EndpointFeatureFilterHelper đánh giá tên method hợp đồng (ví dụ deleteById, batchChunked, importCsv) hoặc HTTP method (DELETE) thông qua enabledEndpoints và disabledEndpoints trên @AutoRestController:'}
-        {currentLang === 'en' && 'EndpointFeatureFilterHelper evaluates contract method names (e.g. deleteById, batchChunked, importCsv) or HTTP methods (DELETE) via enabledEndpoints and disabledEndpoints on @AutoRestController:'}
-        {currentLang === 'ja' && 'EndpointFeatureFilterHelper は @AutoRestController の enabledEndpoints / disabledEndpoints に指定されたメソッド名（deleteById、batchChunked、importCsv等）や HTTP メソッド単位で公開制御します：'}
-        {currentLang === 'zh' && 'EndpointFeatureFilterHelper 根据 @AutoRestController 的 enabledEndpoints 与 disabledEndpoints 精确匹配方法名（如 deleteById、batchChunked、importCsv）或 HTTP 方法：'}
-      </p>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GET /system/studio</code></td>
+              <td><code>DevStudioController</code></td>
+              <td>20-language interactive console (requires <code>studio.enabled=true</code>; returns 404/401 when disabled)</td>
+            </tr>
+            <tr>
+              <td><code>GET /system/studio/eject</code></td>
+              <td><code>DevEjectionController</code></td>
+              <td>Generates standalone MVC Repository, Service, and Controller scaffolds via <code>?target=Entity</code></td>
+            </tr>
+            <tr>
+              <td><code>POST /api/v1/graphql</code></td>
+              <td><code>GraphQLDynamicApiController</code></td>
+              <td>Auto-generated GraphQL SDL queries &amp; mutations across all registered entities</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/v1/system/databases/health</code></td>
+              <td><code>MultiDatabaseHealthCheckController</code></td>
+              <td>Multi-platform datasource status &amp; connection pool diagnostics</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/v1/system/trace-context</code></td>
+              <td><code>TraceContextSystemApiController</code></td>
+              <td>Inspect active W3C <code>traceparent</code>, <code>traceId</code>, and <code>spanId</code> from MDC</td>
+            </tr>
+            <tr>
+              <td><code>GET /api/v1/system/customizers</code></td>
+              <td><code>CustomizerTelemetryApiController</code></td>
+              <td>Inspect active Spring Ecosystem Customizers registered via SPI</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <CodeBlock
+        currentLang={currentLang}
         language="java"
-        fileName="Granular Endpoint Toggles"
-        code={`// 1. Whitelist read + create endpoints
-@AutoRestController(
-    path = "/api/v1/catalog",
-    enabledEndpoints = {"getPage", "getById", "getKeyset", "create"}
+        fileName="SelectiveEndpointExclusion.java"
+        highlightLines={[3, 4]}
+        code={`@AutoRestController(
+    path = "/api/v1/tags",
+    disabledEndpoints = {"batchChunked", "bulkDelete"}
 )
-public interface ProductCatalogController extends AutoApiController<CommercialProduct> {}
-
-// 2. Blacklist destructive or bulk endpoints
-@AutoRestController(
-    path = "/api/v1/orders",
-    disabledEndpoints = {"deleteById", "batchChunked", "DELETE"}
-)
-public interface SecureOrderController extends AutoApiController<CustomerOrder> {}`}
+public interface TagController extends AutoApiController<Tag> {}`}
       />
-    </div>
+
+      <Callout type="tip" currentLang={currentLang}>
+        Every endpoint enforces pagination ceilings and operator allow-lists through <code>QueryGuardrailProperties</code> before touching JPA Criteria queries.
+      </Callout>
+    </article>
   );
 };

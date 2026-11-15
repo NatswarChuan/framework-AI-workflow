@@ -1,53 +1,56 @@
-# 04. Bảo Mật Chống Scanner, Đa Ngôn Ngữ `/system/studio`, Virtual Threads & Lưu Trữ Đa Đám Mây
+# 04. Bảo Mật, Lưu Trữ Đa Đám Mây, `@ServiceOverride`, Metrics & Đa Ngôn Ngữ (`1.0.0`)
 
-> **Ngôn ngữ**: Tiếng Việt | [English](en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tổng hợp](../GUIDE_VI.md)
-
----
-
-## 1. Bảo Mật Đối Kháng & Phòng Chống Scanner AI Tự Động
-
-| Cơ Chế Phòng Thủ | Lớp Thực Thi | Cấu Hình / Hằng Số Kiểm Chứng |
-| :--- | :--- | :--- |
-| **Đóng Băng Studio & Demo Auth** | `DevStudioController`, `AuthController`, `SecurityExposurePolicyBridge` | Mặc định `app.framework.studio.enabled=false` & `demo-token-endpoint-enabled=false`; trả HTTP `404` và loại `/system/**` khỏi matcher công khai |
-| **Xoay Khóa CSPRNG 64 Byte** | `StartupDiagnosticsUtil.validateAndHardenSecurity` | Khi tắt demo token và `jwt-secret` vẫn là chuỗi dev mặc định, hệ thống sinh khóa 64-byte `SecureRandom` ngay lúc khởi động |
-| **Chặn Khóa JWT Yếu** | `StartupDiagnosticsUtil.assertJwtSecretEntropy` | `fail-fast-weak-jwt-secret=true` từ chối khởi động nếu khóa `< 32` byte UTF-8 |
-| **So Khớp Thời Gian Hằng** | `ConstantTimeComparisonUtil` | Bọc `MessageDigest.isEqual` chống timing attack trên hash `@Idempotent` và HMAC `@EntityWebhook` (`WebhookHmacSignerHelper`) |
-| **Giới Hạn Tốc Độ Trượt** | `RateLimitingFilter` | Caffeine cache giới hạn `10,000` khóa; trần mặc định `1,000 req/s`, riêng `/api/v1/auth/**` khóa còn `20 req/s` |
-| **Chống Path Traversal (`CWE-22`)** | `StoragePathSanitizerHelper` | Loại null byte (`\0`), chuẩn hóa đường dẫn và ràng buộc file trong thư mục gốc hợp lệ |
-| **Tiêu Đề Bảo Mật HTTP** | `SecurityHeadersPolicyBridge` | Gắn `X-Frame-Options: DENY`, `Content-Security-Policy`, `Permissions-Policy`, `Referrer-Policy` và `Strict-Transport-Security` |
+> **Ngôn ngữ**: Tiếng Việt | [English](en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Sổ Tay Đầy Đủ](../GUIDE_VI.md)
 
 ---
 
-## 2. Đa Ngôn Ngữ (`i18n`), `/system/studio` & Mở Rộng Bản Dịch
+## 1. Bảo Mật NIST Level 2, Khóa Bề Mặt Production & Chống Quét Lỗ Hổng
 
-1. **20 Ngôn Ngữ Tích Hợp (`I18nLocalizationProperties`)**: `en`, `zh`, `hi`, `es`, `fr`, `ar` (RTL), `bn`, `pt`, `ru`, `ur` (RTL), `id`, `de`, `ja`, `vi`, `ko`, `tr`, `it`, `th`, `fa` (RTL), `pl`. Các ngôn ngữ `ar`, `ur`, `fa` tự động gán `dir="rtl"` trên `/system/studio`.
-2. **Thứ Tự Ưu Tiên (`LocaleResolutionUtil.resolveBestMatchLocale`)**:
-   `?lang=` -> Header `X-Language` -> Cookie `NWVMC_LANG` -> Header `Accept-Language` (`MAX_ACCEPT_HEADER_LENGTH=256`, `MAX_ACCEPT_RANGES=8`) -> `app.framework.i18n.default-locale` (`en`).
-3. **Bảo Vệ Khóa & Chẩn Đoán (`LocaleResolutionUtil` / `DevStudioDiagnosticsUtil`)**:
-   - Chỉ chấp nhận khóa khớp `^[A-Za-z0-9._-]+$` dài tối đa `128` ký tự (`MAX_MESSAGE_CODE_LENGTH`), từ chối chuỗi `..`. Payload dạng `?lang=../../etc/passwd` bị bỏ qua và rơi về `en`.
-   - Bộ đệm dịch giới hạn `8192` mục (`MAX_TRANSLATION_CACHE_SIZE`), danh sách thiếu khóa giới hạn `128` khóa (`MAX_MISSING_KEY_RECORDS`) hiển thị trên `#studioI18nDiagBar` khi `show-i18n-diagnostics=true`.
-4. **Mở Rộng Từ Host Application**:
-   - Đặt `src/main/resources/i18n/messages_{lang}.properties` để bổ sung/ghi đè khóa thông điệp.
-   - Hoặc tiêm `MessageSource` tùy chỉnh của host app vào `new MessageHelper(hostMessageSource)`.
+- **`@EntitySecurity`, `@FieldSecurity` & `@MultiTenant`**: Phân quyền theo bảng (`readRoles`, `writeRoles`, `deleteRoles`), giới hạn chủ sở hữu (`ownerField`), che giấu/null hóa cột nhạy cảm (`viewRoles`, `maskPattern`, `nullifyInsteadOfMask`) và cô lập tenant (`tenantField`).
+- **Khóa Bề Mặt Mặc Định (`DevStudioProperties` + `SurfaceAccessGuardrailUtil`)**: Khi `app.framework.studio.enabled=false` (mặc định production), `/system/studio` và `/system/studio/eject` trả HTTP `401 Unauthorized`; khi `demo-token-endpoint-enabled=false`, `POST /api/v1/auth/token` trả HTTP `404 Not Found`.
+- **Anti-Fingerprinting & Mask Lỗi Nội Bộ**: `hide-framework-fingerprint=true` ẩn badge phiên bản trên HTML, đồng thời `ExceptionCauseUnwrapperUtil` ghi trọn stack trace ở log server nhưng chỉ trả `ApiResponse<Void>` an toàn ra HTTP client.
+- **CORS SPA & `Idempotency-Key` (`SecurityFilterChainBridge`)**: Cho phép wildcard pattern `*` kèm các tiêu đề `Authorization`, `Idempotency-Key`, `X-Idempotency-Key`, `X-Language`, `X-Tenant-ID`, `traceparent`, `X-Request-ID`.
 
 ---
 
-## 3. Lưu Trữ Tệp Đa Đám Mây (`FileStorageController`)
+## 2. Cơ Chế `@ServiceOverride` & Xuất Mã Chuẩn MVC (`GET /system/studio/eject`)
 
-Cấu hình qua `app.framework.storage.provider` (`LOCAL`, `S3`, `GCS`), giới hạn kích thước qua `max-file-size` (mặc định `52428800` byte = 50 MB):
+Khi một endpoint cần nghiệp vụ riêng vượt ngoài CRUD chuẩn:
 
-- `POST /api/v1/storage/upload`
-- `GET /api/v1/storage/download/{fileId}`
-- `GET /api/v1/storage/metadata/{fileId}`
-- `DELETE /api/v1/storage/{fileId}`
-- `POST /api/v1/storage/presigned-url`
-- `GET /api/v1/storage/exists/{fileId}`
+1. **Ghi Đè Tại Chỗ Qua `@ServiceOverride`**: Gắn `@ServiceOverride(targetBean, beanName, methodName, bypassAutoDispatch)` trực tiếp lên phương thức trong interface Controller; `EscapeHatchDispatchHelper` sử dụng `MethodHandleCacheUtil` điều hướng thẳng vào Spring Bean tùy biến.
+2. **Xuất Mã Chuẩn MVC (`/system/studio/eject`)**: Gọi `GET /system/studio/eject?target=<EntityOrControllerName>` để `ControllerEjectionHelper` sinh bộ mã Spring MVC chuẩn (`Controller`, `Service`, `ServiceImpl`, `Repository`).
 
 ---
 
-## 4. Virtual Threads Java 21, CloudEvents, ETag & Real-Time
+## 3. Chỉ Số Micrometer (`DynamicEntityMetricsHelper` & `MetricConstant`)
 
-- **Virtual Threads + HikariCP**: Bật `spring.threads.virtual.enabled: true` và tắt OSIV (`spring.jpa.open-in-view: false`) giúp giải phóng kết nối HikariCP ngay sau bước truy vấn thay vì giữ qua giai đoạn serialize JSON.
-- **Real-Time SSE & WebSocket/STOMP**: `@Hidden @AutoGet("/events")` trên từng controller kết hợp kênh `RealtimeStreamingProperties` (`heartbeat-seconds=15`, `max-emitters-per-entity=1000`).
-- **HTTP ETag (`@HttpCacheable`) & `@Idempotent`**: Giảm truyền tải lặp lại với `304 Not Modified` và đảm bảo an toàn retry cho giao dịch tài chính qua khóa `Idempotency-Key`.
-- **Audit Trail Time-Travel**: `GET /api/v1/system/time-travel/{entityName}/{id}?timestamp=...` phục hồi ảnh thực thể quá khứ bằng cách áp dụng ngược bản ghi CDC với độ phức tạp $O(K)$.
+| Metric | Kiểu | Tags Chính | Mô Tả |
+| :--- | :--- | :--- | :--- |
+| `dynamic.entity.requests.total` | Counter | `entity`, `operation`, `status` | Tổng số yêu cầu CRUD thực thi |
+| `dynamic.entity.duration.seconds` | Timer | `entity`, `operation`, `status` | Độ trễ thực thi thực tế |
+| `nwvmc.proxy.request.duration` | Timer | `entity`, `operation`, `status` | Độ trễ tại Dynamic Proxy Controller |
+| `nwvmc.cache.http.requests` | Counter | `outcome` (`HIT` / `MISS`) | Tỉ lệ đánh giá `@HttpCacheable` ETag |
+| `nwvmc.outbox.pending.events` | Gauge | — | Số sự kiện đang chờ trong Outbox |
+| `nwvmc.outbox.dispatch.duration` | Timer | — | Thời gian gửi mỗi đợt Outbox |
+| `nwvmc.resilience.circuitbreaker.state` | Gauge | `circuit` | Trạng thái (`0=CLOSED`, `1=HALF_OPEN`, `2=OPEN`) |
+| `nwvmc.ratelimit.rejected.total` | Counter | `partition` | Số yêu cầu vượt ngưỡng HTTP `429` |
+| `framework.datasource.routing.total` | Counter | `datasource` | Phân bố điều hướng Primary / Replica / Tenant |
+
+---
+
+## 4. Đa Ngôn Ngữ 20 Thứ Tiếng, RTL & Mở Rộng Từ Host (`i18n/`)
+
+- **20 Ngôn Ngữ Tích Hợp (`I18nConstant`)**: `en, zh, hi, es, fr, ar, bn, pt, ru, ur, id, de, ja, vi, ko, tr, it, th, fa, pl` (`ar`, `fa`, `ur` tự động bật giao diện phải sang trái `dir="rtl"`).
+- **Thứ Tự Độ Ưu Tiên Ngôn Ngữ (`LocaleResolutionUtil` & `HeaderLocaleResolver`)**: Query param `?lang=` -> Cookie `NWVMC_LANG` -> Header `X-Language` -> Header `Accept-Language` -> `app.framework.i18n.default-locale` (`en`). Mã không hợp lệ tự rơi về `en`.
+- **Ghi Đè / Bổ Sung Từ Ứng Dụng Host**: `I18nConfig` nạp `classpath:i18n/messages` (UTF-8, `cacheSeconds=3600`). Khi `app.framework.studio.show-i18n-diagnostics=true`, thanh `#studioI18nDiagBar` trên `/system/studio` hiển thị locale đang chạy, hướng LTR/RTL và cảnh báo các khóa thiếu bản dịch.
+
+---
+
+## 5. Kết Quả Vi Chuẩn JMH `1.37` (`DynamicProxyThroughputBenchmarkTest`)
+
+| Đường Dẫn Gọi (Throughput, `ops/ms`) | Kết Quả Trung Bình Đo Thực Tế |
+| :--- | :--- |
+| `measureVanillaDirectDispatch` | `1457.171 ops/ms` |
+| `measureCachedMethodHandleDispatch` | `1029.464 ops/ms` |
+| `measureDynamicProxyServiceOverrideDispatch` | `528.621 ops/ms` |
+| `measureDynamicProxyDefaultDispatch` | `195.486 ops/ms` |

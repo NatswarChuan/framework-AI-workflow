@@ -11,10 +11,10 @@
 | ไฟล์ / โฟลเดอร์ | บทบาท |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | ภาพรวมสถาปัตยกรรม: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` และ JitPack `v0.1.0`, สัญญา 2 โฟลเดอร์ (`entity/` + `controller/`), 9 อินเทอร์เฟซประกอบได้, 6 แพ็กเกจแอนโนเทชัน, 11 ระบบย่อยในตัว |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | กฎเหล็กป้องกันการหลอน (`13.6 KB`, ต่ำกว่าขีดจำกัด `24 KB`) ที่รวมทุกกับดักรันไทม์ซึ่งผ่านการพิสูจน์แล้ว |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | กฎเหล็กป้องกันการหลอน (`17.2 KB`, ต่ำกว่าขีดจำกัด `24 KB`) ที่รวมทุกกับดักรันไทม์ซึ่งผ่านการพิสูจน์แล้ว |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | ทักษะแบบเปิดเผยเป็นขั้น `spring-nwvmc-adoption` พร้อม 6 ขั้นตอนการทำงานและตารางแก้ปัญหา 10 สาเหตุหลัก |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | รายการตรวจสอบ 6 ระยะก่อนส่งมอบ (Pre-Flight -> ออกแบบ -> กับดักรันไทม์ -> ล็อกความปลอดภัย Production -> ประสิทธิภาพ -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | เอกสารอ้างอิงเชิงลึก 5 ฉบับที่ตรวจด้วยเครื่อง (60 แอนโนเทชัน / 133 แอตทริบิวต์, 40 API + 13 ตัวดำเนินการจุด, YAML + หลายฐานข้อมูล, สูตรโค้ดพร้อม `@MultiTenant` + DB-RBAC 4 Entity + `JwtTokenService`, และตาราง import คลาส/SPI นอกแอนโนเทชัน) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | เอกสารอ้างอิงเชิงลึก 5 ฉบับที่ตรวจด้วยเครื่อง (60 แอนโนเทชัน / 133 แอตทริบิวต์, 40 API + 13 ตัวดำเนินการจุด, YAML + หลายฐานข้อมูล, สูตรโค้ดพร้อม `@MultiTenant` + DB-RBAC 4 Entity + `JwtTokenService`, และตาราง import คลาส/SPI นอกแอนโนเทชัน) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | ดัชนีมาตรฐาน `llmstxt.org` สำหรับบอตและ AI Agent |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA Entity สืบทอด `BaseAuditEntity`** (มี UUIDv7 `id`, soft-delete, คอลัมน์ตรวจสอบและ `@Version` ในตัว) ห้ามใช้ `@Data` บน `@Entity` และอย่าแต่งชื่อ `@SoftDelete` ขึ้นเอง
 7. **เส้นทาง CamelCase อัตโนมัติและขอบเขต `readDto`**: `ECommerceOrder` จะได้ `/api/v1/e-commerce-orders` และ Controller ที่กำหนด `readDto = X.class` จะแปลงผลลัพธ์ทุกเส้นทางผ่าน `X`
 8. **การล็อก Production**: คงค่า `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true` และ `JWT_SECRET >= 32` ไบต์ UTF-8 ใน `application.yml` / `application-prod.yml` (เปิด Studio เฉพาะใน `application-dev.yml`)
+
+---
+
+## 5. โปรโตคอลคุณภาพ SDD (พัฒนาตามข้อกำหนด) และ TDD (พัฒนาด้วยการทดสอบ)
+
+ทุกอะแดปเตอร์และเวิร์กโฟลว์บังคับใช้แนวทาง Spec-First + Test-First ผ่าน `references/06-sdd-and-tdd-playbook.md` และเทมเพลต `templates/{spec,plan,tasks}.template.md` เพื่อป้องกันการเดาเงียบ ๆ และการคลาดเคลื่อนของสัญญา API
+
+- **SDD — การพัฒนาตามข้อกำหนด (`specs/<feature>/`):** กระบวนการ 6 ด่าน (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): เขียน `spec.md` พร้อมเกณฑ์ `REQ-ID` (`Given/When/Then`) หยุดยืนยันทุกจุด `[NEEDS CLARIFICATION]` สร้างตารางเชื่อมโยง 1:1 ใน `plan.md` และตรวจเทียบกับ `/v3/api-docs`, `/metadata`, `/schema/zod`
+- **TDD — Red → Green → Refactor (พีระมิดการทดสอบ 4 ระดับ):** เขียนเทสต์ JUnit 5 / `MockMvc` ที่ล้มเหลวก่อนพร้อม `@DisplayName("REQ-XXX: ...")` (ทุกบั๊กต้องมี regression test ก่อน) เขียนโค้ดเชิงประกาศขั้นต่ำจน GREEN แล้ว REFACTOR ครอบคลุม 4 ระดับ: Unit, Security/Workflow, Contract Drift และ `@DistributedLock` Concurrency + JMeter `0.0%` ห้ามใช้ `@Disabled`
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

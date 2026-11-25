@@ -1,30 +1,46 @@
 ---
 name: spring-nwvmc-adoption
 description: >-
-  Complete, empirically verified runbook for adopting, extending, securing, and debugging
-  Spring-NWVMC (v0.1.0) in Java 21 + Spring Boot 3.x projects. Activate whenever a user asks
-  to add Spring-NWVMC to a project, create @AutoRestController APIs, configure @EntitySecurity /
+  Complete, empirically verified Spec-Driven (SDD) & Test-Driven (TDD) runbook for adopting,
+  extending, securing, and debugging Spring-NWVMC (0.1.0) in Java 21 + Spring Boot 3.x projects.
+  Activate whenever a user asks to add Spring-NWVMC to a project, write feature specs/plans/tasks
+  or TDD Red-Green-Refactor tests, create @AutoRestController APIs, configure @EntitySecurity /
   @FieldSecurity / @MultiTenant / DB-RBAC / @StateMachine / @CustomEndpoint / @ServiceOverride /
   @DistributedLock / @Idempotent / @TargetDataSource / @AutoCacheable / @HttpCacheable /
   @EntityWebhook / @PublishCloudEvent / GraphQL / File Storage / Spring AI / Zod-TypeScript codegen,
   or troubleshoot Spring-NWVMC startup or runtime errors.
 ---
 
-# Spring-NWVMC (`v0.1.0`) — Master AI-Agent Adoption Skill
+# Spring-NWVMC (`0.1.0`) — Master SDD + TDD AI-Agent Adoption Skill
 
-This skill guides any AI coding agent step by step to integrate **Spring-NWVMC `0.1.0` / `v0.1.0`** accurately on the first try, using only real, verified APIs from the framework and reference implementation (`173` passing tests + `2,000`-request JMeter `0.0%` error rate).
+This skill guides any AI coding agent step by step to deliver **Spring-NWVMC `0.1.0`** (`io.github.natswarchuan:spring-nwvmc:0.1.0`) features using strict **Spec-Driven Development (SDD)** and **Test-Driven Development (TDD)**, grounded 1:1 in verified framework APIs (`586/586` framework unit tests + clean-room NovaMart `23/23` tests & `1,003`-request JMeter `0.0%` error rate).
 
-## Progressive Disclosure References (Load On Demand)
+## Progressive Disclosure References & SDD Templates (Load On Demand)
 
-Before emitting annotations, YAML keys, endpoint routes, or complex patterns, read the relevant reference file instead of guessing:
+Before emitting specs, tests, annotations, YAML keys, endpoint routes, or complex patterns, read the relevant reference file instead of guessing:
 
 1. **[references/01-annotations-exact-matrix.md](./references/01-annotations-exact-matrix.md)** — All **60 real annotations** across their **6 exact Java packages**, all **133 attributes**, Java types, defaults, copy-paste examples, and caveats.
 2. **[references/02-endpoints-and-query-dsl.md](./references/02-endpoints-and-query-dsl.md)** — All **40 auto-generated endpoints**, **13 dot-syntax query operators**, GraphQL, File Storage, Time-Travel, System Telemetry, and verified `curl` commands.
 3. **[references/03-yaml-properties-and-profiles.md](./references/03-yaml-properties-and-profiles.md)** — Exact `app.framework.*` and `spring-nwvmc.human-policies.*` YAML properties, defaults, `prod` lockdown, and `dev` studio profiles.
-4. **[references/04-cookbook-verified-patterns.md](./references/04-cookbook-verified-patterns.md)** — Copy-paste-runnable Java + YAML + test recipes (including `@MultiTenant`, 4-entity DB-RBAC, Multi-Datasource, `@HttpCacheable` helper, and `JwtTokenService` testing).
+4. **[references/04-cookbook-verified-patterns.md](./references/04-cookbook-verified-patterns.md)** — Copy-paste-runnable Java + YAML + test recipes (including `@MultiTenant`, 4-entity DB-RBAC, Multi-Datasource, `@HttpCacheable`, and `JwtTokenService` testing).
 5. **[references/05-imports-and-spi-contracts.md](./references/05-imports-and-spi-contracts.md)** — Exact non-annotation class, constant, DTO, Helper, and SPI imports & signatures (eliminates `javap` lookups completely).
+6. **[references/06-sdd-and-tdd-playbook.md](./references/06-sdd-and-tdd-playbook.md)** — Full **SDD** (`Specify → Clarify → Plan → Tasks → Contract-Sync`) & **TDD** (`Red → Green → Refactor`, 4-Tier Test Pyramid, verified JUnit 5 / `MockMvc` / Concurrency / Drift recipes) playbook.
+7. **[templates/spec.template.md](./templates/spec.template.md)**, **[templates/plan.template.md](./templates/plan.template.md)**, **[templates/tasks.template.md](./templates/tasks.template.md)** — Ready-to-copy SDD starter templates for `specs/<feature-slug>/`.
 
 For orientation, rules, and pre-handover sign-off, see [INTRO.md](./INTRO.md), [RULES.md](./RULES.md), and [CHECKLIST.md](./CHECKLIST.md).
+
+---
+
+## Workflow 0 — Mandatory SDD + TDD Execution Loop (Run BEFORE Workflows 2–4)
+
+NEVER jump directly into writing Java production code on a new feature or bug fix. Always execute:
+
+1. **SDD Step 1 — Specify (`specs/<feature-slug>/spec.md`):** Draft from `templates/spec.template.md` with explicit `REQ-ID` (`Given / When / Then`) criteria, entity schema, API surface (`AutoApiController<E>` vs `AutoReadApi<E>` + `readDto`), security/tenant/DB-RBAC matrix, `@StateMachine` colon transitions, resilience/cache contract, and NFRs.
+2. **SDD Step 2 — Clarify Gate:** Flag any ambiguity with `[NEEDS CLARIFICATION: ...]` and confirm with the user BEFORE writing `plan.md` or Java code.
+3. **SDD Step 3 — Plan & Tasks (`plan.md` + `tasks.md`):** Build the `REQ-ID ↔ Endpoint/Method ↔ Test` Traceability Matrix (`templates/plan.template.md`) and ordered `[RED] → [GREEN] → [REFACTOR]` vertical slices (`templates/tasks.template.md`).
+4. **TDD Step 4 — RED (Failing Test First):** Write JUnit 5 / `MockMvc` test tagged `@DisplayName("REQ-XXX: ...")` BEFORE implementing the entity/controller/service/helper. Run `mvn test -Dtest=<TargetTest>` and verify the exact expected behavioral failure. *(For bug fixes, write a failing regression test first!)*
+5. **TDD Step 5 — GREEN (Minimal Declarative Code):** Implement the minimal Spring-NWVMC 2-Directory / declarative solution to pass the test. NEVER weaken assertions or use `@Disabled`.
+6. **TDD Step 6 — REFACTOR & Contract-Sync:** Clean up magic literals/SRP while staying 100% green, assert `/v3/api-docs`, `/metadata`, `/schema/zod` match `spec.md` (Tier 3 drift test), and update `spec.md` atomically if any contract evolved.
 
 ---
 

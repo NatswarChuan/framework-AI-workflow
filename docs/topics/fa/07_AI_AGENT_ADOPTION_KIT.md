@@ -11,10 +11,10 @@
 | فایل / پوشه | نقش |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نمای معماری: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` و JitPack `v0.1.0`، قرارداد ۲ پوشه‌ای (`entity/` + `controller/`)، ۹ اینترفیس ترکیبی، ۶ پکیج حاشیه‌نویسی و ۱۱ زیرسیستم داخلی |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | قواعد سخت‌گیرانه ضدتوهم (`13.6 KB`، کمتر از سقف `24 KB`) شامل همه دام‌های تاییدشده زمان اجرا |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | قواعد سخت‌گیرانه ضدتوهم (`17.2 KB`، کمتر از سقف `24 KB`) شامل همه دام‌های تاییدشده زمان اجرا |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارت مرحله‌ای `spring-nwvmc-adoption` با ۶ گردش‌کار گام‌به‌گام و ماتریس عیب‌یابی ۱۰ علت ریشه‌ای |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | دروازه بررسی ۶ مرحله‌ای پیش از تحویل (پیش‌بررسی -> طراحی -> دام‌های زمان اجرا -> قفل تولید -> کارایی -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | ۵ مرجع عمیق تاییدشده با ماشین (۶۰ حاشیه‌نویسی / ۱۳۳ ویژگی، ۴۰ مسیر + ۱۳ عملگر نقطه‌ای، YAML + چندپایگاه‌داده، دستورالعمل‌های عملی شامل `@MultiTenant` + DB-RBAC چهار موجودیتی + `JwtTokenService`، و جدول دقیق import کلاس‌ها و SPI) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | ۵ مرجع عمیق تاییدشده با ماشین (۶۰ حاشیه‌نویسی / ۱۳۳ ویژگی، ۴۰ مسیر + ۱۳ عملگر نقطه‌ای، YAML + چندپایگاه‌داده، دستورالعمل‌های عملی شامل `@MultiTenant` + DB-RBAC چهار موجودیتی + `JwtTokenService`، و جدول دقیق import کلاس‌ها و SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | فهرست‌های منطبق با `llmstxt.org` برای خزنده‌ها و ایجنت‌های هوش مصنوعی |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **موجودیت‌های JPA از `BaseAuditEntity` ارث می‌برند** (UUIDv7 `id`، حذف نرم، ستون‌های ممیزی و `@Version` داخلی هستند)؛ هرگز `@Data` را روی `@Entity` نگذارید و `@SoftDelete` اختراع نکنید.
 7. **مسیرهای خودکار CamelCase و محدوده `readDto`**: `ECommerceOrder` به `/api/v1/e-commerce-orders` نگاشت می‌شود؛ کنترلرهای دارای `readDto = X.class` تمام پاسخ‌ها را از طریق `X` قالب‌بندی می‌کنند.
 8. **قفل امنیتی محیط تولید**: مقادیر `app.framework.studio.enabled: false`، `demo-token-endpoint-enabled: false`، `fail-fast-weak-jwt-secret: true` و `JWT_SECRET >= 32` بایت UTF-8 را در `application.yml` / `application-prod.yml` حفظ کنید (Studio را فقط در `application-dev.yml` فعال کنید).
+
+---
+
+## 5. پروتکل کیفیت SDD (توسعه مبتنی بر مشخصات) و TDD (توسعه مبتنی بر آزمون)
+
+هر آداپتور و گردش‌کار با تکیه بر `references/06-sdd-and-tdd-playbook.md` و قالب‌های `templates/{spec,plan,tasks}.template.md` رویکرد مشخصات‌اول و آزمون‌اول را اجبار می‌کند و از حدس‌های پنهان و انحراف قرارداد جلوگیری می‌نماید.
+
+- **SDD — توسعه مبتنی بر مشخصات (`specs/<feature>/`):** خط لوله ۶ مرحله‌ای (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): نگارش `spec.md` با معیارهای `REQ-ID` (`Given/When/Then`)، توقف روی `[NEEDS CLARIFICATION]`، ساخت ماتریس ردیابی ۱:۱ در `plan.md` و تطبیق بدون انحراف با `/v3/api-docs`، `/metadata` و `/schema/zod`.
+- **TDD — قرمز ← سبز ← بازآرایی (هرم آزمون ۴ لایه):** ابتدا آزمون شکست‌خورده JUnit 5 / `MockMvc` با `@DisplayName("REQ-XXX: ...")` (و برای هر باگ آزمون رگرسیون) بنویسید، حداقل کد اعلانی را تا سبز شدن پیاده کنید و سپس بازآرایی نمایید. هر ۴ لایه واحد، امنیت/گردش‌کار، انحراف قرارداد و هم‌زمانی `@DistributedLock` + JMeter با خطای `0.0%` پوشش داده می‌شود و `@Disabled` ممنوع است.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

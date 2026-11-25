@@ -11,10 +11,10 @@ The **Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) equips **e
 | File / Directory | Role |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Architecture orientation: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `0.1.0`, 2-Directory Contract (`entity/` + `controller/`), 9 composable capability interfaces (`AutoReadApi`..`AutoAiApi`), 6 annotation packages, 11 built-in subsystems |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strict anti-hallucination guardrails (`13.6 KB`, strictly under the `24 KB` agent rule budget) encoding every verified runtime pitfall |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strict anti-hallucination guardrails (`17.2 KB`, strictly under the `24 KB` agent rule budget) encoding every verified runtime pitfall |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Progressive-disclosure `spring-nwvmc-adoption` skill with 6 step-by-step adoption workflows + 10-row root-cause troubleshooting matrix |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6-phase pre-handover sign-off gate (Pre-Flight -> Design -> Runtime Gotchas -> Production Security Lockdown -> Performance -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 5 machine-verified deep references (60 annotations / 133 attributes, 40 endpoints + 13 dot operators, YAML + Multi-Datasource, verified cookbook including `@MultiTenant` + 4-entity DB-RBAC + `JwtTokenService`, and exact non-annotation class/constant/SPI imports) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 machine-verified deep references (60 annotations / 133 attributes, 40 endpoints + 13 dot operators, YAML + Multi-Datasource, verified cookbook including `@MultiTenant` + 4-entity DB-RBAC + `JwtTokenService`, and exact non-annotation class/constant/SPI imports) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | `llmstxt.org`-compliant entry points for automated AI crawlers and agent fetchers |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA entities extend `BaseAuditEntity`** (UUIDv7 `id`, soft-delete, audit columns, `@Version` built-in); never use `@Data` on `@Entity` and never invent `@SoftDelete`.
 7. **CamelCase auto base paths & `readDto` scoping**: `ECommerceOrder` resolves to `/api/v1/e-commerce-orders`; controllers declaring `readDto = X.class` project all responses through `X`.
 8. **Production lockdown**: keep `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true`, and `JWT_SECRET >= 32` UTF-8 bytes in `application.yml` / `application-prod.yml` (enable Studio only in `application-dev.yml`).
+
+---
+
+## 5. SDD (Spec-Driven) & TDD (Test-Driven) Quality Protocol
+
+Every adapter and skill workflow enforces Spec-First + Test-First delivery using `references/06-sdd-and-tdd-playbook.md` and starter templates in `templates/{spec,plan,tasks}.template.md` — preventing silent AI assumptions, contract drift, and untested production code.
+
+- **SDD — Spec-Driven Development (`specs/<feature>/`):** 6-gate pipeline (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): author `spec.md` with testable `REQ-ID` (`Given/When/Then`) criteria, halt on `[NEEDS CLARIFICATION]` until confirmed, build a 1:1 `REQ-ID` Traceability Matrix in `plan.md`, and verify zero drift against live `/v3/api-docs`, `/metadata`, and `/schema/zod`.
+- **TDD — Red → Green → Refactor (4-Tier Test Pyramid):** Write a failing JUnit 5 / `MockMvc` test tagged `@DisplayName("REQ-XXX: ...")` FIRST (and regression test first for every bug fix), implement minimal declarative Spring-NWVMC code until GREEN, then REFACTOR. Covers Tier 1 Unit, Tier 2 Security/Workflow Integration, Tier 3 Contract Drift, and Tier 4 `@DistributedLock` Concurrency + JMeter `0.0%` err — zero `@Disabled` allowed.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

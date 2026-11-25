@@ -11,10 +11,10 @@
 | ファイル / ディレクトリ | 役割 |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | アーキテクチャ概要：Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`、2 ディレクトリ契約（`entity/` + `controller/`）、9 合成インターフェース、6 アノテーションパッケージ、11 組み込みサブシステム |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ハルシネーション防止ガードレール（`13.6 KB`、`24 KB` 上限内）と実証済みランタイム落とし穴 |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ハルシネーション防止ガードレール（`17.2 KB`、`24 KB` 上限内）と実証済みランタイム落とし穴 |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | 段階的開示型 `spring-nwvmc-adoption` スキル（6 導入ワークフロー + 10 項目トラブルシューティング表） |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6 段階引き渡し前チェックリスト（事前確認 -> 設計 -> ランタイム注意点 -> 本番ロックダウン -> 性能 -> `mvn clean verify`） |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 機械検証済み 5 詳細リファレンス（60 アノテーション / 133 属性、40 API + 13 ドット演算子、YAML + マルチ DB、`@MultiTenant` + 4 エンティティ DB-RBAC + `JwtTokenService` 実装レシピ、非アノテーション import / SPI 契約一覧） |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 機械検証済み 5 詳細リファレンス（60 アノテーション / 133 属性、40 API + 13 ドット演算子、YAML + マルチ DB、`@MultiTenant` + 4 エンティティ DB-RBAC + `JwtTokenService` 実装レシピ、非アノテーション import / SPI 契約一覧） |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | AI クローラー・エージェント向け `llmstxt.org` 準拠インデックス |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA エンティティは `BaseAuditEntity` を継承**（UUIDv7 `id`、論理削除、監査列、`@Version` を内蔵）。`@Entity` に `@Data` 禁止、`@SoftDelete` は存在しない。
 7. **CamelCase 自動パスと `readDto` スコープ**：`ECommerceOrder` は `/api/v1/e-commerce-orders` に対応。`readDto = X.class` 指定時は全応答が `X` へ射影される。
 8. **本番ロックダウン**：`application.yml` / `application-prod.yml` では `app.framework.studio.enabled: false`、`demo-token-endpoint-enabled: false`、`fail-fast-weak-jwt-secret: true`、`JWT_SECRET >= 32` バイトを維持（Studio は `application-dev.yml` のみ有効化）。
+
+---
+
+## 5. SDD（仕様駆動開発）＆ TDD（テスト駆動開発）品質プロトコル
+
+全アダプターとスキルは `references/06-sdd-and-tdd-playbook.md` および `templates/{spec,plan,tasks}.template.md` により仕様先行・テスト先行開発を強制し、AI の勝手な推測や契約ドリフト、未テストコードを防ぎます。
+
+- **SDD — 仕様駆動開発（`specs/<feature>/`）:** 6段階ゲート（`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`）：`REQ-ID`（`Given/When/Then`）付き `spec.md` を起票し `[NEEDS CLARIFICATION]` で必ず確認、1:1 トレーサビリティ表を `plan.md` に定義し、稼働中の `/v3/api-docs`・`/metadata`・`/schema/zod` と完全一致させます。
+- **TDD — Red → Green → Refactor（4 層テストピラミッド）:** まず `@DisplayName("REQ-XXX: ...")` 付きで失敗する JUnit 5 / `MockMvc` テスト（バグ修正時は回帰テスト）を書き、最小限の宣言的コードで GREEN にした上でリファクタリングします。単体・セキュリティ統合・契約ドリフト・`@DistributedLock` 並行/JMeter `0.0%` の 4 層を網羅し、`@Disabled` は禁止です。
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

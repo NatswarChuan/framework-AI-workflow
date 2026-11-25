@@ -109,24 +109,19 @@ Once Spring-NWVMC is on the classpath, these enterprise endpoints activate autom
 
 ---
 
-## 6. Continuous Reference Project Map (`controller-to-api-implementation/`)
+## 6. SDD + TDD Engineering Workflow & Clean-Room Verification
 
-Every pattern in this kit is empirically verified by **173 passing tests + 2,000-request Apache JMeter (`0.0%` error rate)** inside the reference B2C2B2C Marketplace application:
-
-- **Catalog & Public DTO + Caching + Resilience:** `ProductCatalog`, `ProductCatalogController`, `ProductCatalogReadOnlyController`, `ProductReadDto`, `ProductCatalogShowcaseHelper`.
-- **Orders, StateMachine, Audit Time-Travel & `@CustomEndpoint`:** `ECommerceOrder`, `ECommerceOrderController`, `OrderSummaryHelper`, `OrderQuickSummaryDto`.
-- **Warehouse Stock & `@DistributedLock`:** `InventoryStock`, `InventoryStockController`, `InventoryReservationService`, `InventoryReservationServiceImpl`, `InventoryReservationHelper`.
-- **Idempotent Payments:** `PaymentTransaction`, `PaymentTransactionController` (`@Idempotent`).
-- **Webhooks, CloudEvents & Outbox SPI:** `ElectronicInvoice` (`@EntityWebhook` + `@PublishCloudEvent`), `MarketplaceOutboxEventDispatcherProvider`.
-- **Read-Replica Analytics & L1 Cache:** `MarketplaceAnalyticsService`, `MarketplaceAnalyticsServiceImpl` (`@TargetDataSource(REPLICA)`, `@AutoCacheable`, `@AutoCacheEvict`), `MarketplaceAnalyticsHelper`.
-- **Escape Hatch & Standard Spring MVC Binding:** `Tag`, `TagController` (`@ServiceOverride` + `@PostMapping`/`@PathVariable`/`@RequestParam`/`@RequestBody`), `TagEscapeHatchHelper`.
-- **Security Customizer, Spring AI & Partner RestClient:** `AppSecurityRole`/`Permission`/`UserRole`/`Policy`, `EnterpriseSecurityIdentityCustomizer`, `CatalogAssistantHelper`, `MarketplacePartnerGatewayHelper`.
+Every Spring-NWVMC feature built with this kit follows **Spec-Driven Development (SDD)** + **Test-Driven Development (TDD)**:
+- **SDD (`specs/<feature>/{spec.md, plan.md, tasks.md}`):** Define `Given / When / Then` `REQ-ID`s, entity schemas, API surfaces, security/RBAC matrices, and NFRs BEFORE coding, resolving every `[NEEDS CLARIFICATION]` item upfront and verifying zero drift against Spring-NWVMC's live `/v3/api-docs`, `/metadata`, `/schema/zod`, and GraphQL SDL.
+- **TDD (`Red → Green → Refactor` across 4 Test Tiers):** Write failing JUnit 5 / `MockMvc` tests tied to `REQ-ID`s first, implement minimal declarative Spring-NWVMC code until green, refactor cleanly, and finish with `mvn clean verify` (`0` failures, `0` `@Disabled`) and Apache JMeter `0.0%` error rate.
+- **Empirical Proof:** Verified against `controller-to-api-framework/` (`586/586` unit tests) and the clean-room **NovaMart Multi-Merchant E-Commerce** reference (`controller-to-api-implementation/`, `23/23` integration & unit tests across 10 modules including 4-entity Dynamic DB-RBAC `DENY > ALLOW` + `1,003`-request JMeter `0.0%` error rate).
 
 ---
 
 ## 7. Next Files to Read
 
-1. **[RULES.md](./RULES.md)** — Mandatory consumer rules and empirically verified gotchas (read BEFORE writing code).
-2. **[SKILL.md](./SKILL.md)** — Step-by-step adoption workflows and decision trees.
-3. **[CHECKLIST.md](./CHECKLIST.md)** — Pre-flight, implementation, security, and verification gates.
-4. **[references/](./references/)** — Exact 60-annotation matrix (`01`), 40-endpoint & query DSL reference (`02`), YAML properties (`03`), verified copy-paste cookbook (`04`), and exact non-annotation class/constant/SPI import table (`05`).
+1. **[RULES.md](./RULES.md)** — Mandatory SDD/TDD rules and empirically verified runtime guardrails (read BEFORE writing code).
+2. **[SKILL.md](./SKILL.md)** — Step-by-step SDD+TDD workflows, adoption steps, and root-cause troubleshooting matrix.
+3. **[CHECKLIST.md](./CHECKLIST.md)** — 7-phase SDD, pre-flight, implementation, security, TDD, and go-live sign-off gates.
+4. **[references/](./references/)** — Exact 60-annotation matrix (`01`), 40-endpoint & query DSL (`02`), YAML properties (`03`), copy-paste cookbook (`04`), non-annotation class/SPI imports (`05`), and the **SDD + TDD Playbook (`06`)**.
+5. **[templates/](./templates/)** — Ready-to-copy SDD starter templates (`spec.template.md`, `plan.template.md`, `tasks.template.md`).

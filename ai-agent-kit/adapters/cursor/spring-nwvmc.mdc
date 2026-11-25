@@ -1,21 +1,26 @@
 ---
-description: Spring-NWVMC (v0.1.0) enterprise adoption rules, exact 6 annotation packages, verified runtime gotchas, and production security lockdown for Java 21 + Spring Boot 3.x projects.
+description: Spring-NWVMC (0.1.0) SDD + TDD delivery rules, exact 6 annotation packages, verified runtime gotchas, and production security lockdown for Java 21 + Spring Boot 3.x projects.
 globs:
   - "**/*.java"
   - "**/application*.yml"
   - "**/application*.yaml"
   - "**/pom.xml"
   - "**/build.gradle*"
+  - "**/specs/**/*.md"
 alwaysApply: true
 ---
 
-# Spring-NWVMC (`v0.1.0`) Cursor Rules
+# Spring-NWVMC (`0.1.0`) Cursor Rules (SDD + TDD Enabled)
 
-This repository uses **Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0`)** on **Java 21 LTS + Spring Boot 3.x**.
-For full attribute matrices, 40 auto-endpoints, YAML properties, verified recipes, and non-annotation class imports, read `.agents/skills/spring-nwvmc-adoption/SKILL.md` and `references/01..05` before inventing syntax.
+This repository uses **Spring-NWVMC (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; optional JitPack `v0.1.0`)** on **Java 21 LTS + Spring Boot 3.x**.
+For full attribute matrices, 40 auto-endpoints, YAML properties, verified recipes, non-annotation class imports, and the SDD/TDD playbook, read `.agents/skills/spring-nwvmc-adoption/SKILL.md`, `references/01..06`, and `templates/{spec,plan,tasks}.template.md` before inventing syntax.
+
+## Mandatory SDD (Spec-Driven) & TDD (Test-Driven) Workflow
+- **SDD First:** Before coding a new feature, draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, security/RBAC/tenant rules, NFRs). Pause on any `[NEEDS CLARIFICATION]` item until confirmed, then write `plan.md` (Traceability Matrix) & `tasks.md` (`[RED]→[GREEN]→[REFACTOR]`). Keep `spec.md` synced with live `/v3/api-docs` and `/schema/zod`.
+- **TDD Red → Green → Refactor:** Write a failing JUnit 5 / `MockMvc` test (`@DisplayName("REQ-XXX: ...")`) BEFORE production code (and failing regression test first for every bug fix), observe RED failure, implement minimal declarative Spring-NWVMC code until GREEN, then REFACTOR. NEVER weaken assertions or add `@Disabled`. Verify all 4 tiers (Unit, `MockMvc` Integration, Contract Drift, Concurrency/JMeter).
 
 ## Architecture & Build Requirements
-- Require Java 21 LTS, JitPack `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`, and `<parameters>true</parameters>` in `maven-compiler-plugin`.
+- Require Java 21 LTS, Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0`, and `<parameters>true</parameters>` in `maven-compiler-plugin`.
 - Follow the **2-Directory Contract**:
   - `entity/`: JPA `@Entity` extending `BaseAuditEntity` (UUIDv7 `id`, soft-delete, audit columns, `@Version` optimistic locking built-in — NEVER invent `@SoftDelete`, NEVER use Lombok `@Data` on `@Entity`).
   - `controller/`: `@AutoRestController` Java `interface` extending `AutoApiController<E>` (40 endpoints) or narrow composable interfaces (`AutoReadApi<E>`, `AutoWriteApi<E>`, `AutoBatchApi<E>`, `AutoAuditApi<E>`, `AutoAnalyticsApi<E>`, `AutoStateApi<E>`, `AutoExportImportApi<E>`, `AutoSchemaApi<E>`, `AutoAiApi<E>`).

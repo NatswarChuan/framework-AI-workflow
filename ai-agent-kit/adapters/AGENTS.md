@@ -16,6 +16,15 @@ Before inventing annotations, endpoints, or YAML keys, load the installed skill 
 - **Exact `app.framework.*` YAML Properties:** `.agents/skills/spring-nwvmc-adoption/references/03-yaml-properties-and-profiles.md`
 - **Copy-Paste Verified Patterns:** `.agents/skills/spring-nwvmc-adoption/references/04-cookbook-verified-patterns.md`
 - **Exact Non-Annotation Class/Constant/SPI Imports:** `.agents/skills/spring-nwvmc-adoption/references/05-imports-and-spi-contracts.md`
+- **SDD + TDD Playbook & Starter Templates:** `.agents/skills/spring-nwvmc-adoption/references/06-sdd-and-tdd-playbook.md` & `.agents/skills/spring-nwvmc-adoption/templates/{spec,plan,tasks}.template.md`
+
+---
+
+## 1.5 Mandatory SDD (Spec-Driven) & TDD (Test-Driven) Protocol
+
+1. **SDD Before Code:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, entity schema, API surface, security/RBAC/tenant rules, NFRs). Stop and confirm any `[NEEDS CLARIFICATION]` item with the user BEFORE writing `plan.md`, `tasks.md`, or Java code. Keep `spec.md` synced with live `/v3/api-docs`, `/metadata`, and `/schema/zod` (zero drift).
+2. **TDD Red → Green → Refactor:** For every `REQ-ID` (and every bug fix!), write a failing JUnit 5 / `MockMvc` test tagged `@DisplayName("REQ-XXX: ...")` **first** (`RED`), run `mvn test -Dtest=...` to verify the expected failure, implement minimal declarative Spring-NWVMC code (`GREEN`), then refactor cleanly (`REFACTOR`). NEVER delete, weaken, or `@Disabled` a failing test.
+3. **4-Tier Test Coverage:** Tier 1 pure unit tests (Helpers/Exceptions/Guards), Tier 2 real `@SpringBootTest` + `MockMvc` security/masking/state-machine/idempotency/lockdown tests, Tier 3 OpenAPI/`/schema/zod` contract-drift tests, Tier 4 `@DistributedLock` concurrency & JMeter `0.0%` error SLA.
 
 ---
 

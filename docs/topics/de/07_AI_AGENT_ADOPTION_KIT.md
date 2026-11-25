@@ -11,10 +11,10 @@ Das **Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) stattet **
 | Datei / Verzeichnis | Aufgabe |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Architektur-Orientierung: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, Zwei-Verzeichnis-Vertrag (`entity/` + `controller/`), 9 kombinierbare Interfaces, 6 Annotations-Packages, 11 integrierte Subsysteme |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strenge Anti-Halluzinations-Leitplanken (`13.6 KB`, strikt unter dem `24 KB`-Limit) für jede verifizierte Laufzeitfalle |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strenge Anti-Halluzinations-Leitplanken (`17.2 KB`, strikt unter dem `24 KB`-Limit) für jede verifizierte Laufzeitfalle |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Progressive-Disclosure-Skill `spring-nwvmc-adoption` mit 6 Schritt-für-Schritt-Workflows + 10-zeiliger Fehlerdiagnose-Matrix |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6-stufige Übergabe-Checkliste (Pre-Flight -> Design -> Laufzeitfallen -> Produktions-Lockdown -> Performance -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 5 maschinell geprüfte Tiefenreferenzen (60 Annotationen / 133 Attribute, 40 Endpunkte + 13 Punkt-Operatoren, YAML + Multi-Datasource, Cookbook inkl. `@MultiTenant` + 4-Entitäten-DB-RBAC + `JwtTokenService`, sowie exakte Nicht-Annotations-Imports & SPIs) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 maschinell geprüfte Tiefenreferenzen (60 Annotationen / 133 Attribute, 40 Endpunkte + 13 Punkt-Operatoren, YAML + Multi-Datasource, Cookbook inkl. `@MultiTenant` + 4-Entitäten-DB-RBAC + `JwtTokenService`, sowie exakte Nicht-Annotations-Imports & SPIs) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | `llmstxt.org`-konforme Einstiegspunkte für KI-Crawler und Agenten |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA-Entitäten erweitern `BaseAuditEntity`** (UUIDv7-`id`, Soft-Delete, Audit-Spalten, `@Version` integriert); niemals `@Data` auf `@Entity` nutzen und kein `@SoftDelete` erfinden.
 7. **CamelCase-Routen & `readDto`-Bereich**: `ECommerceOrder` wird zu `/api/v1/e-commerce-orders`; Controller mit `readDto = X.class` projizieren sämtliche Antworten durch `X`.
 8. **Produktions-Lockdown**: `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true` und `JWT_SECRET >= 32` UTF-8-Bytes in `application.yml` / `application-prod.yml` belassen (Studio nur in `application-dev.yml` aktivieren).
+
+---
+
+## 5. SDD- (Spec-Driven) & TDD- (Test-Driven) Qualitätsprotokoll
+
+Jeder Adapter erzwingt Spec-First- + Test-First-Umsetzung über `references/06-sdd-and-tdd-playbook.md` und Vorlagen in `templates/{spec,plan,tasks}.template.md` — gegen stille KI-Annahmen, Vertragsdrift und ungetesteten Code.
+
+- **SDD — Spezifikationsgetriebene Entwicklung (`specs/<feature>/`):** 6-Phasen-Gate (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): `spec.md` mit testbaren `REQ-ID`s (`Given/When/Then`) schreiben, bei `[NEEDS CLARIFICATION]` stoppen, 1:1-Rückverfolgbarkeit in `plan.md` erstellen und Live-Parität mit `/v3/api-docs`, `/metadata` & `/schema/zod` prüfen.
+- **TDD — Red → Green → Refactor (4-Stufen-Testpyramide):** Schreibe zuerst einen fehlschlagenden JUnit-5-/`MockMvc`-Test mit `@DisplayName("REQ-XXX: ...")` (bei Bugs zuerst Regressionstest), implementiere minimalen deklarativen Code bis GRÜN und refaktoriere. Deckt 4 Stufen ab: Unit, Security/Workflow, Contract Drift sowie `@DistributedLock`-Nebenläufigkeit + JMeter `0.0%` ohne `@Disabled`.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

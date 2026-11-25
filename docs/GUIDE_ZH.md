@@ -200,7 +200,7 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 > 交互式门户：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 中文专题文档：[07. AI-Agent 集成工具包](topics/zh/07_AI_AGENT_ADOPTION_KIT.md) · LLM 索引：[`llms.txt`](../llms.txt)
 
-通过内置的 **AI-Agent Adoption Kit**（`INTRO.md`、`RULES.md`、`SKILL.md`、`CHECKLIST.md`、5 份 1:1 机器校验 `references/01..05` 及 8 套即插 `adapters/`），可让 **所有主流 AI 编程代理与大模型**（Antigravity/Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline/Roo Code、ChatGPT、DeepSeek、Qwen、Grok 等）零幻觉精准接入 Spring-NWVMC `v0.1.0`：
+通过内置的 **SDD + TDD 通用 AI-Agent Adoption Kit**（`INTRO.md`、`RULES.md`、`SKILL.md`、`CHECKLIST.md`、6 份机器校验 `references/01..06` 含 **SDD 与 TDD 实战手册**、`templates/{spec,plan,tasks}.template.md` 模板及 8 套即插 `adapters/`），可让 **所有主流 AI 编程代理与大模型**（Antigravity/Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline/Roo Code、ChatGPT、DeepSeek、Qwen、Grok 等）按规范驱动与测试驱动零幻觉精准交付 Spring-NWVMC `0.1.0`：
 
 ```bash
 # Windows（PowerShell — 在您的 Spring Boot 项目根目录直接运行，无需提前克隆仓库）

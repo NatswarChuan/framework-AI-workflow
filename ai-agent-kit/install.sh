@@ -98,6 +98,12 @@ REFERENCE_FILES=(
   03-yaml-properties-and-profiles.md
   04-cookbook-verified-patterns.md
   05-imports-and-spi-contracts.md
+  06-sdd-and-tdd-playbook.md
+)
+TEMPLATE_FILES=(
+  spec.template.md
+  plan.template.md
+  tasks.template.md
 )
 
 install_kit_file() {
@@ -125,6 +131,9 @@ install_skill_tree() {
   done
   for f in "${REFERENCE_FILES[@]}"; do
     install_kit_file "references/$f" "$skill_dir/references/$f" "true"
+  done
+  for f in "${TEMPLATE_FILES[@]}"; do
+    install_kit_file "templates/$f" "$skill_dir/templates/$f" "true"
   done
 }
 

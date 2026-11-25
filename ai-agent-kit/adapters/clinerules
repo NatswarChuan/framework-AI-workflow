@@ -1,21 +1,26 @@
-# Cline / Roo Code Rules — Spring-NWVMC (v0.1.0)
+# Cline / Roo Code Rules — Spring-NWVMC (0.1.0 — SDD + TDD)
 
-This repository uses Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0` via JitPack) on Java 21 LTS and Spring Boot 3.x.
+This repository uses Spring-NWVMC (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; optional JitPack `v0.1.0`) on Java 21 LTS and Spring Boot 3.x.
 
 ## Knowledge Base (Progressive Disclosure)
-Read files under `.agents/skills/spring-nwvmc-adoption/` on demand before emitting annotations, routes, or YAML configuration:
-- `SKILL.md` — Step-by-step adoption workflows & error troubleshooting matrix
+Read files under `.agents/skills/spring-nwvmc-adoption/` on demand before emitting specs, tests, annotations, routes, or YAML configuration:
+- `SKILL.md` — Step-by-step SDD + TDD workflows & error troubleshooting matrix
 - `INTRO.md` — Architecture orientation & 9 composable API interfaces
-- `RULES.md` — Full anti-hallucination consumer rules
-- `CHECKLIST.md` — 6-phase verification & Go-Live checklist
+- `RULES.md` — Full SDD/TDD & anti-hallucination consumer rules
+- `CHECKLIST.md` — 7-phase SDD, security, TDD & Go-Live checklist
 - `references/01-annotations-exact-matrix.md` — 60 exact annotations (6 packages) & 133 attributes
 - `references/02-endpoints-and-query-dsl.md` — 40 auto-endpoints & 13 dot-syntax filter operators
 - `references/03-yaml-properties-and-profiles.md` — Exact `app.framework.*` properties & profiles
 - `references/04-cookbook-verified-patterns.md` — Verified Java/YAML/test cookbook
 - `references/05-imports-and-spi-contracts.md` — Exact non-annotation class, constant & SPI imports/signatures
+- `references/06-sdd-and-tdd-playbook.md` & `templates/{spec,plan,tasks}.template.md` — SDD templates & 4-Tier TDD Red-Green-Refactor playbook
+
+## Mandatory SDD + TDD Workflow
+- **SDD First:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, security/tenant rules, NFRs). Stop on `[NEEDS CLARIFICATION]` until user confirms, then write `plan.md` & `tasks.md`. Keep `spec.md` synced with live `/v3/api-docs` & `/schema/zod`.
+- **TDD Red → Green → Refactor:** Write a failing JUnit 5 / `MockMvc` test (`@DisplayName("REQ-XXX: ...")`) BEFORE production code (and regression test first for every bug fix), verify RED failure, implement minimal declarative code until GREEN, then REFACTOR. NEVER weaken assertions or add `@Disabled`. Cover all 4 tiers (Unit, `MockMvc` Integration, Contract Drift, Concurrency/JMeter).
 
 ## Mandatory Guardrails
-1. **Build:** Java 21 LTS, `<parameters>true</parameters>` in `maven-compiler-plugin`, JitPack `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`.
+1. **Build:** Java 21 LTS, `<parameters>true</parameters>` in `maven-compiler-plugin`, Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0`.
 2. **2-Directory Contract:**
    - `entity/`: JPA `@Entity` extending `BaseAuditEntity`. NEVER use `@Data` on `@Entity` (`@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder @EqualsAndHashCode(callSuper = true)`). NEVER invent `@SoftDelete` (soft-delete, UUIDv7 `id`, `@Version` are inherited from `BaseAuditEntity`).
    - `controller/`: `@AutoRestController` interface extending `AutoApiController<E>` or narrow `AutoReadApi<E>`..`AutoAiApi<E>`. Never scaffold boilerplate CRUD repositories/services/controllers for auto-managed entities.

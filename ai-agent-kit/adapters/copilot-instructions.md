@@ -1,17 +1,22 @@
-# GitHub Copilot Instructions — Spring-NWVMC (`v0.1.0`)
+# GitHub Copilot Instructions — Spring-NWVMC (`0.1.0`, SDD + TDD)
 
-> Install at `.github/copilot-instructions.md` in any Java 21 + Spring Boot 3.x repository using **Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0`)**.
+> Install at `.github/copilot-instructions.md` in any Java 21 + Spring Boot 3.x repository using **Spring-NWVMC (`io.github.natswarchuan:spring-nwvmc:0.1.0`)**.
 
 ## Framework Context & Reference Files
-This codebase uses **Spring-NWVMC (`v0.1.0`)** via JitPack (`https://jitpack.io`).
+This codebase uses **Spring-NWVMC (`0.1.0`)** from Maven Central (`io.github.natswarchuan:spring-nwvmc:0.1.0`; optional JitPack mirror `v0.1.0`).
 Full verified references live in `.agents/skills/spring-nwvmc-adoption/`:
-- `SKILL.md` — Workflows & troubleshooting table
-- `INTRO.md`, `RULES.md`, `CHECKLIST.md` — Orientation, strict guardrails, pre-handover sign-off
+- `SKILL.md` — SDD + TDD workflows & troubleshooting table
+- `INTRO.md`, `RULES.md`, `CHECKLIST.md` — Orientation, SDD/TDD & anti-hallucination guardrails, 7-phase sign-off
 - `references/01-annotations-exact-matrix.md` — All 60 exact annotations & 133 attributes
 - `references/02-endpoints-and-query-dsl.md` — All 40 endpoints & 13 dot-syntax filter operators
 - `references/03-yaml-properties-and-profiles.md` — Exact `app.framework.*` properties & profiles
 - `references/04-cookbook-verified-patterns.md` — Verified Java/YAML/test patterns
 - `references/05-imports-and-spi-contracts.md` — Exact non-annotation class, constant & SPI imports/signatures
+- `references/06-sdd-and-tdd-playbook.md` & `templates/{spec,plan,tasks}.template.md` — SDD templates & 4-Tier TDD Red-Green-Refactor playbook
+
+## Mandatory SDD + TDD Protocol
+- **SDD First:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, RBAC/tenant matrix, NFRs); resolve every `[NEEDS CLARIFICATION]` item before creating `plan.md` & `tasks.md`. Keep `spec.md` synced with `/v3/api-docs` & `/schema/zod`.
+- **TDD Red → Green → Refactor:** Write a failing JUnit 5 / `MockMvc` test (`@DisplayName("REQ-XXX: ...")`) BEFORE production code (and regression test first for every bug fix), verify RED failure, implement minimal declarative code until GREEN, then REFACTOR. NEVER weaken assertions or use `@Disabled`. Cover all 4 tiers (Unit, `MockMvc` Integration, Contract Drift, Concurrency/JMeter).
 
 ## Mandatory Coding Guidelines
 1. **Build Configuration:** Java **21 LTS**, Spring Boot **3.2.5 / 3.3.5 / 3.4.0**, `<parameters>true</parameters>` in `maven-compiler-plugin`.

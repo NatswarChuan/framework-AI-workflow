@@ -11,10 +11,10 @@
 | Tệp / Thư mục | Vai Trò |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Định hướng kiến trúc: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `0.1.0`, Hợp đồng 2 thư mục (`entity/` + `controller/`), 9 capability interfaces (`AutoReadApi`..`AutoAiApi`), 6 package annotation, 11 subsystem |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Luật sắt chống ảo giác (`13.6 KB`, dưới ngưỡng giới hạn `24 KB`) khóa chặt toàn bộ bẫy runtime thực chiến |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Luật sắt chống ảo giác (`17.2 KB`, dưới ngưỡng giới hạn `24 KB`) khóa chặt toàn bộ bẫy runtime thực chiến |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Kỹ năng `spring-nwvmc-adoption` gồm 6 workflow thực thi từng bước + bảng chẩn đoán nguyên nhân gốc cho 10 lỗi phổ biến |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Cổng soát xét 6 giai đoạn (Pre-Flight -> Thiết kế -> Bẫy Runtime -> Khóa Bảo Mật Production -> Hiệu năng -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 5 tài liệu tham chiếu sâu theo cơ chế Progressive Disclosure (60 annotation / 133 thuộc tính, 40 API + 13 toán tử dấu chấm, YAML + Multi-Datasource, cookbook gồm `@MultiTenant` + DB-RBAC 4 thực thể + `JwtTokenService`, và bảng import/chữ ký lớp ngoài annotation không cần `javap`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 tài liệu tham chiếu sâu theo cơ chế Progressive Disclosure (60 annotation / 133 thuộc tính, 40 API + 13 toán tử dấu chấm, YAML + Multi-Datasource, cookbook gồm `@MultiTenant` + DB-RBAC 4 thực thể + `JwtTokenService`, và bảng import/chữ ký lớp ngoài annotation không cần `javap`) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Bản đồ chuẩn `llmstxt.org` giúp trình thu thập dữ liệu và AI-Agent đọc tự động |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA Entity kế thừa `BaseAuditEntity`** (đã có sẵn UUIDv7, soft-delete, audit và `@Version`), tuyệt đối không gắn `@Data` và không tự bịa `@SoftDelete`.
 7. **Tự động tách kebab-case & phạm vi `readDto`**: `ECommerceOrder` -> `/api/v1/e-commerce-orders`; mọi endpoint trên controller có `readDto = X.class` đều ánh xạ phản hồi qua `X`.
 8. **Khóa bảo mật Production**: giữ `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true` và `JWT_SECRET >= 32` byte UTF-8 trong `application.yml` / `application-prod.yml` (chỉ bật Studio trong `application-dev.yml`).
+
+---
+
+## 5. Giao Thức Chất Lượng SDD (Hướng Đặc Tả) & TDD (Hướng Kiểm Thử)
+
+Toàn bộ adapter và skill đều cưỡng chế quy trình Đặc tả trước + Kiểm thử trước qua `references/06-sdd-and-tdd-playbook.md` và bộ mẫu `templates/{spec,plan,tasks}.template.md`, triệt tiêu việc AI tự đoán yêu cầu, lệch contract hay bàn giao code thiếu test.
+
+- **SDD — Phát Triển Hướng Đặc Tả (`specs/<feature>/`):** Chu trình 6 cổng (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): viết `spec.md` với tiêu chí `REQ-ID` (`Given/When/Then`), dừng ngay tại `[NEEDS CLARIFICATION]` để xác nhận, lập ma trận truy vết 1:1 trong `plan.md` và đối chiếu không lệch với `/v3/api-docs`, `/metadata`, `/schema/zod`.
+- **TDD — Red → Green → Refactor (Kim Tự Tháp Kiểm Thử 4 Tầng):** Viết test JUnit 5 / `MockMvc` thất bại trước gắn `@DisplayName("REQ-XXX: ...")` (mọi bug fix phải có regression test trước), viết code khai báo tối thiểu cho tới khi GREEN rồi REFACTOR. Phủ đủ 4 tầng: Unit, Tích hợp Bảo mật/Nghiệp vụ, Chống lệch Contract, và Đồng thời `@DistributedLock` + JMeter `0.0%` lỗi — cấm `@Disabled`.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

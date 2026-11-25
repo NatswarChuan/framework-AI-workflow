@@ -11,10 +11,10 @@
 | ফাইল / ডিরেক্টরি | ভূমিকা |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | আর্কিটেকচার পরিচিতি: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` ও JitPack `v0.1.0`, ২-ডিরেক্টরি চুক্তি (`entity/` + `controller/`), ৯টি কম্পোজেবল ইন্টারফেস, ৬টি অ্যানোটেশন প্যাকেজ, ১১টি বিল্ট-ইন সাবসিস্টেম |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | কঠোর হ্যালুসিনেশন-বিরোধী নিয়ম (`13.6 KB`, `24 KB` সীমার নিচে) যা প্রতিটি প্রমাণিত রানটাইম সতর্কতা নথিভুক্ত করে |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | কঠোর হ্যালুসিনেশন-বিরোধী নিয়ম (`17.2 KB`, `24 KB` সীমার নিচে) যা প্রতিটি প্রমাণিত রানটাইম সতর্কতা নথিভুক্ত করে |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | ধাপে ধাপে `spring-nwvmc-adoption` স্কিল: ৬টি অ্যাডপশন ওয়ার্কফ্লো এবং ১০টি মূল-কারণ ট্রাবলশুটিং ম্যাট্রিক্স |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | হ্যান্ডওভারের আগে ৬-ধাপের যাচাই গেট (Pre-Flight -> ডিজাইন -> রানটাইম সতর্কতা -> প্রোডাকশন লকডাউন -> পারফরম্যান্স -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | মেশিন-যাচাইকৃত ৫টি গভীর রেফারেন্স (৬০ অ্যানোটেশন / ১৩৩ অ্যাট্রিবিউট, ৪০ এন্ডপয়েন্ট + ১৩ ডট অপারেটর, YAML + মাল্টি-ডেটাসোর্স, `@MultiTenant` + ৪-এনটিটি DB-RBAC + `JwtTokenService` কুকবুক, এবং সঠিক নন-অ্যানোটেশন ক্লাস/SPI ইমপোর্ট) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | মেশিন-যাচাইকৃত ৫টি গভীর রেফারেন্স (৬০ অ্যানোটেশন / ১৩৩ অ্যাট্রিবিউট, ৪০ এন্ডপয়েন্ট + ১৩ ডট অপারেটর, YAML + মাল্টি-ডেটাসোর্স, `@MultiTenant` + ৪-এনটিটি DB-RBAC + `JwtTokenService` কুকবুক, এবং সঠিক নন-অ্যানোটেশন ক্লাস/SPI ইমপোর্ট) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | স্বয়ংক্রিয় AI ক্রলার ও এজেন্টদের জন্য `llmstxt.org`-সম্মত সূচক |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA এনটিটি `BaseAuditEntity` এক্সটেন্ড করে** (UUIDv7 `id`, সফট-ডিলিট, অডিট কলাম ও `@Version` বিল্ট-ইন); `@Entity`-তে কখনো `@Data` দেবেন না এবং `@SoftDelete` বানাবেন না।
 7. **CamelCase অটো পাথ ও `readDto` স্কোপ**: `ECommerceOrder` ম্যাপ হয় `/api/v1/e-commerce-orders`-এ; `readDto = X.class` যুক্ত কন্ট্রোলার সব রেসপন্স `X`-এ প্রোজেক্ট করে।
 8. **প্রোডাকশন লকডাউন**: `application.yml` / `application-prod.yml`-এ `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true`, এবং `JWT_SECRET >= 32` UTF-8 বাইট বজায় রাখুন (Studio কেবল `application-dev.yml`-এ চালু করুন)।
+
+---
+
+## 5. SDD (স্পেক-ড্রিভেন) ও TDD (টেস্ট-ড্রিভেন) মান নিয়ন্ত্রণ প্রোটোকল
+
+প্রতিটি অ্যাডাপ্টার ও স্কিল ওয়ার্কফ্লো `references/06-sdd-and-tdd-playbook.md` এবং `templates/{spec,plan,tasks}.template.md` ব্যবহার করে স্পেক-ফার্স্ট ও টেস্ট-ফার্স্ট ডেলিভারি নিশ্চিত করে, ফলে নীরব অনুমান ও কন্ট্র্যাক্ট ড্রিফট দূর হয়।
+
+- **SDD — স্পেক-ড্রিভেন ডেভেলপমেন্ট (`specs/<feature>/`):** ৬-ধাপের গেট (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): `REQ-ID` (`Given/When/Then`) সহ `spec.md` লিখুন, `[NEEDS CLARIFICATION]`-এ থেমে নিশ্চিত হন, `plan.md`-এ ১:১ ট্রেসেবিলিটি ম্যাট্রিক্স গড়ুন এবং লাইভ `/v3/api-docs`, `/metadata`, `/schema/zod`-এর সাথে শূন্য-ড্রিফট যাচাই করুন।
+- **TDD — রেড → গ্রিন → রিফ্যাক্টর (৪-স্তরের টেস্ট পিরামিড):** প্রথমে `@DisplayName("REQ-XXX: ...")` সহ ব্যর্থ JUnit 5 / `MockMvc` টেস্ট (বাগ ফিক্সে রিগ্রেশন টেস্ট) লিখুন, ন্যূনতম ডিক্লারেটিভ কোডে GREEN করুন এবং রিফ্যাক্টর করুন। ৪ স্তর কভার করে: ইউনিট, সিকিউরিটি/ওয়ার্কফ্লো, কন্ট্র্যাক্ট ড্রিফট, এবং `@DistributedLock` কনকারেন্সি + JMeter `0.0%` ত্রুটি (`@Disabled` নিষিদ্ধ)।
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

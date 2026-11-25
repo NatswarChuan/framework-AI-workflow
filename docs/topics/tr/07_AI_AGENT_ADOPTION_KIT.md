@@ -11,10 +11,10 @@
 | Dosya / Dizin | Görev |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Mimari kılavuz: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` ve JitPack `v0.1.0`, 2 dizin sözleşmesi (`entity/` + `controller/`), 9 birleştirilebilir arayüz, 6 anotasyon paketi ve 11 yerleşik alt sistem |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Sıkı halüsinasyon önleyici koruma kuralları (`13.6 KB`, `24 KB` bütçesinin altında) ve doğrulanmış çalışma zamanı tuzakları |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Sıkı halüsinasyon önleyici koruma kuralları (`17.2 KB`, `24 KB` bütçesinin altında) ve doğrulanmış çalışma zamanı tuzakları |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Aşamalı `spring-nwvmc-adoption` becerisi: 6 adım adım iş akışı ve 10 satırlık kök neden sorun giderme matrisi |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Teslim öncesi 6 aşamalı onay kapısı (Ön Kontrol -> Tasarım -> Çalışma Zamanı Tuzakları -> Üretim Kilitleme -> Performans -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | Makine doğrulamalı 5 derin referans (60 anotasyon / 133 öznitelik, 40 uç nokta + 13 noktalı operatör, YAML + Çoklu Veri Kaynağı, `@MultiTenant` + 4 varlıklı DB-RBAC + `JwtTokenService` tarifleri, ve kesin anotasyon dışı sınıf/SPI import tablosu) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | Makine doğrulamalı 5 derin referans (60 anotasyon / 133 öznitelik, 40 uç nokta + 13 noktalı operatör, YAML + Çoklu Veri Kaynağı, `@MultiTenant` + 4 varlıklı DB-RBAC + `JwtTokenService` tarifleri, ve kesin anotasyon dışı sınıf/SPI import tablosu) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Otomatik yapay zeka tarayıcıları ve ajanları için `llmstxt.org` uyumlu dizinler |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA varlıkları `BaseAuditEntity` sınıfını genişletir** (UUIDv7 `id`, geçici silme, denetim sütunları ve `@Version` yerleşiktir); `@Entity` üzerinde asla `@Data` kullanmayın ve `@SoftDelete` uydurmayın.
 7. **CamelCase otomatik yolları ve `readDto` kapsamı**: `ECommerceOrder` -> `/api/v1/e-commerce-orders`; `readDto = X.class` tanımlı denetleyiciler tüm yanıtları `X` olarak projekte eder.
 8. **Üretim kilitlemesi**: `application.yml` / `application-prod.yml` içinde `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true` ve `JWT_SECRET >= 32` UTF-8 bayt koruyun (Studio’yu yalnızca `application-dev.yml` içinde açın).
+
+---
+
+## 5. SDD (Şartname Odaklı) ve TDD (Test Odaklı) Kalite Protokolü
+
+Her adaptör ve beceri akışı, `references/06-sdd-and-tdd-playbook.md` ve `templates/{spec,plan,tasks}.template.md` şablonlarıyla önce-şartname ve önce-test teslimatını zorunlu kılar; sessiz varsayımları ve sözleşme sapmalarını engeller.
+
+- **SDD — Şartname Odaklı Geliştirme (`specs/<feature>/`):** 6 kapılı süreç (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): `REQ-ID` (`Given/When/Then`) ölçütleriyle `spec.md` yazın, `[NEEDS CLARIFICATION]` maddelerinde durup onay alın, `plan.md` içinde 1:1 izlenebilirlik kurun ve `/v3/api-docs`, `/metadata`, `/schema/zod` ile sıfır sapma doğrulayın.
+- **TDD — Kırmızı → Yeşil → İyileştir (4 Katmanlı Test Piramidi):** Önce `@DisplayName("REQ-XXX: ...")` etiketli başarısız JUnit 5 / `MockMvc` testini (hata düzeltmelerinde önce regresyon testi) yazın, en az bildirimsel kodla YEŞİL yapın, sonra iyileştirin. 4 katmanı kapsar: Birim, Güvenlik/İş Akışı, Sözleşme Sapması ve `@DistributedLock` Eşzamanlılık + JMeter `0.0%` (`@Disabled` yasaktır).
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

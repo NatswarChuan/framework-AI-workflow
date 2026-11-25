@@ -11,10 +11,10 @@
 | Berkas / Direktori | Peran |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Orientasi arsitektur: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, kontrak 2 direktori (`entity/` + `controller/`), 9 antarmuka komposabel, 6 paket anotasi, 11 subsistem bawaan |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Pagar ketat anti-halusinasi (`13.6 KB`, di bawah batas `24 KB`) yang merangkum setiap jebakan runtime terverifikasi |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Pagar ketat anti-halusinasi (`17.2 KB`, di bawah batas `24 KB`) yang merangkum setiap jebakan runtime terverifikasi |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Skill progresif `spring-nwvmc-adoption` berisi 6 alur kerja langkah demi langkah + matriks pemecahan masalah 10 akar penyebab |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Gerbang pemeriksaan 6 tahap sebelum serah terima (Pre-Flight -> Desain -> Jebakan Runtime -> Penguncian Produksi -> Performa -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 5 referensi mendalam terverifikasi mesin (60 anotasi / 133 atribut, 40 endpoint + 13 operator bertitik, YAML + Multi-Datasource, resep terverifikasi termasuk `@MultiTenant` + DB-RBAC 4 entitas + `JwtTokenService`, dan tabel impor kelas non-anotasi / SPI) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 referensi mendalam terverifikasi mesin (60 anotasi / 133 atribut, 40 endpoint + 13 operator bertitik, YAML + Multi-Datasource, resep terverifikasi termasuk `@MultiTenant` + DB-RBAC 4 entitas + `JwtTokenService`, dan tabel impor kelas non-anotasi / SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Titik masuk sesuai `llmstxt.org` untuk crawler dan agen AI otomatis |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **Entitas JPA memperluas `BaseAuditEntity`** (UUIDv7 `id`, soft-delete, kolom audit, `@Version` bawaan); jangan pernah memakai `@Data` pada `@Entity` dan jangan mengarang `@SoftDelete`.
 7. **Rute otomatis CamelCase & cakupan `readDto`**: `ECommerceOrder` menjadi `/api/v1/e-commerce-orders`; controller dengan `readDto = X.class` memproyeksikan seluruh respons melalui `X`.
 8. **Penguncian produksi**: pertahankan `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true`, dan `JWT_SECRET >= 32` byte UTF-8 pada `application.yml` / `application-prod.yml` (aktifkan Studio hanya di `application-dev.yml`).
+
+---
+
+## 5. Protokol Kualitas SDD (Spec-Driven) & TDD (Test-Driven)
+
+Setiap adaptor dan alur kerja menegakkan pengiriman Spec-First + Test-First memakai `references/06-sdd-and-tdd-playbook.md` serta templat `templates/{spec,plan,tasks}.template.md`, mencegah asumsi diam-diam dan penyimpangan kontrak.
+
+- **SDD — Pengembangan Berbasis Spesifikasi (`specs/<feature>/`):** Alur 6 gerbang (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): susun `spec.md` dengan kriteria `REQ-ID` (`Given/When/Then`), berhenti pada `[NEEDS CLARIFICATION]`, buat matriks ketertelusuran 1:1 di `plan.md`, dan verifikasi nol penyimpangan terhadap `/v3/api-docs`, `/metadata`, serta `/schema/zod`.
+- **TDD — Red → Green → Refactor (Piramida Uji 4 Tingkat):** Tulis uji JUnit 5 / `MockMvc` gagal bertag `@DisplayName("REQ-XXX: ...")` terlebih dahulu (serta uji regresi untuk tiap bug), tulis kode deklaratif minimal hingga GREEN, lalu REFACTOR. Mencakup 4 tingkat: Unit, Integrasi Keamanan/Alur, Penyimpangan Kontrak, dan Konkurensi `@DistributedLock` + JMeter `0.0%`, tanpa `@Disabled`.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

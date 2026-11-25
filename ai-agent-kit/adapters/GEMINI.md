@@ -3,20 +3,25 @@
 > Drop this file at the root of your consumer Spring Boot project when using **Google Antigravity**, **Gemini CLI**, or **Gemini Code Assist**.
 
 ## 1. Auto-Discovered Skill & Reference Files
-This project consumes **Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0`)** on **Java 21 LTS** + **Spring Boot 3.x**.
+This project consumes **Spring-NWVMC (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; optional JitPack `v0.1.0`)** on **Java 21 LTS** + **Spring Boot 3.x**.
 Activate the `spring-nwvmc-adoption` skill in `.agents/skills/spring-nwvmc-adoption/SKILL.md` and consult its references before writing Spring-NWVMC code:
-- [SKILL.md](.agents/skills/spring-nwvmc-adoption/SKILL.md) — Step-by-step workflows & troubleshooting matrix
-- [INTRO.md](.agents/skills/spring-nwvmc-adoption/INTRO.md) — Architecture, JitPack setup, 9 composable interfaces
-- [RULES.md](.agents/skills/spring-nwvmc-adoption/RULES.md) — Full consumer rules & anti-hallucination contract
-- [CHECKLIST.md](.agents/skills/spring-nwvmc-adoption/CHECKLIST.md) — 6-phase production & verification checklist
+- [SKILL.md](.agents/skills/spring-nwvmc-adoption/SKILL.md) — Step-by-step SDD+TDD workflows & troubleshooting matrix
+- [INTRO.md](.agents/skills/spring-nwvmc-adoption/INTRO.md) — Architecture, Maven Central setup, 9 composable interfaces
+- [RULES.md](.agents/skills/spring-nwvmc-adoption/RULES.md) — Full SDD/TDD & anti-hallucination contract
+- [CHECKLIST.md](.agents/skills/spring-nwvmc-adoption/CHECKLIST.md) — 7-phase SDD, security, TDD & verification checklist
 - [01-annotations-exact-matrix.md](.agents/skills/spring-nwvmc-adoption/references/01-annotations-exact-matrix.md) — 60 exact annotations, 6 packages, 133 attributes
 - [02-endpoints-and-query-dsl.md](.agents/skills/spring-nwvmc-adoption/references/02-endpoints-and-query-dsl.md) — 40 endpoints & 13 dot-syntax filter operators
 - [03-yaml-properties-and-profiles.md](.agents/skills/spring-nwvmc-adoption/references/03-yaml-properties-and-profiles.md) — `app.framework.*` properties & `dev`/`prod` profiles
 - [04-cookbook-verified-patterns.md](.agents/skills/spring-nwvmc-adoption/references/04-cookbook-verified-patterns.md) — Copy-paste verified recipes
 - [05-imports-and-spi-contracts.md](.agents/skills/spring-nwvmc-adoption/references/05-imports-and-spi-contracts.md) — Exact non-annotation class/constant/SPI imports & signatures
+- [06-sdd-and-tdd-playbook.md](.agents/skills/spring-nwvmc-adoption/references/06-sdd-and-tdd-playbook.md) & `templates/{spec,plan,tasks}.template.md` — SDD & 4-Tier TDD Red-Green-Refactor playbook
+
+## 1.5 Mandatory SDD + TDD Delivery Discipline
+- **SDD (Spec-First):** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, RBAC/tenant rules, NFRs). Resolve all `[NEEDS CLARIFICATION]` items with the user BEFORE writing `plan.md`, `tasks.md`, or Java code. Verify zero drift against `/v3/api-docs`, `/metadata`, and `/schema/zod`.
+- **TDD (Test-First):** Follow strict **RED → GREEN → REFACTOR** per `REQ-ID` (and failing regression test first for every bug fix). Run `mvn test -Dtest=...` to verify RED failure before coding, NEVER weaken assertions or use `@Disabled`, and verify all 4 tiers (Unit, `MockMvc` Integration, Contract Drift, Concurrency/JMeter).
 
 ## 2. Strict Non-Negotiable Rules
-1. **Build:** Java 21 LTS + `maven-compiler-plugin` `<parameters>true</parameters>` + JitPack `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`.
+1. **Build:** Java 21 LTS + `maven-compiler-plugin` `<parameters>true</parameters>` + Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0`.
 2. **2-Directory Contract:** `entity/` (extends `BaseAuditEntity`, NEVER `@Data`, NEVER `@SoftDelete`) + `controller/` (`@AutoRestController` interface extending `AutoApiController<E>` or narrow `AutoReadApi<E>`..`AutoAiApi<E>`). Do not create manual CRUD repositories/services/controllers for auto-managed entities.
 3. **Exact 6 Annotation Packages Only:**
    - `io.github.natswarchuan.core.annotation.*` (54 annotations)

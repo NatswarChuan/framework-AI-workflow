@@ -232,7 +232,7 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 > Hướng dẫn chi tiết: [07. Bộ Kit Hướng Dẫn AI-Agent](topics/vi/07_AI_AGENT_ADOPTION_KIT.md) · Cổng tương tác: [`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · Chỉ mục LLM: [`llms.txt`](../llms.txt)
 
-Bộ **AI-Agent Adoption Kit** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 5 tài liệu tham chiếu sâu `references/01..05` kiểm chứng máy 1:1 và 8 tệp `adapters/`) giúp **mọi AI-Agent và mô hình LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) triển khai Spring-NWVMC `v0.1.0` chính xác ngay lần đầu:
+Bộ **AI-Agent Adoption Kit chuẩn SDD + TDD** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 6 tài liệu tham chiếu sâu `references/01..06` gồm **Playbook SDD & TDD**, bộ mẫu `templates/{spec,plan,tasks}.template.md` và 8 tệp `adapters/`) giúp **mọi AI-Agent và mô hình LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) triển khai Spring-NWVMC `0.1.0` theo đúng kỷ luật Đặc tả trước + Kiểm thử trước ngay lần đầu:
 
 ```bash
 # Windows (PowerShell — chạy trực tiếp trong thư mục gốc dự án Spring Boot của bạn, không cần clone repo)

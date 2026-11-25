@@ -46,7 +46,13 @@ $ReferenceFiles = @(
     "02-endpoints-and-query-dsl.md",
     "03-yaml-properties-and-profiles.md",
     "04-cookbook-verified-patterns.md",
-    "05-imports-and-spi-contracts.md"
+    "05-imports-and-spi-contracts.md",
+    "06-sdd-and-tdd-playbook.md"
+)
+$TemplateFiles = @(
+    "spec.template.md",
+    "plan.template.md",
+    "tasks.template.md"
 )
 
 function Install-KitFile {
@@ -83,6 +89,10 @@ function Install-SkillTree {
     $refDstDir = Join-Path $SkillBaseDir "references"
     foreach ($r in $ReferenceFiles) {
         Install-KitFile -RelativeKitPath "references/$r" -DestinationPath (Join-Path $refDstDir $r) -AllowOverwrite $true
+    }
+    $tplDstDir = Join-Path $SkillBaseDir "templates"
+    foreach ($t in $TemplateFiles) {
+        Install-KitFile -RelativeKitPath "templates/$t" -DestinationPath (Join-Path $tplDstDir $t) -AllowOverwrite $true
     }
 }
 

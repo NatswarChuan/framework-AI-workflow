@@ -11,10 +11,10 @@ El **Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) dota a **to
 | Archivo / Directorio | Rol |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Orientación arquitectónica: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` y JitPack `v0.1.0`, contrato de 2 directorios (`entity/` + `controller/`), 9 interfaces componibles, 6 paquetes de anotaciones y 11 subsistemas integrados |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Reglas estrictas anti-alucinación (`13.6 KB`, bajo el límite de `24 KB`) que codifican cada trampa de ejecución verificada |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Reglas estrictas anti-alucinación (`17.2 KB`, bajo el límite de `24 KB`) que codifican cada trampa de ejecución verificada |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Skill progresiva `spring-nwvmc-adoption` con 6 flujos paso a paso y matriz de diagnóstico de 10 causas raíz |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Puerta de verificación de 6 fases previa a entrega (Pre-Flight -> Diseño -> Trampas Runtime -> Bloqueo Producción -> Rendimiento -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 5 referencias profundas verificadas por máquina (60 anotaciones / 133 atributos, 40 endpoints + 13 operadores con punto, YAML + Multi-Datasource, recetario con `@MultiTenant` + DB-RBAC de 4 entidades + `JwtTokenService`, e imports exactos no-anotación y SPI) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 referencias profundas verificadas por máquina (60 anotaciones / 133 atributos, 40 endpoints + 13 operadores con punto, YAML + Multi-Datasource, recetario con `@MultiTenant` + DB-RBAC de 4 entidades + `JwtTokenService`, e imports exactos no-anotación y SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Índices compatibles con `llmstxt.org` para rastreadores y agentes IA |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **Las entidades JPA extienden `BaseAuditEntity`** (UUIDv7 `id`, borrado lógico, auditoría y `@Version` integrados); nunca use `@Data` en `@Entity` ni invente `@SoftDelete`.
 7. **Rutas automáticas CamelCase y alcance de `readDto`**: `ECommerceOrder` resuelve a `/api/v1/e-commerce-orders`; los controladores con `readDto = X.class` proyectan todas las respuestas a través de `X`.
 8. **Bloqueo de producción**: mantenga `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true` y `JWT_SECRET >= 32` bytes UTF-8 en `application.yml` / `application-prod.yml` (active Studio solo en `application-dev.yml`).
+
+---
+
+## 5. Protocolo de Calidad SDD (Guiado por Especificación) y TDD (Guiado por Pruebas)
+
+Cada adaptador y flujo impone entrega Spec-First + Test-First mediante `references/06-sdd-and-tdd-playbook.md` y las plantillas `templates/{spec,plan,tasks}.template.md`, evitando suposiciones silenciosas, deriva de contratos y código sin pruebas.
+
+- **SDD — Desarrollo Guiado por Especificación (`specs/<feature>/`):** Flujo de 6 puertas (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): redacta `spec.md` con criterios `REQ-ID` (`Given/When/Then`), detente en `[NEEDS CLARIFICATION]`, crea una matriz de trazabilidad 1:1 en `plan.md` y verifica cero deriva contra `/v3/api-docs`, `/metadata` y `/schema/zod`.
+- **TDD — Rojo → Verde → Refactor (Pirámide de 4 Niveles):** Escribe primero una prueba fallida JUnit 5 / `MockMvc` con `@DisplayName("REQ-XXX: ...")` (y prueba de regresión en cada bug), implementa código declarativo mínimo hasta VERDE y refactoriza. Cubre 4 niveles: Unitario, Seguridad/Flujos, Deriva de Contrato y Concurrencia `@DistributedLock` + JMeter `0.0%`, sin `@Disabled`.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

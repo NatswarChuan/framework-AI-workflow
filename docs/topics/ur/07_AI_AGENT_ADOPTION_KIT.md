@@ -11,10 +11,10 @@
 | فائل / ڈائریکٹری | کردار |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | آرکیٹیکچر تعارف: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` اور JitPack `v0.1.0`، دو ڈائریکٹری معاہدہ (`entity/` + `controller/`)، 9 قابلِ ترکیب انٹرفیس، 6 اینوٹیشن پیکجز، 11 بلٹ ان سب سسٹمز |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | سخت اینٹی ہیلوسینیشن گارڈ ریلز (`13.6 KB`، `24 KB` حد کے اندر) جن میں ہر تصدیق شدہ رن ٹائم احتیاط شامل ہے |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | سخت اینٹی ہیلوسینیشن گارڈ ریلز (`17.2 KB`، `24 KB` حد کے اندر) جن میں ہر تصدیق شدہ رن ٹائم احتیاط شامل ہے |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | تدریجی `spring-nwvmc-adoption` اسکل مع 6 مرحلہ وار ورک فلوز اور 10 بنیادی وجوہات کی ٹربل شوٹنگ جدول |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | حوالگی سے قبل 6 مرحلوں کی جانچ (Pre-Flight -> ڈیزائن -> رن ٹائم احتیاطیں -> پروڈکشن لاک ڈاؤن -> کارکردگی -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | مشین سے تصدیق شدہ 5 گہرے حوالہ جات (60 اینوٹیشنز / 133 ایٹری بیوٹس، 40 اینڈپوائنٹس + 13 ڈاٹ آپریٹرز، YAML + ملٹی ڈیٹاسورس، `@MultiTenant` + 4-اینٹیٹی DB-RBAC + `JwtTokenService` ترکیبیں، اور درست نان-اینوٹیشن کلاس/SPI امپورٹس) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | مشین سے تصدیق شدہ 5 گہرے حوالہ جات (60 اینوٹیشنز / 133 ایٹری بیوٹس، 40 اینڈپوائنٹس + 13 ڈاٹ آپریٹرز، YAML + ملٹی ڈیٹاسورس، `@MultiTenant` + 4-اینٹیٹی DB-RBAC + `JwtTokenService` ترکیبیں، اور درست نان-اینوٹیشن کلاس/SPI امپورٹس) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | خودکار AI کرالرز اور ایجنٹس کے لیے `llmstxt.org` معیاری فہرستیں |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA اینٹیٹیز `BaseAuditEntity` ایکسٹینڈ کرتی ہیں** (UUIDv7 `id`، سافٹ ڈیلیٹ، آڈٹ کالمز اور `@Version` شامل ہیں)؛ `@Entity` پر کبھی `@Data` استعمال نہ کریں اور `@SoftDelete` ایجاد نہ کریں۔
 7. **CamelCase خودکار راستے اور `readDto` دائرہ**: `ECommerceOrder` کا راستہ `/api/v1/e-commerce-orders` بنتا ہے؛ `readDto = X.class` والے کنٹرولر تمام جوابات کو `X` میں پروجیکٹ کرتے ہیں۔
 8. **پروڈکشن لاک ڈاؤن**: `application.yml` / `application-prod.yml` میں `app.framework.studio.enabled: false`، `demo-token-endpoint-enabled: false`، `fail-fast-weak-jwt-secret: true` اور `JWT_SECRET >= 32` UTF-8 بائٹس برقرار رکھیں (Studio صرف `application-dev.yml` میں فعال کریں)۔
+
+---
+
+## 5. SDD (تفصیل پر مبنی) اور TDD (ٹیسٹ پر مبنی) معیار کا پروٹوکول
+
+ہر ایڈاپٹر اور ورک فلو `references/06-sdd-and-tdd-playbook.md` اور `templates/{spec,plan,tasks}.template.md` کے ذریعے اسپیک-فرسٹ اور ٹیسٹ-فرسٹ ترسیل نافذ کرتا ہے تاکہ خاموش مفروضے اور کنٹریکٹ ڈرفٹ ختم ہوں۔
+
+- **SDD — تفصیل پر مبنی ترقی (`specs/<feature>/`):** 6 مراحل پر مشتمل پائپ لائن (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): `REQ-ID` (`Given/When/Then`) کے ساتھ `spec.md` لکھیں، `[NEEDS CLARIFICATION]` پر رک کر تصدیق لیں، `plan.md` میں 1:1 ٹریسیبلٹی میٹرکس بنائیں اور لائیو `/v3/api-docs`، `/metadata`، `/schema/zod` سے مطابقت جانچیں۔
+- **TDD — ریڈ → گرین → ریفیکٹر (4-سطحی ٹیسٹ پیرامڈ):** پہلے `@DisplayName("REQ-XXX: ...")` کے ساتھ ناکام JUnit 5 / `MockMvc` ٹیسٹ (اور ہر بگ کے لیے ریگریشن ٹیسٹ) لکھیں، کم از کم ڈیکلیریٹو کوڈ سے GREEN کریں، پھر REFACTOR کریں۔ چاروں سطحیں (یونٹ، سیکیورٹی/ورک فلو، کنٹریکٹ ڈرفٹ، `@DistributedLock` کونکرنسی + JMeter `0.0%`) لازم ہیں، `@Disabled` ممنوع ہے۔
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

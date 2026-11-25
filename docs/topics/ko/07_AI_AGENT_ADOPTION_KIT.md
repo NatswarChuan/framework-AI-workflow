@@ -11,10 +11,10 @@
 | 파일 / 디렉터리 | 역할 |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | 아키텍처 안내: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, 2-디렉터리 계약(`entity/` + `controller/`), 9개 조합 인터페이스, 6개 애노테이션 패키지, 11개 내장 서브시스템 |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 엄격한 환각 방지 가드레일(`13.6 KB`, `24 KB` 예산 이내) 및 검증된 런타임 함정 총정리 |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 엄격한 환각 방지 가드레일(`17.2 KB`, `24 KB` 예산 이내) 및 검증된 런타임 함정 총정리 |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | 점진적 공개형 `spring-nwvmc-adoption` 스킬(6단계 도입 워크플로 + 10항목 원인별 트러블슈팅 매트릭스) |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6단계 배포 전 최종 점검 게이트(사전 점검 -> 설계 -> 런타임 주의점 -> 프로덕션 잠금 -> 성능 -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 기계 검증된 5개 심층 레퍼런스(60 애노테이션 / 133 속성, 40 API + 13 점 문법 연산자, YAML + 멀티 DB, `@MultiTenant` + 4-엔티티 DB-RBAC + `JwtTokenService` 쿡북, 비애노테이션 클래스/상수/SPI import 표) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 기계 검증된 5개 심층 레퍼런스(60 애노테이션 / 133 속성, 40 API + 13 점 문법 연산자, YAML + 멀티 DB, `@MultiTenant` + 4-엔티티 DB-RBAC + `JwtTokenService` 쿡북, 비애노테이션 클래스/상수/SPI import 표) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | AI 크롤러 및 에이전트를 위한 `llmstxt.org` 표준 인덱스 |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA 엔티티는 `BaseAuditEntity` 상속**(UUIDv7 `id`, 소프트 삭제, 감사 컬럼, `@Version` 내장). `@Entity`에 `@Data` 금지, `@SoftDelete`는 존재하지 않습니다.
 7. **CamelCase 자동 경로 및 `readDto` 범위**: `ECommerceOrder`는 `/api/v1/e-commerce-orders`로 매핑되며, `readDto = X.class` 선언 시 모든 응답이 `X`로 프로젝션됩니다.
 8. **프로덕션 보안 잠금**: `application.yml` / `application-prod.yml`에서 `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true`, `JWT_SECRET >= 32` UTF-8 바이트를 유지하세요(Studio는 `application-dev.yml`에서만 활성화).
+
+---
+
+## 5. SDD(명세 주도 개발) 및 TDD(테스트 주도 개발) 품질 프로토콜
+
+모든 어댑터와 스킬은 `references/06-sdd-and-tdd-playbook.md` 및 `templates/{spec,plan,tasks}.template.md`로 명세 우선·테스트 우선 개발을 강제해 AI의 임의 추측과 계약 드리프트를 방지합니다.
+
+- **SDD — 명세 주도 개발 (`specs/<feature>/`):** 6단계 게이트(`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): `REQ-ID`(`Given/When/Then`)로 `spec.md`를 작성하고 `[NEEDS CLARIFICATION]`에서 중단해 확인한 뒤 `plan.md` 추적성 매트릭스를 구성하고 `/v3/api-docs`·`/metadata`·`/schema/zod`와 일치시킵니다.
+- **TDD — Red → Green → Refactor (4계층 테스트 피라미드):** 먼저 `@DisplayName("REQ-XXX: ...")`가 붙은 실패 JUnit 5 / `MockMvc` 테스트(버그 수정 시 회귀 테스트 우선)를 작성하고 최소 선언적 코드로 GREEN 달성 후 리팩터링합니다. 단위·보안/워크플로·계약 드리프트·`@DistributedLock` 동시성/JMeter `0.0%` 4계층을 검증하며 `@Disabled`는 금지됩니다.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

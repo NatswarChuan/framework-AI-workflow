@@ -14,6 +14,7 @@
 - [YAML Properties & Profiles](../ai-agent-kit/references/03-yaml-properties-and-profiles.md): Exact `app.framework.*` properties & `dev`/`prod` profiles.
 - [Verified Cookbook Patterns](../ai-agent-kit/references/04-cookbook-verified-patterns.md): Copy-paste Java, YAML, `@MultiTenant`, DB-RBAC, Multi-Datasource, and `MockMvc` recipes.
 - [Exact Non-Annotation Class & SPI Imports](../ai-agent-kit/references/05-imports-and-spi-contracts.md): Verified imports & signatures for all non-annotation classes, constants, DTOs, helpers, and SPIs.
+- [SDD & TDD Playbook](../ai-agent-kit/references/06-sdd-and-tdd-playbook.md): Spec-Driven (`specs/<feature>/{spec,plan,tasks}.md`) & Test-Driven (`Red → Green → Refactor`, 4-Tier Test Pyramid) playbook with starter templates in [`../ai-agent-kit/templates/`](../ai-agent-kit/templates/).
 
 ## Multi-Language Documentation Guides (20 Languages × 7 Topics = 140 Guides)
 

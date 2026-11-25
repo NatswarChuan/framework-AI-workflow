@@ -1,8 +1,32 @@
-# Spring-NWVMC (`v0.1.0`) — Universal AI-Agent Rules & Anti-Hallucination Guardrails
+# Spring-NWVMC (`0.1.0`) — Universal AI-Agent Rules, SDD/TDD Protocol & Anti-Hallucination Guardrails
 
-> **Scope:** Applies to EVERY AI coding agent and LLM (**Claude**, **Gemini / Antigravity**, **Codex / ChatGPT**, **Cursor**, **Copilot**, **Windsurf**, **Cline / Roo**, **DeepSeek**, **Qwen**, **Grok**, **Llama**, **Mistral**) when integrating, extending, or debugging an application built on **Spring-NWVMC `0.1.0` / `v0.1.0`**.
+> **Scope:** Applies to EVERY AI coding agent and LLM (**Claude**, **Gemini / Antigravity**, **Codex / ChatGPT**, **Cursor**, **Copilot**, **Windsurf**, **Cline / Roo**, **DeepSeek**, **Qwen**, **Grok**, **Llama**, **Mistral**) when integrating, extending, or debugging an application built on **Spring-NWVMC `0.1.0`** (`io.github.natswarchuan:spring-nwvmc:0.1.0`).
 >
-> **Golden Rule:** NEVER guess an annotation name, attribute, YAML key, URL path, or query operator. Every rule below is empirically verified against the live `v0.1.0` runtime.
+> **Golden Rule:** NEVER guess an annotation name, attribute, YAML key, URL path, or query operator — and NEVER write production code before specifying the contract (**SDD**) and writing a failing test (**TDD**).
+
+---
+
+## 0. Mandatory SDD (Spec-Driven) & TDD (Test-Driven) Engineering Protocol
+
+Load full templates and test recipes from `references/06-sdd-and-tdd-playbook.md` and `templates/{spec,plan,tasks}.template.md`.
+
+### Rule 0.1 — Spec-First Before Production Code (SDD Gate)
+1. **Specify First:** Before coding any new feature, entity, custom route, or security policy, create or update `specs/<feature-slug>/spec.md` with testable **`REQ-ID` (`Given / When / Then`)** acceptance criteria, entity fields, API surface (`AutoApiController<E>` vs `AutoReadApi<E>` + `readDto`), security/multi-tenant matrix, `@StateMachine` graph, resilience/cache contract, and NFRs.
+2. **Zero Silent Assumptions (`[NEEDS CLARIFICATION]` Hard Stop):** If roles, tenant rules, state transitions, validation limits, or public DTO fields are ambiguous, record `[NEEDS CLARIFICATION: ...]` in `spec.md` and **ask the user before planning or coding**.
+3. **Plan & Traceability (`plan.md` + `tasks.md`):** Map every `REQ-ID` 1:1 to a target endpoint/class and a concrete test case (`plan.md`), then slice work into ordered `[RED] → [GREEN] → [REFACTOR]` tasks (`tasks.md`). *(Single-route tweaks or bug fixes may use a lightweight mini-spec with `REQ-ID` + mandatory regression test.)*
+4. **Living Specification (Zero Spec-Code Drift):** Any contract change discovered during implementation MUST update `spec.md` in the same atomic change, verified against live `/v3/api-docs`, `/api/v1/{entity}/metadata`, `/schema/zod`, and `/api/v1/graphql/schema`.
+
+### Rule 0.2 — Red → Green → Refactor Discipline (TDD Gate)
+1. **RED First (Proven Failing Test):** For every `REQ-ID`, write a JUnit 5 test annotated with `@DisplayName("REQ-XXX: ...")` **before** implementing the production code, run `mvn test -Dtest=<TargetTest>`, and confirm it fails for the expected behavioral reason (e.g., `404` missing route, `200` instead of `403`, unmasked PII, missing `409`).
+2. **GREEN Second (Minimal Declarative Code):** Write the minimal Spring-NWVMC declarative implementation (`entity/` + `controller/` + `@Lazy @Service` / `Helper`) to make the test pass.
+3. **REFACTOR Third (Clean Under Green Safety Net):** Eliminate magic strings/numbers into `*Constant`, refine SRP/guard clauses, confirm zero N+1 SQL, and re-run `mvn clean verify`.
+4. **Bug-Fix Regression Law:** Every bug fix MUST begin with a failing regression test reproducing the exact bug (RED) before editing production code (GREEN).
+5. **Anti-Cheating Law:** NEVER delete, weaken, mock away Spring-NWVMC security/proxy behavior, or add `@Disabled` to turn a failing test green.
+6. **4-Tier Test Pyramid Required:**
+   - **Tier 1 (Unit):** JUnit 5 + Mockito + AssertJ for Helpers, Services, `BaseBusinessException`, DTO builders, null/blank guard clauses.
+   - **Tier 2 (Integration `MockMvc`):** Real `@SpringBootTest` tests covering CRUD, `@FieldSecurity`, `readDto` stripping, `@EntitySecurity`, `@MultiTenant` (`403`/IDOR), DB-RBAC `DENY > ALLOW`, `@StateMachine` legal/illegal transitions, `@Idempotent` (`201`→`409`), `@HttpCacheable` (`200`→`304`), `@Version` (`409`), and `prod` Studio lockdown (`401`/`404`).
+   - **Tier 3 (Contract Drift):** Assert `/v3/api-docs`, `/metadata`, and `/schema/zod` match `spec.md` with zero leaked internal fields.
+   - **Tier 4 (Concurrency & Load):** Parallel `ExecutorService` test for `@DistributedLock` + Apache JMeter `0.0%` error rate where configured.
 
 ---
 
@@ -11,7 +35,7 @@
 1. **Use ONLY the 60 real framework annotations from their exact 6 Java packages** (listed in `references/01-annotations-exact-matrix.md`).
    - **FORBIDDEN fictional annotations (DO NOT INVENT):** `@SoftDelete` (soft-delete is built into `BaseAuditEntity.deleted`), `@AutoRest`, `@EnableNwvmc`, `@EnableAutoApi`, `@AutoCrudController`, `@DynamicController`, `@FieldMask`, `@RateLimiter`.
 2. **Exact Version Lock & Compiler Flag:**
-   - Use `com.github.NatswarChuan:Spring-NWVMC:v0.1.0` (JitPack) or `io.github.natswarchuan:spring-nwvmc:0.1.0` (Maven).
+   - Use **`io.github.natswarchuan:spring-nwvmc:0.1.0`** (Maven Central — primary; optional JitPack mirror: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`).
    - Always configure `<maven-compiler-plugin>` with `<parameters>true</parameters>` (Java **21**). Without `-parameters`, SpEL keys like `#stockSkuCode` in `@DistributedLock` / `@AutoCacheable` fail to resolve parameter names.
 3. **Never write boilerplate CRUD `Repository` / `Service` / `Controller` classes** for entities managed by `@AutoRestController`. Put the domain entity in `entity/` and a thin interface extending `AutoApiController<E>` (or composable `AutoReadApi<E>`..`AutoAiApi<E>`) in `controller/`.
 

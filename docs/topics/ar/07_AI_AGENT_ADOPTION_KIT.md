@@ -11,10 +11,10 @@
 | الملف / المجلد | الدور |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نظرة معمارية: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` وJitPack `v0.1.0`، عقد المجلدين (`entity/` + `controller/`)، 9 واجهات قابلة للتركيب، 6 حزم تعليقات، 11 نظامًا فرعيًا مدمجًا |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ضوابط صارمة ضد الهلوسة (`13.6 KB`، دون سقف `24 KB`) توثق كل فخ تشغيلي مُثبت عمليًا |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ضوابط صارمة ضد الهلوسة (`17.2 KB`، دون سقف `24 KB`) توثق كل فخ تشغيلي مُثبت عمليًا |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارة `spring-nwvmc-adoption` التدريجية مع 6 مسارات عمل خطوة بخطوة ومصفوفة تشخيص لـ 10 أسباب جذرية |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | بوابة تحقق من 6 مراحل قبل التسليم (ما قبل البدء -> التصميم -> فخاخ التشغيل -> إغلاق الإنتاج -> الأداء -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 5 مراجع معمقة محققة آليًا (60 تعليقًا / 133 خاصية، 40 نقطة نهاية + 13 عاملًا بالنقطة، YAML + تعدد قواعد البيانات، وصفات عملية تشمل `@MultiTenant` + DB-RBAC من 4 كيانات + `JwtTokenService`، وجدول استيرادات الفئات وSPI الدقيقة) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 مراجع معمقة محققة آليًا (60 تعليقًا / 133 خاصية، 40 نقطة نهاية + 13 عاملًا بالنقطة، YAML + تعدد قواعد البيانات، وصفات عملية تشمل `@MultiTenant` + DB-RBAC من 4 كيانات + `JwtTokenService`، وجدول استيرادات الفئات وSPI الدقيقة) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | فهارس متوافقة مع `llmstxt.org` لوكلاء وزواحف الذكاء الاصطناعي |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **ترث كيانات JPA من `BaseAuditEntity`** (يتضمن UUIDv7 `id` والحذف الناعم وأعمدة التدقيق و`@Version`)؛ لا تستخدم `@Data` على `@Entity` ولا تخترع `@SoftDelete`.
 7. **المسارات التلقائية CamelCase ونطاق `readDto`**: يتحول `ECommerceOrder` إلى `/api/v1/e-commerce-orders`؛ ووحدات التحكم التي تحدد `readDto = X.class` تُسقط جميع الاستجابات عبر `X`.
 8. **إغلاق بيئة الإنتاج**: أبقِ `app.framework.studio.enabled: false` و`demo-token-endpoint-enabled: false` و`fail-fast-weak-jwt-secret: true` و`JWT_SECRET >= 32` بايت UTF-8 في `application.yml` / `application-prod.yml` (وفعّل Studio فقط في `application-dev.yml`).
+
+---
+
+## 5. بروتوكول الجودة SDD (التطوير الموجّه بالمواصفات) و TDD (التطوير الموجّه بالاختبارات)
+
+يفرض كل محوّل ومسار عمل نهج المواصفات أولًا والاختبار أولًا عبر `references/06-sdd-and-tdd-playbook.md` وقوالب `templates/{spec,plan,tasks}.template.md` لمنع الافتراضات الصامتة وانحراف العقود والشيفرة غير المختبرة.
+
+- **SDD — التطوير الموجّه بالمواصفات (`specs/<feature>/`):** مسار من 6 بوابات (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): اكتب `spec.md` بمعايير `REQ-ID` (`Given/When/Then`)، وتوقف عند `[NEEDS CLARIFICATION]` للتأكيد، وأنشئ مصفوفة تتبع 1:1 في `plan.md` مع التحقق من التطابق التام مع `/v3/api-docs` و`/metadata` و`/schema/zod`.
+- **TDD — أحمر ← أخضر ← إعادة هيكلة (هرم الاختبار من 4 مستويات):** اكتب أولًا اختبار JUnit 5 / `MockMvc` فاشلًا بوسم `@DisplayName("REQ-XXX: ...")` (واختبار تراجع لكل خطأ)، ثم اكتب الحد الأدنى من الشيفرة التصريحية حتى ينجح، ثم أعد الهيكلة. يغطي 4 مستويات: الوحدة، الأمان وتدفق العمل، انحراف العقد، وتزامن `@DistributedLock` + JMeter بنسبة خطأ `0.0%` دون `@Disabled`.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

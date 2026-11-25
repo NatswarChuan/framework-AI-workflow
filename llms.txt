@@ -29,6 +29,7 @@
 - [YAML Properties & Profiles](ai-agent-kit/references/03-yaml-properties-and-profiles.md): Exact `app.framework.*` and `spring-nwvmc.human-policies.*` keys with secure `prod` and `dev` templates.
 - [Verified Cookbook Patterns](ai-agent-kit/references/04-cookbook-verified-patterns.md): Copy-paste-runnable Java, YAML, `@MultiTenant`, 4-entity DB-RBAC, Multi-Datasource, and `MockMvc` test recipes.
 - [Exact Non-Annotation Class & SPI Imports](ai-agent-kit/references/05-imports-and-spi-contracts.md): Verified package imports & signatures for `BaseBusinessException`, `StandardHttpStatus`, `UuidUtil`, `*Constant`, `JwtTokenService`, `DynamicRoutingDataSource`, Outbox/AI/Webhook/RestClient DTOs, and 8 `*Customizer` SPIs.
+- [SDD & TDD Playbook](ai-agent-kit/references/06-sdd-and-tdd-playbook.md): Spec-Driven Development (`Specify → Clarify → Plan → Tasks → Contract-Sync`) & Test-Driven Development (`Red → Green → Refactor`, 4-Tier Test Pyramid, verified JUnit 5 / `MockMvc` / Drift / Concurrency recipes), plus starter templates in [`ai-agent-kit/templates/`](ai-agent-kit/templates/).
 
 ## Platform Drop-In Adapters
 

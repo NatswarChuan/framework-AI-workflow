@@ -200,7 +200,7 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 > 詳細ページ：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 日本語トピック：[07. AI エージェント導入キット](topics/ja/07_AI_AGENT_ADOPTION_KIT.md) · LLM インデックス：[`llms.txt`](../llms.txt)
 
-**Spring-NWVMC AI-Agent Adoption Kit**（`INTRO.md`・`RULES.md`・`SKILL.md`・`CHECKLIST.md`・自動検証済み `references/01..05`・8 種の `adapters/`）を導入することで、Antigravity / Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline、ChatGPT / DeepSeek / Qwen などのあらゆる AI エージェントが `v0.1.0` をハルシネーションなく正確に実装できます：
+**Spring-NWVMC SDD + TDD AI-Agent Adoption Kit**（`INTRO.md`・`RULES.md`・`SKILL.md`・`CHECKLIST.md`・自動検証済み `references/01..06`（SDD/TDD プレイブック含む）・`templates/{spec,plan,tasks}.template.md`・8 種の `adapters/`）を導入することで、Antigravity / Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline、ChatGPT / DeepSeek / Qwen などのあらゆる AI エージェントが仕様駆動＋テスト駆動で `0.1.0` を正確に実装できます：
 
 ```bash
 # Windows（PowerShell — Spring Boot プロジェクト直下でそのまま実行、クローン不要）

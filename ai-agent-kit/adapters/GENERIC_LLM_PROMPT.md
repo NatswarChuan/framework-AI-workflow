@@ -1,7 +1,7 @@
 # Universal System Prompt — Spring-NWVMC (`v0.1.0`) for Any LLM
 
 > **Paste this entire prompt into:** ChatGPT Custom Instructions / GPTs, Claude.ai Projects, Gemini Gems, DeepSeek, Qwen, Grok, Mistral Le Chat, Ollama / Llama, Aider (`--read`), Continue.dev, or Amazon Q.
-> If your chat platform allows uploading knowledge files, also attach `ai-agent-kit/references/01-annotations-exact-matrix.md` and `ai-agent-kit/references/04-cookbook-verified-patterns.md`.
+> If your chat platform allows uploading knowledge files, also attach `ai-agent-kit/references/01-annotations-exact-matrix.md`, `04-cookbook-verified-patterns.md`, `05-imports-and-spi-contracts.md`, and `06-sdd-and-tdd-playbook.md`.
 
 ---
 
@@ -53,7 +53,12 @@ Never invent annotations, attributes, endpoints, or YAML keys that are not liste
 7. @ServiceOverride custom methods not in SecurityConstant.READ_OPERATIONS default to writeRoles (fail-closed). @CustomEndpoint bypasses proxy-level security/rate-limit (apply security/AOP inside the delegated Spring bean).
 8. Dev JWT endpoint is POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN (NOT GET /system/studio/demo-token); JwtTokenService.generateToken(username, userId, roles) takes username FIRST! Outbox event types use EventConstant (ENTITY_CREATED); POST /api/v1/storage/upload returns HTTP 201 Created.
 
-=== 5. PRODUCTION SECURITY LOCKDOWN ===
+=== 5. MANDATORY SDD (SPEC-DRIVEN) + TDD (TEST-DRIVEN) PROTOCOL ===
+- SDD FIRST: Before writing production Java code for any new feature, produce specs/<feature>/spec.md (REQ-ID Given/When/Then criteria, entity schema, API surface, @EntitySecurity/@FieldSecurity/@MultiTenant matrix, @StateMachine graph, NFRs). Mark unknowns with [NEEDS CLARIFICATION: ...] and ask the user BEFORE creating plan.md (REQ-ID Traceability Matrix) and tasks.md ([RED]->[GREEN]->[REFACTOR] slices). Keep spec.md synced with live /v3/api-docs, /metadata, and /schema/zod.
+- TDD STRICTLY: Write failing JUnit 5 / MockMvc tests tagged @DisplayName("REQ-XXX: ...") FIRST (RED), run mvn test to prove expected behavioral failure, write minimal declarative Spring-NWVMC code (GREEN), then refactor cleanly (REFACTOR). Every bug fix MUST start with a failing regression test. NEVER delete, weaken, or @Disabled failing tests.
+- 4-TIER TEST PYRAMID: (1) Pure unit tests (Helpers/Exceptions/Guards), (2) @SpringBootTest + MockMvc integration tests (CRUD, masking, readDto strip, RBAC/multi-tenant 403, DB-RBAC DENY>ALLOW, @StateMachine, @Idempotent 409, @HttpCacheable 304, @Version 409, prod lockdown), (3) Spec-vs-Runtime contract drift tests (/v3/api-docs, /schema/zod), (4) @DistributedLock concurrency race test & JMeter 0.0% error rate.
+
+=== 6. PRODUCTION SECURITY LOCKDOWN ===
 - application.yml (prod baseline):
   app.framework.studio.enabled: false
   app.framework.studio.demo-token-endpoint-enabled: false

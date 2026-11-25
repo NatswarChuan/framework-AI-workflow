@@ -1,7 +1,17 @@
-# Spring-NWVMC (`v0.1.0`) — Adoption & Zero-Defect Verification Checklist
+# Spring-NWVMC (`0.1.0`) — SDD, TDD & Zero-Defect Verification Checklist
 
 > **For AI Agents:** Execute every applicable section below as a hard gate before reporting a task complete.
-> **For Developers:** Use this checklist during PR review and production go-live sign-off.
+> **For Developers:** Use this checklist during spec sign-off, PR review, and production go-live.
+
+---
+
+## Phase 0 — SDD (Spec-Driven Development) Contract Gate (Before Coding!)
+
+- [ ] **Specification Authored (`specs/<feature-slug>/spec.md`):** Business goal, out-of-scope boundaries, testable `REQ-ID` (`Given / When / Then`) criteria, entity schema, API surface (`AutoApiController<E>` vs `AutoReadApi<E>` + `readDto`), security/tenant/DB-RBAC matrix, `@StateMachine` transitions, resilience/cache rules, and NFRs are explicitly written.
+- [ ] **Ambiguity Gate Cleared:** Zero unresolved `[NEEDS CLARIFICATION: ...]` markers remain; all open business questions confirmed with the stakeholder.
+- [ ] **Technical Plan & Traceability Ready (`plan.md`):** Every `REQ-ID` is mapped 1:1 to a target endpoint/class and concrete JUnit 5 / `MockMvc` test method (`REQ-ID ↔ Endpoint ↔ Test`).
+- [ ] **Atomic TDD Task List Ready (`tasks.md`):** Work is broken into vertical slices ordered `[RED] → [GREEN] → [REFACTOR] → [VERIFY]`.
+- [ ] **Living Spec Policy:** Any contract change discovered during implementation is synced back to `spec.md` in the same atomic commit.
 
 ---
 
@@ -74,17 +84,20 @@
 
 ---
 
-## Phase 6 — Automated Verification & Go-Live Gate
+## Phase 6 — TDD Red-Green-Refactor, Contract Drift & Go-Live Gate
 
-- [ ] **Unit Tests Pass:** Every new Helper, DTO builder (`fromXXX`/`toXXX`), Custom Exception, and Provider has isolated JUnit 5 tests covering Happy Path, Negative Path, and Null/Blank Guard Clauses.
-- [ ] **Integration Tests Pass (`MockMvc` / `@SpringBootTest`):** Verified live HTTP flows for:
-  - Entity CRUD + `@AutoSlug` / `@AutoCode` / `@UniqueField`
-  - `@FieldSecurity` (`ROLE_ADMIN` vs `ROLE_USER`) and `readDto` stripping
-  - `@StateMachine` valid transition (`200`) & illegal jump rejection (`4xx`)
+- [ ] **TDD Discipline Verified (RED → GREEN → REFACTOR):** Every new `REQ-ID` had a failing test (`@DisplayName("REQ-XXX: ...")`) observed **before** writing production code; every bug fix began with a failing regression test; zero assertions weakened or bypassed.
+- [ ] **Tier 1 — Fast Unit Tests Pass:** Every Helper, Service, DTO builder (`fromXXX`/`toXXX`), Custom Exception (`BaseBusinessException`), and Provider has isolated JUnit 5 + Mockito + AssertJ tests covering Happy Path, Negative Path, and Null/Blank Guard Clauses.
+- [ ] **Tier 2 — Contract, Security & Workflow Integration Tests Pass (`@SpringBootTest` + `MockMvc`):** Verified live HTTP flows (minting tokens via `jwtTokenService.generateToken(username, userId, roles)`) for:
+  - Entity CRUD + `@AutoSlug` / `@AutoCode` / `@UniqueField` (`201`/`200`/`400`/`409`)
+  - `@FieldSecurity` (`ROLE_ADMIN` vs `ROLE_USER`) and `readDto` field stripping (`$.data.costPrice` absent)
+  - `@EntitySecurity`, `@MultiTenant` (`403` missing header + cross-tenant IDOR), and DB-RBAC `DENY > ALLOW`
+  - `@StateMachine` valid transition (`200`), illegal jump rejection (`4xx`), and `deletableStates` guard
   - `@Idempotent` first call (`201`) & duplicate key replay (`409 Conflict`)
-  - `@DistributedLock` valid deduction (`200`) & over-reservation (`409 Conflict`)
-  - `@CustomEndpoint` & `@ServiceOverride` custom routes
-  - GraphQL query (`POST /api/v1/graphql`), Zod/TS codegen (`/schema/zod`, `/schema/client`), Spring AI (`/ai/query`), File Storage (`/storage/upload` → `download` → `delete`)
-- [ ] **Clean Build Green:** `mvn clean verify` passes with **0 Failures, 0 Errors, 0 Skipped** (no `@Disabled` tests).
-- [ ] **Load Test Verified (if JMeter configured):** Apache JMeter run achieves **0.0% Error Rate** and generates HTML report in `target/jmeter/reports/`.
-- [ ] **Documentation & Frontend Contracts Synced:** Any newly added entity/route/config is reflected in OpenAPI (`/v3/api-docs`), frontend TypeScript/Zod clients (`/schema/zod`, `/schema/client`), and project `README.md`.
+  - `@HttpCacheable` weak ETag (`200` → `If-None-Match` → `304 Not Modified`) & `@Version` stale write (`409 Conflict`)
+  - `@CustomEndpoint` & `@ServiceOverride` custom routes, plus `prod` lockdown (`/system/studio` `401`/`404`, `/api/v1/auth/token` `404`)
+  - GraphQL (`POST /api/v1/graphql`), Spring AI (`/ai/query`), File Storage (`/storage/upload` `201` → `download` → `delete`)
+- [ ] **Tier 3 — Spec-to-Runtime Contract Drift Gate Pass:** Automated assertions confirm `/v3/api-docs`, `/api/v1/{entity}/metadata`, `/schema/zod`, `/schema/client`, and `/api/v1/graphql/schema` match `spec.md` with zero leaked internal fields.
+- [ ] **Tier 4 — Concurrency & Load SLA Verified:** Multi-threaded race test verifies `@DistributedLock` prevents overselling/double-spend; Apache JMeter run (`mvn jmeter:jmeter jmeter:results`, when configured) achieves **0.0% Error Rate** with HTML report in `target/jmeter/reports/`.
+- [ ] **Clean Build Green:** `mvn clean verify` passes with **0 Failures, 0 Errors, 0 Skipped** (zero `@Disabled` tests).
+- [ ] **Living Spec & Frontend Contracts Synced:** `specs/<feature-slug>/spec.md`, OpenAPI (`/v3/api-docs`), frontend TypeScript/Zod clients (`/schema/zod`, `/schema/client`), and project `README.md` are 100% synchronized.

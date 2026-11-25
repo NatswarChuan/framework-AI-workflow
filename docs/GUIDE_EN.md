@@ -234,7 +234,7 @@ For the exhaustive specification of every attribute, Java type, default value, *
 
 > Full guide: [07. AI-Agent Adoption Kit](topics/en/07_AI_AGENT_ADOPTION_KIT.md) · Interactive portal: [`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · LLM index: [`llms.txt`](../llms.txt)
 
-Use the model-agnostic **AI-Agent Adoption Kit** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 5 machine-verified `references/01..05`, and 8 drop-in `adapters/`) so **any AI coding agent or LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) integrates Spring-NWVMC `v0.1.0` accurately without hallucinating annotations or hitting runtime pitfalls:
+Use the model-agnostic **SDD + TDD AI-Agent Adoption Kit** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 6 machine-verified `references/01..06` including the **SDD & TDD Playbook**, starter templates in `templates/{spec,plan,tasks}.template.md`, and 8 drop-in `adapters/`) so **any AI coding agent or LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) delivers Spring-NWVMC `0.1.0` features spec-first and test-first with zero hallucinated annotations or runtime pitfalls:
 
 ```bash
 # Windows (PowerShell — run directly inside your Spring Boot project root, zero clone needed)

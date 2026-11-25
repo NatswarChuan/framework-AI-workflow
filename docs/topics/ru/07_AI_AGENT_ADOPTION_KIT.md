@@ -11,10 +11,10 @@
 | Файл / Каталог | Назначение |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Обзор архитектуры: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` и JitPack `v0.1.0`, контракт 2 каталогов (`entity/` + `controller/`), 9 составных интерфейсов, 6 пакетов аннотаций и 11 встроенных подсистем |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Строгие защитные правила от галлюцинаций (`13.6 KB`, строго в пределах `24 KB`) с каждой подтверждённой ловушкой runtime |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Строгие защитные правила от галлюцинаций (`17.2 KB`, строго в пределах `24 KB`) с каждой подтверждённой ловушкой runtime |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Поэтапный навык `spring-nwvmc-adoption` с 6 рабочими сценариями и матрицей диагностики 10 типовых сбоев |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6-этапный чек-лист приёмки перед релизом (Pre-Flight -> Проектирование -> Ловушки Runtime -> Блокировка продакшена -> Производительность -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..05`](../../../ai-agent-kit/references/) | 5 глубоких справочников с машинной проверкой (60 аннотаций / 133 атрибута, 40 эндпоинтов + 13 точечных операторов, YAML + мульти-БД, рецепты с `@MultiTenant` + DB-RBAC из 4 сущностей + `JwtTokenService`, и точные импорты классов/SPI) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 глубоких справочников с машинной проверкой (60 аннотаций / 133 атрибута, 40 эндпоинтов + 13 точечных операторов, YAML + мульти-БД, рецепты с `@MultiTenant` + DB-RBAC из 4 сущностей + `JwtTokenService`, и точные импорты классов/SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Индексы стандарта `llmstxt.org` для автоматических краулеров и ИИ-агентов |
 
 ---
@@ -77,3 +77,13 @@ rm -rf /tmp/nwvmc-docs
 6. **JPA-сущности наследуют `BaseAuditEntity`** (UUIDv7 `id`, мягкое удаление, аудит и `@Version` встроены); запрещено вешать `@Data` на `@Entity` и придумывать `@SoftDelete`.
 7. **Автопути CamelCase и область `readDto`**: `ECommerceOrder` преобразуется в `/api/v1/e-commerce-orders`; контроллеры с `readDto = X.class` проецируют все ответы через `X`.
 8. **Продакшен-блокировка**: сохраняйте `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true` и `JWT_SECRET >= 32` байт UTF-8 в `application.yml` / `application-prod.yml` (включайте Studio только в `application-dev.yml`).
+
+---
+
+## 5. Протокол качества SDD (разработка по спецификациям) и TDD (разработка через тестирование)
+
+Каждый адаптер и рабочий процесс закрепляет подход Spec-First + Test-First с помощью `references/06-sdd-and-tdd-playbook.md` и шаблонов `templates/{spec,plan,tasks}.template.md`, исключая скрытые допущения ИИ и расхождение контрактов.
+
+- **SDD — Разработка по спецификациям (`specs/<feature>/`):** 6 этапов (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): оформите `spec.md` с критериями `REQ-ID` (`Given/When/Then`), остановитесь на `[NEEDS CLARIFICATION]` до подтверждения, постройте матрицу трассировки 1:1 в `plan.md` и сверьте с `/v3/api-docs`, `/metadata` и `/schema/zod`.
+- **TDD — Red → Green → Refactor (4-уровневая пирамида тестов):** Сначала напишите падающий тест JUnit 5 / `MockMvc` с `@DisplayName("REQ-XXX: ...")` (для багов — регрессионный тест), затем минимальный декларативный код до GREEN и рефакторинг. Покрывает 4 уровня: Unit, Безопасность/Workflow, Дрейф контрактов и Конкурентность `@DistributedLock` + JMeter `0.0%`, без `@Disabled`.
+- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

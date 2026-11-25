@@ -1,11 +1,13 @@
 {
   "name": "spring-nwvmc-docs",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/sync-pages.mjs prepare && vite",
+    "prebuild": "node scripts/sync-pages.mjs prepare",
     "build": "tsc -b && vite build",
+    "postbuild": "node scripts/sync-pages.mjs publish",
     "preview": "vite preview"
   },
   "dependencies": {

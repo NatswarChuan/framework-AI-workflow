@@ -1,0 +1,42 @@
+# Windsurf Rules — Spring-NWVMC (v0.1.0)
+
+This project uses Spring-NWVMC (com.github.NatswarChuan:Spring-NWVMC:v0.1.0 via JitPack) on Java 21 LTS and Spring Boot 3.x.
+
+## Reference Knowledge Base (Read On Demand)
+Before writing annotations, YAML keys, or custom routes, inspect `.agents/skills/spring-nwvmc-adoption/`:
+- `SKILL.md` — Workflows & troubleshooting table
+- `INTRO.md` — 2-Directory Contract & 9 composable API interfaces
+- `RULES.md` — Full consumer guardrails
+- `CHECKLIST.md` — Pre-handover verification checklist
+- `references/01-annotations-exact-matrix.md` — 60 exact annotations across 6 packages & 133 attributes
+- `references/02-endpoints-and-query-dsl.md` — 40 auto-endpoints & 13 dot-syntax filter operators
+- `references/03-yaml-properties-and-profiles.md` — Exact `app.framework.*` properties & profiles
+- `references/04-cookbook-verified-patterns.md` — Verified Java/YAML/test patterns
+- `references/05-imports-and-spi-contracts.md` — Exact non-annotation class, constant & SPI imports/signatures
+
+## Mandatory Rules
+1. Require Java 21 LTS and `<parameters>true</parameters>` in `maven-compiler-plugin`.
+2. Follow the 2-Directory Contract:
+   - `entity/`: JPA `@Entity` extending `BaseAuditEntity`. NEVER use `@Data` on JPA entities (`@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder @EqualsAndHashCode(callSuper = true)`). NEVER invent `@SoftDelete` (soft-delete, UUIDv7 `id`, and `@Version` come from `BaseAuditEntity`).
+   - `controller/`: `@AutoRestController` interface extending `AutoApiController<E>` or narrow interfaces (`AutoReadApi<E>`..`AutoAiApi<E>`). Do NOT write manual CRUD repositories/services/controllers for auto-managed entities.
+3. Only import annotations from the 6 real packages:
+   - `io.github.natswarchuan.core.annotation.*` (54)
+   - `io.github.natswarchuan.module.cache.http.annotation.HttpCacheable`
+   - `io.github.natswarchuan.module.datasource.annotation.{TargetDataSource, TargetDatabasePlatform}`
+   - `io.github.natswarchuan.module.event.annotation.PublishCloudEvent`
+   - `io.github.natswarchuan.module.lock.annotation.DistributedLock`
+   - `io.github.natswarchuan.module.webhook.annotation.EntityWebhook`
+4. Verified Runtime Pitfalls (NEVER Break):
+   - `@StateMachine.transitions`: colon syntax `"CREATED:PENDING_PAYMENT,CANCELLED"`, NEVER `"FROM -> TO"`. Invoke transitions via `POST /api/v1/{entity}/{id}/transition?targetState=...`, NEVER JSON body.
+   - Query operators: dot syntax (`retailPrice.gte=1000&productName.like=MacBook`), NEVER `__gte`.
+   - CamelCase base paths: `ECommerceOrder` -> `/api/v1/e-commerce-orders` (or set explicit `basePath`).
+   - Inject framework `@AutoComponent` helpers (`DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`) via `ObjectProvider<T>` and call `.getObject()` at runtime.
+   - Consumer `@Service` beans using `@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, or `@TargetDataSource` MUST be non-final and `@Lazy` (class + method `@TargetDataSource` for `REPLICA` on `v0.1.0`), AND callers injecting them MUST use `ObjectProvider<MyService>` or `@Lazy`. NEVER put `@Transactional` on `public final class` Helpers.
+   - Dev JWT endpoint is `POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN`; `JwtTokenService.generateToken(username, userId, roles)` takes `username` FIRST.
+   - Controllers with `readDto = X.class` project ALL responses through `X`; put custom DTO endpoints on a controller without `readDto`.
+   - `@ServiceOverride` custom methods default to `writeRoles` (fail-closed); `@CustomEndpoint` dispatches directly to the delegated Spring bean (place security/AOP on the delegated bean).
+   - Outbox event types use `EventConstant` (`ENTITY_CREATED`); `POST /api/v1/storage/upload` returns `201 Created`.
+5. Production Lockdown:
+   - Keep `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true`, and `JWT_SECRET >= 32` bytes in `application.yml` / `application-prod.yml`. Enable Dev Studio only in `application-dev.yml`.
+   - Protect every business entity with `@EntitySecurity(...)` and sensitive columns with `@FieldSecurity(...)`.
+   - Run `mvn clean verify` (`0` failures, `0` `@Disabled`) and check `CHECKLIST.md` before completing any task.

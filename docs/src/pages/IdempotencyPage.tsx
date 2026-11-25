@@ -4,7 +4,9 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
-import { UI_LABELS, pickText } from '../data/locales';
+import { RichDocText } from '../components/RichDocText';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { STAGE5_CONTENT } from '../data/pages/stage5Content';
 
 interface PageProps {
   currentLang: SupportedLanguage;
@@ -13,17 +15,16 @@ interface PageProps {
 
 const IDEMPOTENCY_FLOW = `sequenceDiagram
   participant Client
-  participant Aspect as IdempotencyAspect
-  participant Store as IdempotencyManagerHelper
-  Client->>Aspect: POST /api/v1/orders (X-Idempotency-Key: k-101)
-  Aspect->>Store: Lookup SHA-256 fingerprint for k-101
-  alt First Request (MISS)
-    Aspect-->>Client: Proceed, set X-Idempotency-Status: MISS
-    Aspect->>Store: Persist response for ttlSeconds (default 300s)
-  else Duplicate Same Payload (HIT)
-    Aspect-->>Client: Return cached response (X-Idempotency-Status: HIT)
-  else Same Key Different Body
-    Aspect-->>Client: 409 Conflict (error.idempotency.payload_mismatch)
+  participant Guard as ProxyIdempotencyGuardHelper
+  participant Cache as Caffeine Cache (TTL 86400s)
+  Client->>Guard: POST /api/v1/payment-transactions (X-Idempotency-Key: k-101)
+  alt Missing or Blank Key
+    Guard-->>Client: Bypass idempotency guard and proceed directly
+  else Fresh Key (Not in Cache)
+    Guard->>Cache: Record in-flight key with ttlSeconds
+    Guard-->>Client: 201 Created (PaymentTransaction persisted)
+  else Duplicate or Concurrent Key within TTL
+    Guard-->>Client: 409 Conflict (ConflictBusinessException)
   end`;
 
 export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dark' }) => {
@@ -35,7 +36,7 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
         badges={[
           { label: '@Idempotent', tone: 'emerald' },
           { label: 'X-Idempotency-Key', tone: 'blue' },
-          { label: 'SHA-256 Payload Match', tone: 'amber' },
+          { label: pickText(STAGE5_CONTENT.idBadgeSha, currentLang), tone: 'amber' },
         ]}
       />
 
@@ -43,12 +44,13 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
         {pickText(UI_LABELS.stepGoal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
-        <code>IdempotencyAspect</code> and <code>IdempotencyManagerHelper</code> guard mutating endpoints against double submits and retry storms. Every request carrying <code>X-Idempotency-Key</code> is fingerprinted using SHA-256; retries with matching payloads receive cached responses marked <code>X-Idempotency-Status: HIT</code>, while mutated payloads trigger <code>IdempotencyException</code> (<code>409 Conflict</code>).
+        <RichDocText text={STAGE5_CONTENT.idGoalBody} currentLang={currentLang} />
       </p>
 
       <MermaidDiagram
         theme={theme}
-        caption="Idempotency Check & SHA-256 Fingerprint Verification Flow"
+        currentLang={currentLang}
+        caption={pickText(STAGE5_CONTENT.idMermaidCaption, currentLang)}
         chart={IDEMPOTENCY_FLOW}
       />
 
@@ -60,31 +62,31 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
         <table className="doc-table">
           <thead>
             <tr>
-              <th>Component / Attribute</th>
-              <th>Default</th>
-              <th>Details</th>
+              <th>{pickText(STAGE5_CONTENT.idThComp, currentLang)}</th>
+              <th>{pickText(STAGE5_CONTENT.idThDef, currentLang)}</th>
+              <th>{pickText(STAGE5_CONTENT.idThDet, currentLang)}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><code>headerName</code> (on <code>@Idempotent</code>)</td>
+              <td><code>headerName</code> (<code>@Idempotent</code>)</td>
               <td><code>"X-Idempotency-Key"</code></td>
-              <td>HTTP header carrying caller deduplication key</td>
+              <td><RichDocText text={STAGE5_CONTENT.idRowHdr} currentLang={currentLang} /></td>
             </tr>
             <tr>
-              <td><code>ttlSeconds</code> (on <code>@Idempotent</code>)</td>
+              <td><code>ttlSeconds</code> (<code>@Idempotent</code>)</td>
               <td><code>300L</code></td>
-              <td>Record expiration window before key may be reused</td>
+              <td><RichDocText text={STAGE5_CONTENT.idRowTtl} currentLang={currentLang} /></td>
             </tr>
             <tr>
-              <td><code>X-Idempotency-Status</code></td>
-              <td><code>HIT</code> | <code>MISS</code> | <code>PROCESSING</code></td>
-              <td>Response header identifying duplicate replay vs initial write</td>
+              <td><code>ProxyIdempotencyGuardHelper</code></td>
+              <td><code>Dynamic Proxy</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.idRowStat} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>app.framework.aop.idempotency-enabled</code></td>
               <td><code>true</code></td>
-              <td>Global switch bound via <code>AopAuditProperties</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.idRowSwitch} currentLang={currentLang} /></td>
             </tr>
           </tbody>
         </table>
@@ -96,20 +98,94 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
 
       <CodeBlock
         currentLang={currentLang}
-        language="java"
-        fileName="controller/PaymentController.java"
-        highlightLines={[4]}
-        code={`@AutoRestController(path = "/api/v1/payments")
-public interface PaymentController extends AutoApiController<PaymentTransaction> {
+        tabs={[
+          {
+            id: 'idempotent-controller',
+            label: 'PaymentTransactionController.java (@Idempotent)',
+            language: 'java',
+            fileName: 'src/main/java/com/example/implementation/controller/PaymentTransactionController.java',
+            highlightLines: [11, 12, 13, 14],
+            code: `package com.example.implementation.controller;
 
-  @Idempotent(headerName = "X-Idempotency-Key", ttlSeconds = 300L)
-  @AutoPost("/capture")
-  ApiResponse<PaymentTransaction> capturePayment(@Valid @AutoBody CaptureRequestDto request);
-}`}
+import com.example.implementation.entity.PaymentTransaction;
+import io.github.natswarchuan.common.constant.AopConstant;
+import io.github.natswarchuan.common.constant.HttpHeaderConstant;
+import io.github.natswarchuan.core.annotation.AutoRestController;
+import io.github.natswarchuan.core.annotation.Idempotent;
+import io.github.natswarchuan.core.controller.AutoApiController;
+
+@AutoRestController
+@Idempotent(
+    headerName = HttpHeaderConstant.HEADER_IDEMPOTENCY_KEY,
+    ttlSeconds = AopConstant.SECONDS_PER_DAY)
+public interface PaymentTransactionController extends AutoApiController<PaymentTransaction> {
+  // Auto-mounted at /api/v1/payment-transactions; duplicate X-Idempotency-Key returns 409 Conflict!
+}`,
+          },
+          {
+            id: 'idempotent-entity',
+            label: 'PaymentTransaction.java',
+            language: 'java',
+            fileName: 'src/main/java/com/example/implementation/entity/PaymentTransaction.java',
+            highlightLines: [17, 18],
+            code: `package com.example.implementation.entity;
+
+import io.github.natswarchuan.common.entity.BaseAuditEntity;
+import io.github.natswarchuan.core.annotation.AutoCode;
+import io.github.natswarchuan.core.annotation.UniqueField;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@Table(name = "tbl_payment_transactions")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder
+public class PaymentTransaction extends BaseAuditEntity {
+
+  @UniqueField @AutoCode(prefix = "TXN-")
+  private String transactionReference;
+
+  @NotBlank private String orderCode;
+  @NotBlank private String paymentMethod;
+  @NotNull @DecimalMin("0.01") private BigDecimal amount;
+  private String currency;
+  @NotBlank private String status;
+  private String gatewayProvider;
+}`,
+          },
+          {
+            id: 'idempotent-curl',
+            label: 'Try Live (curl)',
+            language: 'bash',
+            fileName: '09b-verify-payment-idempotency.sh',
+            code: `KEY="0194e1a0-7f20-7000-8000-000000000101"
+
+# 1st attempt -> HTTP 201 Created (generates TXN-XXXXXXXX automatically via @AutoCode)
+curl -i -X POST "http://localhost:8080/api/v1/payment-transactions" \\
+  -H "Authorization: Bearer $ADMIN_TOKEN" \\
+  -H "X-Idempotency-Key: $KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"orderCode":"ORD-B2C2B2C-DOC01","paymentMethod":"CREDIT_CARD","amount":2414.00,"currency":"USD","status":"CAPTURED","gatewayProvider":"STRIPE"}'
+
+# 2nd attempt with the SAME X-Idempotency-Key -> HTTP 409 Conflict (zero double-charge!)
+curl -i -X POST "http://localhost:8080/api/v1/payment-transactions" \\
+  -H "Authorization: Bearer $ADMIN_TOKEN" \\
+  -H "X-Idempotency-Key: $KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"orderCode":"ORD-B2C2B2C-DOC01","paymentMethod":"CREDIT_CARD","amount":2414.00,"currency":"USD","status":"CAPTURED","gatewayProvider":"STRIPE"}'`,
+          },
+        ]}
       />
 
+      <h2 id="idempotency-notes" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
+
       <Callout type="warning" currentLang={currentLang}>
-        Error codes emitted on violations are internationalized via <code>i18n/messages*.properties</code>: <code>error.idempotency.key_missing</code>, <code>error.idempotency.payload_mismatch</code>, and <code>error.idempotency.concurrent_processing</code>.
+        <RichDocText text={STAGE5_CONTENT.idCalloutWarn} currentLang={currentLang} />
       </Callout>
     </article>
   );

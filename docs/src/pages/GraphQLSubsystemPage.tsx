@@ -3,7 +3,9 @@ import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
+import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
+import { STAGE4_CONTENT } from '../data/pages/stage4Content';
 
 interface PageProps {
   currentLang: SupportedLanguage;
@@ -17,7 +19,7 @@ export const GraphQLSubsystemPage: React.FC<PageProps> = ({ currentLang }) => {
         currentLang={currentLang}
         badges={[
           { label: 'GraphQLDynamicApiController', tone: 'purple' },
-          { label: 'Auto SDL Schema', tone: 'blue' },
+          { label: pickText(STAGE4_CONTENT.gqlBadgeSchema, currentLang), tone: 'blue' },
           { label: 'DynamicGraphQLExecutionHelper', tone: 'emerald' },
         ]}
       />
@@ -26,7 +28,7 @@ export const GraphQLSubsystemPage: React.FC<PageProps> = ({ currentLang }) => {
         {pickText(UI_LABELS.stepGoal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
-        <code>GraphQLDynamicApiController</code> mirrors every registered REST entity onto <code>/api/v1/graphql</code>. <code>DynamicGraphQLSchemaGeneratorHelper</code> introspects JPA metadata to produce typed GraphQL SDL documents on <code>GET /api/v1/graphql/schema</code> without writing manual resolver classes or schema files.
+        <RichDocText text={STAGE4_CONTENT.gqlGoalBody} currentLang={currentLang} />
       </p>
 
       <h2 id="graphql-endpoints" className="section-heading">
@@ -37,26 +39,26 @@ export const GraphQLSubsystemPage: React.FC<PageProps> = ({ currentLang }) => {
         <table className="doc-table">
           <thead>
             <tr>
-              <th>Endpoint</th>
-              <th>Helper Class</th>
-              <th>Visibility &amp; Function</th>
+              <th>{pickText(STAGE4_CONTENT.gqlThEndpoint, currentLang)}</th>
+              <th>{pickText(STAGE4_CONTENT.gqlThHelper, currentLang)}</th>
+              <th>{pickText(STAGE4_CONTENT.gqlThFunc, currentLang)}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><code>GET /api/v1/graphql/schema</code></td>
               <td><code>DynamicGraphQLSchemaGeneratorHelper</code></td>
-              <td>Generates complete GraphQL Schema Definition Language (SDL) from active JPA entities</td>
+              <td><RichDocText text={STAGE4_CONTENT.gqlRowSchema} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>POST /api/v1/graphql</code></td>
               <td><code>DynamicGraphQLExecutionHelper</code></td>
-              <td>Parses <code>GraphQLRequestDto</code> and delegates queries/mutations to <code>DynamicEntityCrudService</code></td>
+              <td><RichDocText text={STAGE4_CONTENT.gqlRowExec} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>GET /api/v1/graphql/explorer</code></td>
               <td><code>GraphQLDynamicApiController</code></td>
-              <td>Interactive HTML console marked <code>@Hidden</code> in Swagger OpenAPI 3.0</td>
+              <td><RichDocText text={STAGE4_CONTENT.gqlRowExplorer} currentLang={currentLang} /></td>
             </tr>
           </tbody>
         </table>
@@ -73,30 +75,41 @@ export const GraphQLSubsystemPage: React.FC<PageProps> = ({ currentLang }) => {
             id: 'graphql-query',
             label: 'POST /api/v1/graphql',
             language: 'graphql',
-            fileName: 'query-products.graphql',
-            code: `query ListActiveProducts($page: Int, $size: Int) {
-  findAllProductCatalog(page: $page, size: $size) {
+            fileName: 'marketplace-catalog-and-tags.graphql',
+            code: `query ListMarketplaceCatalogAndTags {
+  listProductCatalogs {
+    id
+    skuCode
+    productName
+    retailPrice
+  }
+  listTags {
     id
     code
-    name
-    unitPrice
+    label
   }
 }`,
           },
           {
             id: 'graphql-curl',
-            label: 'cURL Example',
+            label: pickText(STAGE4_CONTENT.gqlTabCurl, currentLang),
             language: 'bash',
-            fileName: 'graphql-request.sh',
-            code: `curl -X POST http://localhost:8080/api/v1/graphql \\
+            fileName: '06-graphql-marketplace.sh',
+            code: `# 1. Inspect the auto-generated GraphQL SDL schema
+curl -s "http://localhost:8080/api/v1/graphql/schema" \\
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+# 2. Fetch ProductCatalog and Tag fields in one single GraphQL round-trip
+curl -s -X POST "http://localhost:8080/api/v1/graphql" \\
+  -H "Authorization: Bearer $ADMIN_TOKEN" \\
   -H "Content-Type: application/json" \\
-  -d '{"query":"{ findAllTag(page: 0, size: 10) { id name } }"}'`,
+  -d '{"query":"query { listProductCatalogs { id skuCode productName retailPrice } listTags { id code label } }"}' | jq`,
           },
         ]}
       />
 
       <Callout type="note" currentLang={currentLang}>
-        GraphQL queries reuse the exact same entity-level row security (<code>@EntitySecurity</code>) and field masking policies (<code>@FieldSecurity</code>) enforced on REST endpoints.
+        <RichDocText text={STAGE4_CONTENT.gqlCalloutNote} currentLang={currentLang} />
       </Callout>
     </article>
   );

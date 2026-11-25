@@ -1,6 +1,6 @@
-# 05. 8 SPI Customizer Interfaces, `@CustomEndpoint` & `@ServiceOverride` (`1.0.0`)
+# 05. 8 SPI Customizer Interfaces, `@CustomEndpoint` & `@ServiceOverride` (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../05_SPRING_ECOSYSTEM_SPIS.md) | [Complete Manual](../GUIDE_EN.md)
+> **Language**: English | [Tiếng Việt](../05_SPRING_ECOSYSTEM_SPIS.md) | [Complete Manual](../../GUIDE_EN.md)
 
 ---
 
@@ -19,7 +19,7 @@ All extension hooks under `io.github.natswarchuan.customization.customizer` expo
 | 7 | `ArchitectureExtensionCustomizer` | `ArchitectureCustomizerContextDto` | Custom endpoints, GraphQL extensions & i18n customization |
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` bucket policies, pre-signed URLs & upload limits |
 
-Active registered beans inspect cleanly via `GET /api/v1/system/customizers`.
+Active registered beans across the `7` core telemetry groups (`CustomizerGroupConstant`) inspect cleanly via `GET /api/v1/system/customizers` (`StorageCustomizer` is managed separately via `StorageCustomizerRegistryHelper`).
 
 ---
 
@@ -28,7 +28,7 @@ Active registered beans inspect cleanly via `GET /api/v1/system/customizers`.
 ### Custom Domain Endpoint via `@CustomEndpoint`
 
 ```java
-@AutoRestController(path = "/api/v1/advanced-enterprise")
+@AutoRestController(basePath = "/api/v1/advanced-enterprise")
 public interface AdvancedEnterpriseBusinessController extends AutoApiController<CustomerOrder> {
 
   @CustomEndpoint(
@@ -45,16 +45,16 @@ public interface AdvancedEnterpriseBusinessController extends AutoApiController<
 ### Method-Level Escape Hatch via `@ServiceOverride`
 
 ```java
-@AutoRestController(path = "/api/v1/tags")
+@AutoRestController(basePath = "/api/v1/tags")
 public interface TagController extends AutoApiController<Tag> {
 
   @ServiceOverride(
-      beanName = "tagCustomOverrideService",
-      methodName = "getCustomTagStats",
+      targetBean = TagEscapeHatchHelper.class,
+      methodName = "buildTaxonomyStats",
       bypassAutoDispatch = true
   )
   @AutoGet("/showcase/escape-hatch-stats")
-  ApiResponse<String> getCustomTagStats();
+  ApiResponse<Map<String, String>> getTaxonomyEscapeHatchStats();
 }
 ```
 
@@ -62,4 +62,4 @@ public interface TagController extends AutoApiController<Tag> {
 
 ## 3. Outbound HTTP Client (`ThirdPartyRestClientHelper`)
 
-`ThirdPartyRestClientHelper` dispatches outbound HTTP calls reflectively via Spring 6 `RestClient` (or standard Java 21 `java.net.http.HttpClient`), automatically propagating `X-Request-ID` and W3C `traceparent` headers from active MDC context.
+`ThirdPartyRestClientHelper` dispatches outbound HTTP calls via its default Java 21 `java.net.http.HttpClient` mode or optional Spring 6 `RestClient` (`RestClientConfig`), injecting `X-Request-ID`, W3C `traceparent`, and `tracestate` headers from active MDC context in both modes.

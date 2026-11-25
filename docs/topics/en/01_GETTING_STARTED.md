@@ -1,17 +1,17 @@
-# 01. Getting Started, Two-Directory Contract & Fail-Fast Diagnostics (`1.0.0`)
+# 01. Getting Started, Two-Directory Contract & Fail-Fast Diagnostics (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../01_GETTING_STARTED.md) | [Complete Manual](../GUIDE_EN.md)
+> **Language**: English | [Tiếng Việt](../01_GETTING_STARTED.md) | [Complete Manual](../../GUIDE_EN.md)
 
 ---
 
 ## 1. Strict Two-Directory Domain Contract (`entity/` & `controller/`)
 
-Applications built with **`io.github.natswarchuan:spring-nwvmc:1.0.0`** structure domain domains into two directories:
+Applications built with **`io.github.natswarchuan:spring-nwvmc:0.1.0`** organize business domains into two directories:
 
-1. `entity/`: JPA domain entities extending `BaseAuditEntity`, carrying Bean Validation constraints (`jakarta.validation.constraints.*`), B-Tree indexes, and declarative annotations (`@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@AuditTrail`, `@MultiTenant`).
-2. `controller/`: Marker interfaces annotated with `@AutoRestController` extending `AutoApiController<E>`.
+1. `entity/`: JPA domain entities extending `BaseAuditEntity` (built-in UUIDv7 PK and `@Version` optimistic locking), carrying Bean Validation constraints (`jakarta.validation.constraints.*`), B-Tree indexes, and declarative annotations (`@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@AuditTrail`, `@MultiTenant`).
+2. `controller/`: Marker interfaces annotated with `@AutoRestController` extending `AutoApiController<E>` or composable subsets such as `AutoReadApi<E>` (also supporting standard Spring MVC `@RequestBody`/`@RequestParam`/`@PathVariable`).
 
-Domain workflows beyond generic CRUD live in `Service` interfaces and independent `@AutoService` / `@AutoComponent` `public final class` `Helper` beans routed via `@CustomEndpoint` or `@ServiceOverride`.
+Domain workflows beyond generic CRUD live in `Service` interfaces and independent Spring `@Service` / `@Component` `public final class` `Helper` beans routed via `@CustomEndpoint` or `@ServiceOverride` (`@AutoService` / `@AutoComponent` only scan `"io.github.natswarchuan"`, and add `@EntityScan` when entities live outside `io.github.natswarchuan`, `com.example`, `io.github`).
 
 ---
 
@@ -26,7 +26,7 @@ Domain workflows beyond generic CRUD live in `Service` interfaces and independen
   <dependency>
     <groupId>io.github.natswarchuan</groupId>
     <artifactId>spring-nwvmc</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
   </dependency>
 </dependencies>
 ```
@@ -45,7 +45,7 @@ For direct GitHub builds via [JitPack](https://jitpack.io):
   <dependency>
     <groupId>com.github.NatswarChuan</groupId>
     <artifactId>Spring-NWVMC</artifactId>
-    <version>v1.0.0</version>
+    <version>v0.1.0</version>
   </dependency>
 </dependencies>
 ```
@@ -54,7 +54,7 @@ For direct GitHub builds via [JitPack](https://jitpack.io):
 
 ## 3. Production Baseline Configuration (`application.yml`)
 
-`spring-boot-configuration-processor` ships `META-INF/spring-configuration-metadata.json` for `app.framework.*` and `spring-nwvmc.human-policies`:
+`spring-boot-configuration-processor` ships `META-INF/spring-configuration-metadata.json` (`18` metadata groups from `16` `@AutoConfigurationBean`/`@ConfigurationProperties` classes across `20` `*Properties` models under `app.framework.*` and `spring-nwvmc.human-policies`; legacy top-level fields on `ControllerToApiProperties` such as `base-path-prefix`, `default-page-size`, `max-page-size`, `eager-fetch-singular-relations` remain boot-validated compatibility fields while live routes use `@AutoRestController(basePath = ...)` and query limits use `app.framework.query-guardrails.*`):
 
 ```yaml
 spring:
@@ -66,14 +66,12 @@ spring:
 
 app:
   framework:
-    base-path-prefix: /api/v1
-    default-page-size: 20
-    max-page-size: 100
-    eager-fetch-singular-relations: true
     query-guardrails:
       max-join-depth: 3
       max-filter-criteria: 25
       max-page-size: 200
+      max-unpaged-fetch-limit: 5000
+      eager-fetch-singular-relations: true
     security:
       enabled: true
       jwt-secret: ${JWT_SECRET}
@@ -85,18 +83,17 @@ app:
       enabled: false
       demo-token-endpoint-enabled: false
       show-i18n-diagnostics: false
-      hide-framework-fingerprint: true
 ```
 
 ---
 
 ## 4. Granular Endpoint Filtering (`enabledEndpoints` & `disabledEndpoints`)
 
-`EndpointFeatureFilterHelper` matches case-insensitively against method names on `AutoApiController<E>` or functional feature groups (`READ`, `WRITE`, `DELETE`, `BATCH`, `ANALYTICS`, `EXPORT`, `AI`, `STREAM`, `SCHEMA`, `SUB_RESOURCE`):
+`EndpointFeatureFilterHelper` matches case-insensitively by exact method name on `AutoApiController<E>` (`equalsIgnoreCase(methodName)`, e.g. `batchChunked`, `deleteById`, `importCsv`):
 
 ```java
 @AutoRestController(
-    path = "/api/v1/commercial-products",
+    basePath = "/api/v1/commercial-products",
     disabledEndpoints = {"batchChunked", "deleteById", "importCsv"},
     enableNestedSubResources = true
 )

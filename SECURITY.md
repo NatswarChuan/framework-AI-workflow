@@ -4,7 +4,7 @@
 
 | Version | Supported |
 | :--- | :--- |
-| `1.0.x` | Supported |
+| `0.0.x` | Supported |
 | `0.0.x` | End of support |
 
 ## Production Security Hardening Checklist

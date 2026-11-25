@@ -4,7 +4,9 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
-import { UI_LABELS, pickText } from '../data/locales';
+import { RichDocText } from '../components/RichDocText';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { STAGE2_CONTENT } from '../data/pages/stage2Content';
 
 interface PageProps {
   currentLang: SupportedLanguage;
@@ -12,13 +14,13 @@ interface PageProps {
 }
 
 const PROXY_FLOW_CHART = `flowchart TD
-  Start[DynamicControllerProxyRegistrarHelper.register] --> Scan[Scan AutoApiController Interfaces]
-  Scan --> Filter[EndpointFeatureFilterHelper enabled/disabled]
-  Filter --> Bridge[SpringMvcEndpointBridge RequestMappingHandlerMapping]
-  Bridge --> Call[HTTP Call -> ControllerProxyInvocationHandler]
-  Call --> Check{@ServiceOverride present?}
-  Check -- Yes --> Escape[EscapeHatchDispatchHelper -> MethodHandleCacheUtil]
-  Check -- No --> Crud[DynamicEntityCrudService -> Transaction + JPA]`;
+  Start["DynamicControllerProxyRegistrarHelper\ncreateAndRegisterControllerProxy"] --> Scan["Scan AutoApiController Interfaces"]
+  Scan --> Filter["EndpointFeatureFilterHelper\nenabled / disabled"]
+  Filter --> Bridge["SpringMvcEndpointBridge\nRequestMappingHandlerMapping"]
+  Bridge --> Call["HTTP Request\nControllerProxyInvocationHandler"]
+  Call --> Check{"@ServiceOverride present?"}
+  Check -->|Yes| Escape["EscapeHatchDispatchHelper\nMethodHandleCacheUtil"]
+  Check -->|No| Crud["DynamicEntityCrudService\nTransaction + JPA"]`;
 
 export const DynamicProxyPage: React.FC<PageProps> = ({ currentLang, theme }) => {
   return (
@@ -29,7 +31,7 @@ export const DynamicProxyPage: React.FC<PageProps> = ({ currentLang, theme }) =>
         badges={[
           { label: 'MethodHandleCacheUtil', tone: 'emerald' },
           { label: 'LambdaAccessorUtil', tone: 'blue' },
-          { label: 'NwvmcRuntimeHintsRegistrar', tone: 'purple' },
+          { label: pickText(STAGE2_CONTENT.dpBadgeAot, currentLang), tone: 'purple' },
         ]}
       />
 
@@ -37,12 +39,13 @@ export const DynamicProxyPage: React.FC<PageProps> = ({ currentLang, theme }) =>
         {pickText(UI_LABELS.stepGoal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
-        <code>DynamicControllerProxyRegistrarHelper</code> instantiates one JDK Dynamic Proxy per controller interface backed by <code>ControllerProxyInvocationHandler</code> and registers its handler methods into Spring MVC via <code>SpringMvcEndpointBridge</code>. On the execution hot path, <code>MethodHandleCacheUtil</code> (plus <code>MethodHandle.asFixedArity()</code> for varargs methods such as <code>SecurityCustomizerProxyBridge</code>) replaces slow reflective <code>Method.invoke</code> calls.
+        <RichDocText text={STAGE2_CONTENT.dpGoalBody} currentLang={currentLang} />
       </p>
 
       <MermaidDiagram
         theme={theme}
-        caption="Dynamic Proxy Bootstrap & MethodHandle Hot-Path Dispatch"
+        currentLang={currentLang}
+        caption={pickText(STAGE2_CONTENT.dpMermaidCaption, currentLang)}
         chart={PROXY_FLOW_CHART}
       />
 
@@ -50,7 +53,7 @@ export const DynamicProxyPage: React.FC<PageProps> = ({ currentLang, theme }) =>
         {pickText(UI_LABELS.stepConfig, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
-        For GraalVM Native Image builds, <code>NwvmcRuntimeHintsRegistrar</code> (registered in <code>META-INF/spring/aot.factories</code> and activated via <code>@ImportRuntimeHints</code> on <code>ControllerToApiAutoConfiguration</code>) declares proxy interfaces, reflection hints for framework components and <code>i18n/messages*</code> resource bundles.
+        <RichDocText text={STAGE2_CONTENT.dpConfigBody} currentLang={currentLang} />
       </p>
 
       <CodeBlock
@@ -58,7 +61,7 @@ export const DynamicProxyPage: React.FC<PageProps> = ({ currentLang, theme }) =>
         language="properties"
         fileName="META-INF/spring/aot.factories"
         code={`org.springframework.aot.hint.RuntimeHintsRegistrar=\\
-io.github.natswarchuan.core.aot.NwvmcRuntimeHintsRegistrar`}
+io.github.natswarchuan.autoconfigure.NwvmcRuntimeHintsRegistrar`}
       />
 
       <h2 id="proxy-accessors" className="section-heading">
@@ -68,22 +71,22 @@ io.github.natswarchuan.core.aot.NwvmcRuntimeHintsRegistrar`}
       <CodeBlock
         currentLang={currentLang}
         language="java"
-        fileName="MethodHandleCacheUtil & LambdaAccessorUtil Usage"
+        fileName="MethodHandleCacheUtil.java + LambdaAccessorUtil.java"
         code={`// Cached unreflected MethodHandle lookup inside EscapeHatchDispatchHelper
-final MethodHandle handle = MethodHandleCacheUtil.resolveHandle(targetClass, targetMethod);
+final MethodHandle handle = MethodHandleCacheUtil.resolveMethodHandle(targetClass, "buildTaxonomyStats");
 final Object result = handle.bindTo(beanInstance).invokeWithArguments(args);
 
-// Zero-reflection property getter/setter handles via LambdaAccessorUtil
-final Function<Object, Object> getter = LambdaAccessorUtil.resolveGetter(entityClass, "status");
+// Zero-reflection property getter handle via LambdaAccessorUtil
+final Function<Object, Object> getter = LambdaAccessorUtil.resolveLambdaGetter(entityClass, "status");
 final Object statusValue = getter.apply(entity);`}
       />
 
       <h2 id="proxy-notes" className="section-heading">
-        {pickText(UI_LABELS.stepNotes, currentLang)}
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
       </h2>
 
       <Callout type="tip" currentLang={currentLang}>
-        When wrapping proxied bridge calls that take Java varargs (for example array parameters), convert handles with <code>asFixedArity()</code> in <code>MethodHandleCacheUtil</code> to prevent JVM <code>WrongMethodTypeException</code> during argument spread.
+        <RichDocText text={STAGE2_CONTENT.dpCalloutTip} currentLang={currentLang} />
       </Callout>
     </article>
   );

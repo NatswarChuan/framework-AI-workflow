@@ -3,7 +3,9 @@ import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
+import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
+import { STAGE6_CONTENT } from '../data/pages/stage6Content';
 
 interface PageProps {
   currentLang: SupportedLanguage;
@@ -26,7 +28,7 @@ export const WebSocketStompPage: React.FC<PageProps> = ({ currentLang }) => {
         {pickText(UI_LABELS.stepGoal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
-        Entity mutations publish real-time notifications simultaneously over Server-Sent Events (<code>GET /api/v1/{'{entity}'}/events</code>) and STOMP WebSockets configured by <code>WebSocketStompConfig</code> and <code>EntityEventWebSocketBroadcasterListener</code>.
+        <RichDocText text={STAGE6_CONTENT.wsGoalBody} currentLang={currentLang} />
       </p>
 
       <h2 id="ws-destinations" className="section-heading">
@@ -37,31 +39,31 @@ export const WebSocketStompPage: React.FC<PageProps> = ({ currentLang }) => {
         <table className="doc-table">
           <thead>
             <tr>
-              <th>Channel / Constant</th>
-              <th>Value / Pattern</th>
-              <th>Purpose</th>
+              <th>{pickText(STAGE6_CONTENT.wsThChannel, currentLang)}</th>
+              <th>{pickText(STAGE6_CONTENT.wsThPattern, currentLang)}</th>
+              <th>{pickText(STAGE6_CONTENT.wsThPurpose, currentLang)}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><code>WebSocketStompConstant.WS_ENDPOINT</code></td>
               <td><code>/ws-connect</code></td>
-              <td>STOMP WebSocket handshake endpoint</td>
+              <td><RichDocText text={STAGE6_CONTENT.wsRowWs} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>TOPIC_PREFIX</code> / <code>QUEUE_PREFIX</code></td>
               <td><code>/topic</code> · <code>/queue</code></td>
-              <td>Public broadcast topics and user-specific message queues</td>
+              <td><RichDocText text={STAGE6_CONTENT.wsRowBroker} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>APP_PREFIX</code></td>
               <td><code>/app</code></td>
-              <td>Application-routed inbound STOMP message destination prefix</td>
+              <td><RichDocText text={STAGE6_CONTENT.wsRowApp} currentLang={currentLang} /></td>
             </tr>
             <tr>
-              <td>Event Suffixes</td>
+              <td>{pickText(STAGE6_CONTENT.wsEventsLabel, currentLang)}</td>
               <td><code>/created</code>, <code>/updated</code>, <code>/deleted</code>, <code>/state-changed</code></td>
-              <td>Per-entity mutation sub-topics dispatched by <code>WebSocketEntityBroadcasterHelper</code></td>
+              <td><RichDocText text={STAGE6_CONTENT.wsRowEvents} currentLang={currentLang} /></td>
             </tr>
           </tbody>
         </table>
@@ -76,7 +78,7 @@ export const WebSocketStompPage: React.FC<PageProps> = ({ currentLang }) => {
         tabs={[
           {
             id: 'realtime-yml',
-            label: 'SSE Configuration',
+            label: pickText(STAGE6_CONTENT.wsTabYaml, currentLang),
             language: 'yaml',
             fileName: 'application.yml',
             code: `app:
@@ -88,7 +90,7 @@ export const WebSocketStompPage: React.FC<PageProps> = ({ currentLang }) => {
           },
           {
             id: 'sse-js',
-            label: 'Browser EventSource Client',
+            label: pickText(STAGE6_CONTENT.wsTabJs, currentLang),
             language: 'typescript',
             fileName: 'realtime-client.ts',
             code: `const source = new EventSource('/api/v1/product-catalogs/events');
@@ -100,7 +102,7 @@ source.addEventListener('UPDATED', (event) => {
       />
 
       <Callout type="tip" currentLang={currentLang}>
-        Active SSE and WebSocket client counts export directly under Micrometer gauge <code>framework.realtime.active.connections</code> via <code>DynamicEntityMetricsHelper</code>.
+        <RichDocText text={STAGE6_CONTENT.wsCalloutTip} currentLang={currentLang} />
       </Callout>
     </article>
   );

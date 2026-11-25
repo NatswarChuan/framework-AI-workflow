@@ -1,4 +1,4 @@
-# 01. Khởi Động Nhanh, Kiến Trúc Hai Thư Mục & Chẩn Đoán Fail-Fast (`1.0.0`)
+# 01. Khởi Động Nhanh, Kiến Trúc Hai Thư Mục & Chẩn Đoán Fail-Fast (`0.1.0`)
 
 > **Ngôn ngữ**: Tiếng Việt | [English](en/01_GETTING_STARTED.md) | [Sổ Tay Đầy Đủ](../GUIDE_VI.md)
 
@@ -6,12 +6,12 @@
 
 ## 1. Cấu Trúc Hai Thư Mục Domain (`entity/` & `controller/`)
 
-Ứng dụng Spring Boot dùng **`io.github.natswarchuan:spring-nwvmc:1.0.0`** chỉ cần hai thư mục domain chính:
+Ứng dụng Spring Boot dùng **`io.github.natswarchuan:spring-nwvmc:0.1.0`** chỉ cần hai thư mục domain chính:
 
-1. `entity/`: JPA Entity kế thừa `BaseAuditEntity`, khai báo Bean Validation (`jakarta.validation.constraints.*`), chỉ mục database và các annotation khai báo (`@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@AuditTrail`, `@MultiTenant`).
-2. `controller/`: Marker interface gắn `@AutoRestController` kế thừa `AutoApiController<E>`.
+1. `entity/`: JPA Entity kế thừa `BaseAuditEntity` (tích hợp UUIDv7 và `@Version` Optimistic Locking), khai báo Bean Validation (`jakarta.validation.constraints.*`), chỉ mục database và các annotation khai báo (`@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@AuditTrail`, `@MultiTenant`).
+2. `controller/`: Marker interface gắn `@AutoRestController` kế thừa `AutoApiController<E>` hoặc các capability interface thành phần như `AutoReadApi<E>` (hỗ trợ cả `@RequestBody`/`@RequestParam`/`@PathVariable` chuẩn Spring).
 
-Mọi nghiệp vụ vượt ra ngoài CRUD chuẩn đều được tách vào `Service` interface + `Helper` (`@AutoService` / `@AutoComponent`, `public final class`, không có hàm `private` hay hàm `static` trong Helper) và gắn kết qua `@CustomEndpoint` hoặc `@ServiceOverride`.
+Mọi nghiệp vụ vượt ra ngoài CRUD chuẩn đều được tách vào `Service` interface + `Helper` (`@Service` / `@Component` của Spring, `public final class`, không có hàm `private` hay hàm `static` trong Helper; `@AutoService` / `@AutoComponent` chỉ quét gói `"io.github.natswarchuan"`, và thêm `@EntityScan` nếu gói Entity nằm ngoài `io.github.natswarchuan`, `com.example`, `io.github`) và gắn kết qua `@CustomEndpoint` hoặc `@ServiceOverride`.
 
 ---
 
@@ -26,7 +26,7 @@ Mọi nghiệp vụ vượt ra ngoài CRUD chuẩn đều được tách vào `S
   <dependency>
     <groupId>io.github.natswarchuan</groupId>
     <artifactId>spring-nwvmc</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
   </dependency>
 </dependencies>
 ```
@@ -45,7 +45,7 @@ Nếu tích hợp trực tiếp từ GitHub qua [JitPack](https://jitpack.io):
   <dependency>
     <groupId>com.github.NatswarChuan</groupId>
     <artifactId>Spring-NWVMC</artifactId>
-    <version>v1.0.0</version>
+    <version>v0.1.0</version>
   </dependency>
 </dependencies>
 ```
@@ -54,7 +54,7 @@ Nếu tích hợp trực tiếp từ GitHub qua [JitPack](https://jitpack.io):
 
 ## 3. Cấu Hình Chuẩn Production (`application.yml`)
 
-Framework đóng gói sẵn `META-INF/spring-configuration-metadata.json` (qua `spring-boot-configuration-processor`) giúp IDE gợi ý toàn bộ `app.framework.*` và `spring-nwvmc.human-policies`:
+Framework đóng gói sẵn `META-INF/spring-configuration-metadata.json` (`18` nhóm cấu hình từ `16` lớp `@AutoConfigurationBean`/`@ConfigurationProperties` và `20` lớp `*Properties` dưới `app.framework.*` và `spring-nwvmc.human-policies`; các khóa tương thích cũ trên `ControllerToApiProperties` như `base-path-prefix`, `default-page-size`, `max-page-size`, `eager-fetch-singular-relations` chỉ phục vụ kiểm tra lúc boot, còn định tuyến dùng `@AutoRestController(basePath = ...)` và giới hạn truy vấn dùng `app.framework.query-guardrails.*`):
 
 ```yaml
 spring:
@@ -66,14 +66,12 @@ spring:
 
 app:
   framework:
-    base-path-prefix: /api/v1
-    default-page-size: 20
-    max-page-size: 100
-    eager-fetch-singular-relations: true
     query-guardrails:
       max-join-depth: 3
       max-filter-criteria: 25
       max-page-size: 200
+      max-unpaged-fetch-limit: 5000
+      eager-fetch-singular-relations: true
     security:
       enabled: true
       jwt-secret: ${JWT_SECRET}
@@ -85,18 +83,17 @@ app:
       enabled: false
       demo-token-endpoint-enabled: false
       show-i18n-diagnostics: false
-      hide-framework-fingerprint: true
 ```
 
 ---
 
 ## 4. Lọc Endpoint Theo Phạm Vi (`enabledEndpoints` & `disabledEndpoints`)
 
-`EndpointFeatureFilterHelper` đối chiếu tên phương thức trên `AutoApiController<E>` hoặc nhóm chức năng (`READ`, `WRITE`, `DELETE`, `BATCH`, `ANALYTICS`, `EXPORT`, `AI`, `STREAM`, `SCHEMA`, `SUB_RESOURCE`) không phân biệt hoa/thường:
+`EndpointFeatureFilterHelper` đối chiếu chính xác tên phương thức trên `AutoApiController<E>` không phân biệt hoa/thường (`equalsIgnoreCase(methodName)` như `batchChunked`, `deleteById`, `importCsv`):
 
 ```java
 @AutoRestController(
-    path = "/api/v1/commercial-products",
+    basePath = "/api/v1/commercial-products",
     disabledEndpoints = {"batchChunked", "deleteById", "importCsv"},
     enableNestedSubResources = true
 )

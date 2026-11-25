@@ -1,4 +1,7 @@
 import { LanguageMeta, LocalizedText, SupportedLanguage } from '../types/docs';
+import { UI_CONTROLS } from './uiControls';
+
+export { UI_CONTROLS };
 
 export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
   { code: 'en', nativeName: 'English', englishName: 'English', rtl: false },
@@ -29,13 +32,26 @@ export function isRtlLanguage(lang: SupportedLanguage): boolean {
   return RTL_LANGUAGE_CODES.includes(lang);
 }
 
-export function pickText(text: LocalizedText, lang: SupportedLanguage): string {
-  return text[lang] ?? text.en;
+export function pickText(text: LocalizedText | undefined, lang: SupportedLanguage): string {
+  if (!text) {
+    return '';
+  }
+  return text[lang] ?? text.en ?? '';
+}
+
+export function formatStepHeading(
+  stepNumber: number,
+  text: LocalizedText,
+  lang: SupportedLanguage
+): string {
+  const raw = pickText(text, lang);
+  const stripped = raw.replace(/^\d+\.\s*/, '');
+  return `${stepNumber}. ${stripped}`;
 }
 
 export const UI_LABELS = {
   brandName: 'Spring-NWVMC',
-  versionBadge: 'v1.0.0 · Java 21 · Spring Boot 3',
+  versionText: '0.1.0',
   searchButton: {
     en: 'Search docs...',
     zh: '搜索文档...',

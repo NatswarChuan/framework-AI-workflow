@@ -1,4 +1,4 @@
-# 03. Truy Vấn Động 13 Toán Tử, Query Guardrails, Keyset $O(1)$ & GraphQL SDL (`1.0.0`)
+# 03. Truy Vấn Động 13 Toán Tử, Query Guardrails, Keyset $O(1)$ & GraphQL SDL (`0.1.0`)
 
 > **Ngôn ngữ**: Tiếng Việt | [English](en/03_QUERY_AND_DATA_ACCESS.md) | [Sổ Tay Đầy Đủ](../GUIDE_VI.md)
 
@@ -31,25 +31,27 @@ Mọi tham số lọc HTTP được biên dịch sang JPA Criteria có tham số
 - `max-join-depth` (mặc định `3`): Giới hạn số cấp lồng quan hệ dấu chấm khi lọc hoặc sắp xếp.
 - `max-filter-criteria` (mặc định `25`): Giới hạn tổng số điều kiện lọc động trong một truy vấn.
 - `max-page-size` (mặc định `200`): Giới hạn kích thước trang tối đa chống cạn kiệt bộ nhớ.
+- `max-unpaged-fetch-limit` (mặc định `5000`): Trần số bản ghi an toàn chống OOM cho `GET /all`.
+- `eager-fetch-singular-relations` (mặc định `true`): Tự động eager `LEFT JOIN FETCH` các quan hệ đơn lẻ trừ khi dùng `?expand=...`.
 - `allowed-filter-fields` & `allowed-sort-fields`: Danh sách trắng các trường được phép lọc/sắp xếp theo cấu hình.
 
 ---
 
 ## 2. Phân Trang Con Trỏ Keyset $O(1)$ (`GET /keyset`)
 
-Phân trang `OFFSET` truyền thống có chi phí quét tuyến tính $O(N)$ khi đi sâu vào các trang cuối. Vì khóa chính của thực thể dùng **UUIDv7 (RFC 9562)** tăng dần đơn điệu theo dấu thời gian 48-bit, endpoint `/keyset` truy cập trực tiếp qua chỉ mục B-Tree với chi phí seek $O(1)$:
+Phân trang `OFFSET` truyền thống có chi phí quét tuyến tính $O(N)$ khi đi sâu vào các trang cuối. Vì khóa chính của thực thể dùng **UUIDv7 (RFC 9562)** tăng dần đơn điệu theo dấu thời gian 48-bit, endpoint `/keyset` truy cập trực tiếp qua chỉ mục B-Tree hỗ trợ cả `dir=asc` và `dir=desc` kèm thăm dò `size + 1` độ phức tạp $O(1)$:
 
 ```bash
-curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&size=20&fields=id,name,price" \
+curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
 ---
 
-## 3. Nạp Chủ Động Eager Loading & Sparse Fieldsets
+## 3. Tối Ưu Truy Vấn JPA, `@Version` & Sparse Fieldsets Không Đột Biến
 
-- **`include=...` & `eager-fetch-singular-relations: true`**: Tự động tạo `JOIN FETCH` trên quan hệ `@ManyToOne` / `@OneToOne` trong duy nhất 1 truy vấn SQL, giữ nguyên `spring.jpa.open-in-view=false`.
-- **`fields=id,name,price`**: Lọc thuộc tính đầu ra tại `DynamicSchemaProjectionHelper`.
+- **`spring.jpa.open-in-view=false`, `?expand=` & `EntityCloneSnapshotHelper`**: Tắt Open-Session-in-View ở production; hỗ trợ `?expand=rel1,rel2` có chọn lọc, `@Version` Optimistic Locking trên `BaseAuditEntity` trả `409 Conflict` khi ghi đè cũ, và `JpaAssociationReferenceUtil` giải quyết stub FK lồng nhau.
+- **`fields=id,skuCode,productName,retailPrice`**: Sao chép snapshot qua `EntityCloneSnapshotHelper` tại `DynamicSchemaProjectionHelper` để bảo vệ 100% L1 Caffeine Cache và Hibernate managed state.
 
 ---
 
@@ -57,6 +59,6 @@ curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456
 
 | Endpoint | HTTP | Chức Năng |
 | :--- | :--- | :--- |
-| `/api/v1/graphql/schema` | `GET` | Xuất GraphQL Schema SDL (`get<Entity>`, `list<Entity>`, `count<Entity>`) |
+| `/api/v1/graphql/schema` | `GET` | Xuất GraphQL Schema SDL (`list<Entity>s`, Object & Input types) |
 | `/api/v1/graphql` | `POST` | Thực thi Query & Mutation theo trường chọn |
 | `/api/v1/graphql/explorer` | `GET` (`@Hidden`) | Giao diện GraphiQL kiểm thử trực tiếp trên trình duyệt |

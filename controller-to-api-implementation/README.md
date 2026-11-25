@@ -1,42 +1,60 @@
-# `controller-to-api-implementation` — Reference Application (`1.0.0`)
+# NovaMart Multi-Merchant E-Commerce Backend
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Framework](https://img.shields.io/badge/Dependency-spring--nwvmc%3A1.0.0-blue.svg)](pom.xml)
-[![License](https://img.shields.io/badge/License-Apache--2.0-lightgrey.svg)](../LICENSE)
-
-Reference Spring Boot `3.3.5` application consuming **`io.github.natswarchuan:spring-nwvmc:1.0.0`**. Demonstrates the strict two-directory architecture (`entity/` + `controller/`) across 24 business entities (e-commerce, healthcare, fintech, HR, supply chain, multi-tenancy), custom `@CustomEndpoint` delegation, `@ServiceOverride` escape hatches (`TagController`), `@HumanPolicy` YAML rules (`SubscriptionContract`), and Apache JMeter verification.
+Enterprise multi-merchant e-commerce platform built on **Java 21 LTS**, **Spring Boot 3.3.5**, and **Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0`)** from public JitPack.
 
 ---
 
-## Project Layout & Configuration
+## Architecture & Modules
 
-- **Framework Dependency** ([`pom.xml`](pom.xml)): `io.github.natswarchuan:spring-nwvmc:1.0.0`, Java 21 LTS, Virtual Threads enabled, H2 in-memory persistence (`open-in-view: false`, HikariCP pool max `30`).
-- **Controllers** (`src/main/java/com/example/implementation/controller/`): Interfaces extending `AutoApiController<E>` (`ProductCatalogController`, `CustomerOrderController`, `LoanApplicationController`, `BankAccountController`, `PatientRecordController`, `SubscriptionContractController`, `TagController` with `@ServiceOverride`, and `AdvancedEnterpriseBusinessController` with `@CustomEndpoint`).
-- **Entities** (`src/main/java/com/example/implementation/entity/`): Domain models using `@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@HumanPolicy`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@EntityWebhook`, `@TargetDatabasePlatform`, and `@MultiTenant`.
-- **Configuration** ([`application.yml`](src/main/resources/application.yml) & [`application-dev.yml`](src/main/resources/application-dev.yml)):
-  - Production defaults keep `app.framework.studio.enabled: false` and `demo-token-endpoint-enabled: false` (locked via `SurfaceAccessGuardrailUtil`).
-  - Active `dev` profile unlocks `/system/studio`, `/system/studio/eject`, and `POST /api/v1/auth/token`.
-  - Query guardrails configure `max-join-depth: 3`, `max-filter-criteria: 25`, and `max-page-size: 100`.
+Following Spring-NWVMC's **2-Directory Domain Contract** (`entity/` + `controller/`) with zero boilerplate CRUD Repositories/Services/Controllers:
+
+| # | Module | Key Classes | Spring-NWVMC Features |
+| :---: | :--- | :--- | :--- |
+| **1** | **Storefront Catalog** | `StoreCategory`, `StorefrontProduct`, `StoreCategoryController`, `StorefrontProductController` | `BaseAuditEntity` (UUIDv7, `@Version`, soft-delete), `@AutoSlug`, `@UniqueField`, `@EntitySecurity`, `@FieldSecurity` (`supplierCost` nullified for `ROLE_USER`) |
+| **2** | **Public Read-Only Storefront** | `PublicCatalogController`, `PublicProductCardDto`, `PublicCatalogCacheHelper` | `AutoReadApi<StorefrontProduct>`, `readDto = PublicProductCardDto.class`, `@RateLimit`, `@EntityCircuitBreaker`, `@EntityRetry`, `@HttpCacheable` (weak ETag + `304 Not Modified`) |
+| **3** | **Multi-Tenant Merchant Isolation** | `MerchantListing`, `MerchantListingController` | `@MultiTenant(tenantField = "merchantTenantId", bypassTenantRoles = {"ROLE_SUPER_ADMIN"})`, fail-closed `403`, anti-spoofing, cross-tenant IDOR protection |
+| **4** | **Flash-Sale Inventory Reservation** | `WarehouseStock`, `WarehouseStockController`, `StockReservationService`, `StockReservationServiceImpl`, `StockReservationHelper` | Non-final `@Lazy @Service`, `@Transactional(rollbackFor = Exception.class)`, `@DistributedLock(key = "'STOCK_' + #sku")`, `@CustomEndpoint(path = "/reserve")`, `InsufficientStockException` (`409`) |
+| **5** | **Order Lifecycle** | `ShopOrder`, `ShopOrderController`, `OrderSummaryHelper`, `OrderPricingOverrideHelper` | `@AutoCode(prefix = "NVM-")`, `@StateMachine` (colon syntax + `deletableStates`), `@AuditTrail` Time-Travel, `@CustomEndpoint("/checkout-summary")`, `@ServiceOverride("/{id}/pricing-quote")` |
+| **6** | **Idempotent Payment & Outbox/Webhooks** | `CheckoutPayment`, `CheckoutPaymentController`, `NovaOutboxDispatcherProvider` | `@Idempotent` (`X-Idempotency-Key`, `201` -> `409`), `@EntityWebhook`, `@PublishCloudEvent`, custom `OutboxEventDispatcherProvider` recording `ENTITY_CREATED` |
+| **7** | **Dynamic Database RBAC** | `NovaRole`, `NovaPermission`, `NovaUserRole`, `NovaAccessPolicy` + 4 controllers | `@SecurityRoleEntity`, `@SecurityPermissionEntity`, `@SecurityUserRoleEntity`, `@SecurityPolicyEntity` enforcing live roles, permissions, and `DENY > ALLOW` |
+| **8** | **Read-Replica Sales Analytics & L1 Cache** | `SalesAnalyticsService`, `SalesAnalyticsServiceImpl`, `SalesAnalyticsHelper`, `SalesAnalyticsDispatchHelper`, `NovaDataSourceConfig` | `DynamicRoutingDataSource` (`PRIMARY` + `REPLICA`), `@TargetDataSource(REPLICA)`, `@TargetDatabasePlatform`, `@AutoCacheable` / `@AutoCacheEvict`, mounted on `StorefrontProductController` (no `readDto`) |
+| **9** | **Ecosystem Integrations** | `CatalogAiAssistantHelper`, `PartnerShippingGatewayHelper` | `ObjectProvider<T>` injection of `DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`; Dot-DSL, `/keyset`, `?fields=`, GraphQL, File Storage, Spring AI, Zod/TS SDK codegen |
+| **10** | **Security Lockdown & Load Testing** | `ProductionSecurityLockdownIntegrationTest`, `src/test/jmeter/novamart-load-test.jmx` | Production `application.yml` locks down Studio & demo token endpoints (`false`); Apache JMeter load test achieving `0.0%` error rate |
 
 ---
 
-## Verification & Runtime Commands
+## Running Locally
 
-```bash
-# 1. Run integration tests + Apache JMeter load suite (expects local 1.0.0 in ~/.m2)
-mvn clean verify -f controller-to-api-implementation/pom.xml
+### Development Mode (Dev Studio + Demo JWT enabled)
+```powershell
+mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
+- **Swagger UI:** `http://localhost:8080/swagger-ui/index.html`
+- **Dev Studio:** `http://localhost:8080/system/studio`
+- **Demo Token:** `http://localhost:8080/system/studio/demo-token?role=ROLE_ADMIN`
 
-# 2. Launch application with dev profile on port 8080
-mvn spring-boot:run "-Dspring-boot.run.profiles=dev" -f controller-to-api-implementation/pom.xml
+### Production Baseline
+`src/main/resources/application.yml` enforces:
+- `app.framework.studio.enabled: false`
+- `app.framework.studio.demo-token-endpoint-enabled: false`
+- `app.framework.security.fail-fast-weak-jwt-secret: true`
+- `app.framework.security.jwt-secret: ${JWT_SECRET}` (minimum 32 UTF-8 bytes)
+- `spring.threads.virtual.enabled: true` and `spring.jpa.open-in-view: false`
+
+---
+
+## Verification & Apache JMeter Load Testing
+
+### Full Unit & Integration Test Suite
+```powershell
+mvn clean verify
 ```
 
-### Runtime Verification Endpoints (`dev` profile)
+### Apache JMeter Load Test (Against Live Local `dev` Server)
+```powershell
+# 1. Start the packaged app in dev profile
+java -jar target/novamart-ecommerce-1.0.0.jar --spring.profiles.active=dev
 
-| Surface | URL | Purpose |
-| :--- | :--- | :--- |
-| **Developer Live Studio** | `http://localhost:8080/system/studio` | 20-language live API inspector, JWT generator, `#studioI18nDiagBar`, Zod/TS/JSON/Client exporters |
-| **Code Ejection Endpoint** | `http://localhost:8080/system/studio/eject?target=ProductCatalog` | Exports standalone Spring MVC Controller/Service/Repository scaffold |
-| **Swagger UI (OpenAPI 3.0)** | `http://localhost:8080/swagger-ui/index.html` | Interactive specification (`BearerAuth` scheme, excludes `@Hidden` routes) |
-| **SPI Customizer Telemetry** | `http://localhost:8080/api/v1/system/customizers` | Lists active SPI customizer beans |
-| **Database Health Telemetry** | `http://localhost:8080/api/v1/system/databases/health` | Multi-datasource health status |
-| **JMeter HTML Report** | `target/jmeter/reports` | Generated Apache JMeter latency and error-rate dashboard |
+# 2. Execute JMeter load test & generate HTML dashboard (target/jmeter/reports/)
+mvn jmeter:configure jmeter:jmeter jmeter:results
+```

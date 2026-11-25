@@ -26,15 +26,15 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Install Spring-NWVMC framework (${{ matrix.boot-version }})
+      - name: Verify Spring-NWVMC framework unit suite (${{ matrix.boot-version }})
         run: >
-          mvn -B clean install
+          mvn -B clean test
           -f controller-to-api-framework/pom.xml
           -Dspring-boot.version=${{ matrix.boot-version }}
 
-      - name: Verify reference implementation (${{ matrix.boot-version }})
+      - name: Verify reference implementation against io.github.natswarchuan:spring-nwvmc:0.1.0 (${{ matrix.boot-version }})
         run: >
-          mvn -B test
+          mvn -B clean test
           -f controller-to-api-implementation/pom.xml
           -Dspring-boot.version=${{ matrix.boot-version }}
 

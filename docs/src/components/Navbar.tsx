@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Globe, Layers, Menu, Moon, Search, Sun, X } from 'lucide-react';
+import { Check, ChevronDown, Globe, Layers, Menu, Moon, Search, Sun, X } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
-import { SUPPORTED_LANGUAGES, UI_LABELS, pickText } from '../data/locales';
+import { SUPPORTED_LANGUAGES, UI_CONTROLS, UI_LABELS, pickText } from '../data/locales';
 
 interface NavbarProps {
   currentLang: SupportedLanguage;
@@ -26,16 +26,59 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!langMenuOpen) {
+      return;
+    }
     const handleOutsideClick = (event: MouseEvent) => {
       if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
         setLangMenuOpen(false);
       }
     };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.stopPropagation();
+        setLangMenuOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+      if (!panelRef.current) {
+        return;
+      }
+      const optionButtons = Array.from(
+        panelRef.current.querySelectorAll<HTMLButtonElement>('button[role="option"]'),
+      );
+      if (optionButtons.length === 0) {
+        return;
+      }
+      const currentIdx = optionButtons.indexOf(document.activeElement as HTMLButtonElement);
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        const nextIdx = currentIdx < 0 ? 0 : (currentIdx + 1) % optionButtons.length;
+        optionButtons[nextIdx].focus();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prevIdx =
+          currentIdx <= 0 ? optionButtons.length - 1 : currentIdx - 1;
+        optionButtons[prevIdx].focus();
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        optionButtons[0].focus();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        optionButtons[optionButtons.length - 1].focus();
+      }
+    };
     document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, []);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [langMenuOpen]);
 
   const activeMeta =
     SUPPORTED_LANGUAGES.find((item) => item.code === currentLang) ?? SUPPORTED_LANGUAGES[0];
@@ -46,7 +89,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           type="button"
           className="nav-icon-btn mobile-menu-btn"
-          aria-label="Toggle navigation drawer"
+          aria-label={pickText(UI_CONTROLS.toggleNavLabel, currentLang)}
+          aria-expanded={sidebarOpen}
           onClick={onToggleSidebar}
         >
           {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
@@ -58,12 +102,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={onNavigateHome}
         >
           <span className="navbar-logo-mark">
-            <Layers size={18} />
+            <Layers size={17} />
           </span>
-          <span className="navbar-brand-title">{UI_LABELS.brandName}</span>
+          <span className="navbar-brand-title" dir="ltr">
+            <span>{UI_LABELS.brandName}</span>
+            <span className="navbar-brand-version">{UI_LABELS.versionText}</span>
+          </span>
         </button>
-
-        <span className="navbar-version-pill">{UI_LABELS.versionBadge}</span>
       </div>
 
       <div className="navbar-controls">
@@ -76,9 +121,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
             <Search size={15} />
-            <span>{pickText(UI_LABELS.searchButton, currentLang)}</span>
+            <span className="search-trigger-label">{pickText(UI_LABELS.searchButton, currentLang)}</span>
           </span>
-          <span className="kbd-pill">Ctrl+K</span>
+          <kbd className="search-kbd-hint" dir="ltr">Ctrl K</kbd>
         </button>
 
         <button
@@ -86,49 +131,84 @@ export const Navbar: React.FC<NavbarProps> = ({
           id="theme-toggle-btn"
           className="nav-icon-btn"
           onClick={onToggleTheme}
-          aria-label="Toggle Dark or Light Theme"
-          title="Toggle Theme"
+          aria-label={pickText(UI_CONTROLS.toggleThemeLabel, currentLang)}
+          title={pickText(UI_CONTROLS.toggleThemeLabel, currentLang)}
         >
           {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
         </button>
 
         <div className="lang-picker-wrap" ref={pickerRef}>
           <button
+            ref={triggerRef}
             type="button"
             id="lang-selector-trigger"
-            className="nav-icon-btn"
+            className={`nav-icon-btn lang-trigger-btn ${langMenuOpen ? 'open' : ''}`}
             onClick={() => setLangMenuOpen((prev) => !prev)}
             aria-expanded={langMenuOpen}
-            aria-label="Select documentation language"
+            aria-haspopup="listbox"
+            aria-label={pickText(UI_CONTROLS.selectLangLabel, currentLang)}
           >
             <Globe size={15} />
-            <span>{activeMeta.code.toUpperCase()}</span>
+            <span className="lang-trigger-code">{activeMeta.code.toUpperCase()}</span>
+            <ChevronDown size={13} className="lang-trigger-caret" />
           </button>
 
           {langMenuOpen && (
-            <div className="lang-dropdown-panel" role="listbox" aria-label="20 Languages">
-              {SUPPORTED_LANGUAGES.map((lang) => (
+            <div
+              ref={panelRef}
+              className="lang-dropdown-panel"
+              role="listbox"
+              aria-label={pickText(UI_CONTROLS.langMenuLabel, currentLang)}
+            >
+              <div className="lang-dropdown-header">
+                <span className="lang-dropdown-title">
+                  {pickText(UI_CONTROLS.langMenuLabel, currentLang)}
+                </span>
                 <button
-                  key={lang.code}
                   type="button"
-                  data-lang-option={lang.code}
-                  className={`lang-option-btn ${lang.code === currentLang ? 'active' : ''}`}
+                  className="lang-dropdown-close"
                   onClick={() => {
-                    onChangeLang(lang.code);
                     setLangMenuOpen(false);
+                    triggerRef.current?.focus();
                   }}
+                  aria-label={pickText(UI_CONTROLS.closeLangMenuLabel, currentLang)}
                 >
-                  <span>
-                    {lang.nativeName}{' '}
-                    <span style={{ opacity: 0.65, fontSize: '0.75rem' }}>
-                      ({lang.code})
-                    </span>
-                  </span>
-                  {lang.rtl && (
-                    <span className="sidebar-item-badge">RTL</span>
-                  )}
+                  <X size={14} />
                 </button>
-              ))}
+              </div>
+              <div className="lang-dropdown-grid">
+                {SUPPORTED_LANGUAGES.map((lang) => {
+                  const isActive = lang.code === currentLang;
+                  return (
+                    <button
+                      key={lang.code}
+                      type="button"
+                      role="option"
+                      aria-selected={isActive}
+                      data-lang-option={lang.code}
+                      className={`lang-option-btn ${isActive ? 'active' : ''}`}
+                      onClick={() => {
+                        onChangeLang(lang.code);
+                        setLangMenuOpen(false);
+                        triggerRef.current?.focus();
+                      }}
+                    >
+                      <span className="lang-option-names">
+                        <span className="lang-option-native" dir={lang.rtl ? 'rtl' : 'ltr'}>
+                          {lang.nativeName}
+                        </span>
+                        <span className="lang-option-code" dir="ltr">
+                          {lang.code.toUpperCase()}
+                        </span>
+                      </span>
+                      <span className="lang-option-trail">
+                        {lang.rtl && <span className="rtl-lang-text">RTL</span>}
+                        {isActive && <Check size={14} className="lang-option-check" />}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

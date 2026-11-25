@@ -31,19 +31,22 @@ export type LocalizedText = Partial<Record<SupportedLanguage, string>> & {
   en: string;
 };
 
+export type FullLocalizedText = Record<SupportedLanguage, string>;
+
 export interface NavItem {
   id: string;
   stageId: string;
-  label: LocalizedText;
-  summary: LocalizedText;
+  parentId?: string;
+  isSubPage?: boolean;
+  label: FullLocalizedText;
+  summary: FullLocalizedText;
   keywords: string[];
-  badge?: string;
 }
 
 export interface NavStage {
   id: string;
   stageNumber: number;
-  title: LocalizedText;
+  title: FullLocalizedText;
   items: NavItem[];
 }
 
@@ -67,26 +70,42 @@ export interface EndpointSpec {
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   path: string;
   methodName: string;
-  group: 'read' | 'write' | 'enterprise';
+  group: 'read' | 'write' | 'enterprise' | 'export-import';
   hiddenInSwagger?: boolean;
-  summary: LocalizedText;
+  summary: FullLocalizedText;
   sampleRequest: string;
   sampleResponse: string;
 }
 
+export interface AnnotationAttributeSpec {
+  name: string;
+  type: string;
+  defaultValue: string;
+  required: boolean;
+  description: FullLocalizedText;
+  allowedValues: FullLocalizedText;
+  example: string;
+  caveat: FullLocalizedText;
+}
+
 export interface AnnotationSpec {
   name: string;
-  category: 'routing' | 'bean' | 'entity' | 'resilience';
+  packageName: string;
+  category: 'routing' | 'bean' | 'entity' | 'rbac' | 'resilience';
   target: string;
-  purpose: LocalizedText;
+  purpose: FullLocalizedText;
   attributes: string;
+  attributeSpecs: AnnotationAttributeSpec[];
+  howToUse: FullLocalizedText;
+  whenToUse: FullLocalizedText;
+  whenNotToUse: FullLocalizedText;
   syntaxSample: string;
-  runtimeBehavior: LocalizedText;
+  runtimeBehavior: FullLocalizedText;
 }
 
 export interface FilterOperatorSpec {
   operator: string;
   syntax: string;
   sqlEquivalent: string;
-  description: LocalizedText;
+  description: FullLocalizedText;
 }

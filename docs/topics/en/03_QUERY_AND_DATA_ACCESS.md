@@ -1,6 +1,6 @@
-# 03. 13 Dynamic Filter Operators, Query Guardrails, Keyset O(1) & GraphQL SDL (`1.0.0`)
+# 03. 13 Dynamic Filter Operators, Query Guardrails, Keyset O(1) & GraphQL SDL (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../03_QUERY_AND_DATA_ACCESS.md) | [Complete Manual](../GUIDE_EN.md)
+> **Language**: English | [Tiếng Việt](../03_QUERY_AND_DATA_ACCESS.md) | [Complete Manual](../../GUIDE_EN.md)
 
 ---
 
@@ -31,25 +31,27 @@ All filter query parameters compile to parameterized JPA Criteria queries valida
 - `max-join-depth` (default `3`): Caps dot-separated association traversal depth.
 - `max-filter-criteria` (default `25`): Caps total predicates per request.
 - `max-page-size` (default `200`): Caps per-page record limit.
+- `max-unpaged-fetch-limit` (default `5000`): OOM safety ceiling on unpaged `GET /all` fetches.
+- `eager-fetch-singular-relations` (default `true`): Eagerly `LEFT JOIN FETCH`es singular associations unless overridden by `?expand=`.
 - `allowed-filter-fields` & `allowed-sort-fields`: Optional strict allowlists restricting queryable/sortable fields.
 
 ---
 
 ## 2. O(1) Cursor Keyset Pagination (`GET /keyset`)
 
-Because primary keys use monotonic timestamp-ordered **UUIDv7** identifiers, `/keyset` jumps straight to the cursor boundary on the primary B-Tree index in $O(1)$ seek time:
+Because primary keys use monotonic timestamp-ordered **UUIDv7** identifiers, `/keyset` jumps straight to the cursor boundary in both `dir=asc` and `dir=desc` using a `size + 1` probe in $O(1)$ seek time:
 
 ```bash
-curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&size=20&fields=id,name,price" \
+curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
 ---
 
-## 3. Eager Loading & Sparse Fieldsets
+## 3. Stateless JPA Persistence, `@Version` & Non-Mutating Sparse Fieldsets
 
-- **`include=...` & `eager-fetch-singular-relations: true`**: Generates `JOIN FETCH` plans on `@ManyToOne` / `@OneToOne` relationships inside a single SQL query while maintaining `spring.jpa.open-in-view=false`.
-- **`fields=id,name,price`**: Restricts serialized output properties via `DynamicSchemaProjectionHelper`.
+- **`spring.jpa.open-in-view=false`, `?expand=` & Optimistic Locking**: Keeps OSIV disabled, supports selective `?expand=rel1,rel2`, enforces `@Version` (`409 Conflict` on stale writes) in `BaseAuditEntity`, and resolves detached FK stubs via `JpaAssociationReferenceUtil`.
+- **`fields=id,skuCode,productName,retailPrice`**: Uses `EntityCloneSnapshotHelper` inside `DynamicSchemaProjectionHelper` so sparse REST and GraphQL projections never mutate L1 cache entries or managed Hibernate entities.
 
 ---
 
@@ -57,6 +59,6 @@ curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456
 
 | Endpoint | HTTP | Function |
 | :--- | :--- | :--- |
-| `/api/v1/graphql/schema` | `GET` | Exports synthesized GraphQL SDL (`get<Entity>`, `list<Entity>`, `count<Entity>`) |
+| `/api/v1/graphql/schema` | `GET` | Exports synthesized GraphQL SDL (`list<Entity>s`, Object & Input types) |
 | `/api/v1/graphql` | `POST` | Unified query and mutation execution endpoint |
 | `/api/v1/graphql/explorer` | `GET` (`@Hidden`) | Interactive GraphiQL playground |

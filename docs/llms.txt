@@ -1,0 +1,27 @@
+# Spring-NWVMC (`v0.1.0`) — Documentation Index for LLMs & AI Agents
+
+> Enterprise declarative REST, GraphQL, persistence, RBAC/ABAC security, resilience, and observability starter for **Java 21 LTS** and **Spring Boot 3.x** (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0` on JitPack).
+
+## Quick Adoption Kit Links
+
+- [AI-Agent Adoption Kit README](../ai-agent-kit/README.md): Compatibility matrix for every AI coding tool and LLM, plus 1-command installers (`install.ps1` / `install.sh`).
+- [INTRO](../ai-agent-kit/INTRO.md): Architecture, JitPack setup, 2-Directory Contract, 9 composable API interfaces.
+- [RULES](../ai-agent-kit/RULES.md): Strict anti-hallucination guardrails & verified runtime pitfalls.
+- [SKILL](../ai-agent-kit/SKILL.md): Step-by-step adoption workflows & troubleshooting matrix.
+- [CHECKLIST](../ai-agent-kit/CHECKLIST.md): 6-phase Pre-Flight, Design, Security Lockdown & Verification checklist.
+- [60 Annotations & 133 Attributes Reference](../ai-agent-kit/references/01-annotations-exact-matrix.md): 1:1 verified annotation specification.
+- [40 Auto-Endpoints & 13 Query Operators](../ai-agent-kit/references/02-endpoints-and-query-dsl.md): Complete route map & verified `curl` examples.
+- [YAML Properties & Profiles](../ai-agent-kit/references/03-yaml-properties-and-profiles.md): Exact `app.framework.*` properties & `dev`/`prod` profiles.
+- [Verified Cookbook Patterns](../ai-agent-kit/references/04-cookbook-verified-patterns.md): Copy-paste Java, YAML, `@MultiTenant`, DB-RBAC, Multi-Datasource, and `MockMvc` recipes.
+- [Exact Non-Annotation Class & SPI Imports](../ai-agent-kit/references/05-imports-and-spi-contracts.md): Verified imports & signatures for all non-annotation classes, constants, DTOs, helpers, and SPIs.
+
+## Multi-Language Documentation Guides
+
+- [Interactive Portal (20 Languages)](index.html): Searchable Hub-and-Spoke portal (`34` pages) with 16-step continuous B2C2B2C Marketplace walkthrough and dedicated [`#ai-agent-kit`](index.html#ai-agent-kit) page.
+- [AI-Agent Adoption Kit Topic Guide (EN)](topics/en/07_AI_AGENT_ADOPTION_KIT.md)
+- [AI-Agent Adoption Kit Topic Guide (VI)](topics/07_AI_AGENT_ADOPTION_KIT.md)
+- [English Manual](GUIDE_EN.md)
+- [Tiếng Việt Manual](GUIDE_VI.md)
+- [日本語マニュアル](GUIDE_JA.md)
+- [中文参考手册](GUIDE_ZH.md)
+- [Full Root `llms.txt`](../llms.txt)

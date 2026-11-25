@@ -1,0 +1,50 @@
+# Spring-NWVMC (`0.1.0` — Official Maven Central)
+
+> Enterprise declarative REST, GraphQL, persistence, RBAC/ABAC security, resilience, and observability starter for **Java 21 LTS** and **Spring Boot 3.x** (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; GitHub Pages Docs: https://natswarchuan.github.io/Spring-NWVMC-document/). Declare a JPA `@Entity` extending `BaseAuditEntity` in `entity/` and an `@AutoRestController` interface extending `AutoApiController<E>` (or narrow composable interfaces `AutoReadApi<E>`..`AutoAiApi<E>`) in `controller/` to expose 40 standardized REST/streaming/schema/AI endpoints with optional `@ServiceOverride` escape hatches and MVC code ejection.
+
+## Critical Anti-Hallucination Facts (Read First)
+
+- **Artifact (Maven Central):** `io.github.natswarchuan:spring-nwvmc:0.1.0` (no custom repository needed; optional JitPack mirror: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`); requires Java 21 + `<parameters>true</parameters>` in `maven-compiler-plugin`.
+- **6 Exact Annotation Packages (60 annotations, 133 attributes):** `io.github.natswarchuan.core.annotation.*` (54), `io.github.natswarchuan.module.cache.http.annotation.HttpCacheable`, `io.github.natswarchuan.module.datasource.annotation.{TargetDataSource, TargetDatabasePlatform}`, `io.github.natswarchuan.module.event.annotation.PublishCloudEvent`, `io.github.natswarchuan.module.lock.annotation.DistributedLock`, `io.github.natswarchuan.module.webhook.annotation.EntityWebhook`.
+- **Never use `@Data` on JPA `@Entity`** and **never invent `@SoftDelete`** (UUIDv7 `id`, soft-delete, audit columns, `@Version` optimistic locking are inherited from `BaseAuditEntity`).
+- **`@StateMachine.transitions`** uses **colon syntax** (`"CREATED:PENDING_PAYMENT,CANCELLED"`), never `"FROM -> TO"`. Trigger transitions with query param `POST /api/v1/{entity}/{id}/transition?targetState=PENDING_PAYMENT` (never JSON body).
+- **Query filter operators** use **dot syntax** (`retailPrice.gte=1000&productName.like=MacBook`), never `__gte`.
+- **CamelCase routes:** `ECommerceOrder` maps to `/api/v1/e-commerce-orders`.
+- **Bean ordering & AOP:** Inject framework `@AutoComponent` helpers via `ObjectProvider<T>` (`.getObject()` at call time). Mark AOP-intercepted consumer `@Service` beans (`@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, `@TargetDataSource`) as **non-final** + **`@Lazy`** (with class-level `@TargetDataSource` for `REPLICA` on `v0.1.0`), AND inject them via `ObjectProvider<MyService>` or `@Lazy` in consumer callers. Never place `@Transactional` on `public final class` Helpers.
+- **Dev JWT & Testing:** Dev token endpoint is `POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN` (`200 OK`, `data.token`); `JwtTokenService.generateToken(username, userId, roles)` takes `username` FIRST.
+- **Production lockdown:** Keep `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true`, and `JWT_SECRET >= 32` UTF-8 bytes in `application.yml` / `application-prod.yml`.
+
+## AI-Agent Adoption Kit (Core)
+
+- [AI-Agent Kit README](ai-agent-kit/README.md): Bilingual onboarding guide, agent compatibility matrix, 1-command installers (`install.ps1` / `install.sh`), and starter prompts.
+- [INTRO](ai-agent-kit/INTRO.md): Architecture overview, JitPack setup, 2-Directory Contract, 9 composable API interfaces, and built-in subsystems.
+- [RULES](ai-agent-kit/RULES.md): Strict consumer rules and empirically verified anti-hallucination guardrails.
+- [SKILL](ai-agent-kit/SKILL.md): Step-by-step adoption workflows (6 workflows + root-cause troubleshooting table).
+- [CHECKLIST](ai-agent-kit/CHECKLIST.md): 6-phase Pre-Flight, Design, Runtime Gotchas, Security Lockdown, Performance, and Go-Live verification checklist.
+
+## Machine-Verified Deep References
+
+- [Exact 60 Annotations & 133 Attributes](ai-agent-kit/references/01-annotations-exact-matrix.md): 1:1 machine-verified catalog of all 60 annotations, exact packages, types, defaults, examples, and caveats.
+- [40 Auto-Endpoints & Query DSL](ai-agent-kit/references/02-endpoints-and-query-dsl.md): Complete route table, 13 dot-syntax operators, GraphQL, Storage, Time-Travel, Telemetry, and `curl` recipes.
+- [YAML Properties & Profiles](ai-agent-kit/references/03-yaml-properties-and-profiles.md): Exact `app.framework.*` and `spring-nwvmc.human-policies.*` keys with secure `prod` and `dev` templates.
+- [Verified Cookbook Patterns](ai-agent-kit/references/04-cookbook-verified-patterns.md): Copy-paste-runnable Java, YAML, `@MultiTenant`, 4-entity DB-RBAC, Multi-Datasource, and `MockMvc` test recipes.
+- [Exact Non-Annotation Class & SPI Imports](ai-agent-kit/references/05-imports-and-spi-contracts.md): Verified package imports & signatures for `BaseBusinessException`, `StandardHttpStatus`, `UuidUtil`, `*Constant`, `JwtTokenService`, `DynamicRoutingDataSource`, Outbox/AI/Webhook/RestClient DTOs, and 8 `*Customizer` SPIs.
+
+## Platform Drop-In Adapters
+
+- [AGENTS.md (OpenAI Codex / Antigravity / Open Standard)](ai-agent-kit/adapters/AGENTS.md)
+- [CLAUDE.md (Anthropic Claude Code)](ai-agent-kit/adapters/CLAUDE.md)
+- [GEMINI.md (Google Antigravity / Gemini CLI)](ai-agent-kit/adapters/GEMINI.md)
+- [Cursor Rule (.mdc)](ai-agent-kit/adapters/cursor/spring-nwvmc.mdc)
+- [GitHub Copilot Instructions](ai-agent-kit/adapters/copilot-instructions.md)
+- [Windsurf Rules](ai-agent-kit/adapters/windsurfrules)
+- [Cline / Roo Code Rules](ai-agent-kit/adapters/clinerules)
+- [Generic LLM System Prompt (ChatGPT / DeepSeek / Qwen / Grok / Mistral / Llama / Aider)](ai-agent-kit/adapters/GENERIC_LLM_PROMPT.md)
+
+## Human Reference Documentation & Source Modules
+
+- [English Reference Manual](docs/GUIDE_EN.md): Comprehensive English specification.
+- [Vietnamese Reference Manual](docs/GUIDE_VI.md): Comprehensive Vietnamese specification.
+- [Interactive 20-Language Portal](docs/index.html): Self-contained React 19 documentation portal with 16-step B2C2B2C Marketplace walkthrough.
+- [Framework Source](controller-to-api-framework/): Core Spring-NWVMC `0.1.0` starter library (`584` unit tests).
+- [Reference Implementation](controller-to-api-implementation/): Verified JitPack consumer showcase (`173` tests + `2,000`-request JMeter `0.0%` error rate).

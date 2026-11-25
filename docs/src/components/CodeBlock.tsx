@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Check, Copy, FileCode } from 'lucide-react';
 import { CodeTab, SupportedLanguage } from '../types/docs';
 import { UI_LABELS, pickText } from '../data/locales';
@@ -103,12 +103,30 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
 }) => {
   const [activeTabId, setActiveTabId] = useState<string>(tabs && tabs.length > 0 ? tabs[0].id : '');
   const [copied, setCopied] = useState(false);
+  const copyTimerRef = useRef<number | null>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const activeTab = tabs?.find((t) => t.id === activeTabId) ?? tabs?.[0];
   const displayCode = activeTab ? activeTab.code : code;
   const displayLang = activeTab ? activeTab.language : language;
   const displayFile = activeTab ? activeTab.fileName : fileName;
   const displayHighlights = activeTab?.highlightLines ?? highlightLines;
+
+  useEffect(() => {
+    setCopied(false);
+    if (copyTimerRef.current !== null) {
+      window.clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = null;
+    }
+  }, [displayCode]);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        window.clearTimeout(copyTimerRef.current);
+      }
+    };
+  }, []);
 
   const lines = displayCode.replace(/\r\n/g, '\n').split('\n');
 
@@ -117,7 +135,30 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       navigator.clipboard.writeText(displayCode).catch(() => {});
     }
     setCopied(true);
-    setTimeout(() => setCopied(false), 1600);
+    if (copyTimerRef.current !== null) {
+      window.clearTimeout(copyTimerRef.current);
+    }
+    copyTimerRef.current = window.setTimeout(() => {
+      setCopied(false);
+      copyTimerRef.current = null;
+    }, 1600);
+  };
+
+  const handleTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
+    if (!tabs || tabs.length < 2) {
+      return;
+    }
+    let nextIdx = -1;
+    if (event.key === 'ArrowRight') {
+      nextIdx = (idx + 1) % tabs.length;
+    } else if (event.key === 'ArrowLeft') {
+      nextIdx = (idx - 1 + tabs.length) % tabs.length;
+    }
+    if (nextIdx >= 0) {
+      event.preventDefault();
+      setActiveTabId(tabs[nextIdx].id);
+      tabRefs.current[nextIdx]?.focus();
+    }
   };
 
   return (
@@ -125,14 +166,20 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       <div className="code-block-header">
         {tabs && tabs.length > 0 ? (
           <div className="code-tabs" role="tablist">
-            {tabs.map((tab) => (
+            {tabs.map((tab, idx) => (
               <button
                 key={tab.id}
+                ref={(el) => {
+                  tabRefs.current[idx] = el;
+                }}
                 type="button"
                 role="tab"
+                dir="auto"
                 aria-selected={tab.id === activeTab?.id}
+                tabIndex={tab.id === activeTab?.id ? 0 : -1}
                 className={`code-tab-btn ${tab.id === activeTab?.id ? 'active' : ''}`}
                 onClick={() => setActiveTabId(tab.id)}
+                onKeyDown={(event) => handleTabKeyDown(event, idx)}
               >
                 {tab.label}
               </button>
@@ -140,14 +187,14 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           </div>
         ) : (
           <div className="code-file-meta">
-            <FileCode size={14} style={{ color: '#34d399' }} />
-            <span>{displayFile ?? displayLang}</span>
+            <FileCode size={14} style={{ color: '#34d399', flexShrink: 0 }} />
+            <span className="code-file-name">{displayFile ?? displayLang}</span>
           </div>
         )}
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div className="code-header-actions">
           {tabs && tabs.length > 0 && displayFile && (
-            <span className="code-file-meta" style={{ fontSize: '0.72rem' }}>
+            <span className="code-file-meta code-tab-filename">
               {displayFile}
             </span>
           )}

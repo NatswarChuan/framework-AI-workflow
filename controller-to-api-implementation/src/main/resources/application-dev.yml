@@ -1,6 +1,7 @@
 app:
   framework:
     security:
+      jwt-secret: ${JWT_SECRET:NovaMartDevFallbackJwtSecretKeyAtLeast32BytesLongForHs256}
       fail-fast-weak-jwt-secret: false
     studio:
       enabled: true

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SupportedLanguage } from './types/docs';
 import { ALL_NAV_ITEMS } from './data/navigation';
-import { SUPPORTED_LANGUAGES, isRtlLanguage } from './data/locales';
+import { SUPPORTED_LANGUAGES, UI_LABELS, isRtlLanguage, pickText } from './data/locales';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { SearchModal } from './components/SearchModal';
@@ -13,7 +13,9 @@ import { TwoDirectoryPage } from './pages/TwoDirectoryPage';
 import { DynamicProxyPage } from './pages/DynamicProxyPage';
 import { EscapeHatchPage } from './pages/EscapeHatchPage';
 import { AnnotationsPage } from './pages/AnnotationsPage';
+import { AnnotationCategoryPage } from './pages/AnnotationCategoryPage';
 import { EndpointsPage } from './pages/EndpointsPage';
+import { EndpointGroupPage } from './pages/EndpointGroupPage';
 import { CustomEndpointsPage } from './pages/CustomEndpointsPage';
 import { QueryOperatorsPage } from './pages/QueryOperatorsPage';
 import { GraphQLSubsystemPage } from './pages/GraphQLSubsystemPage';
@@ -31,6 +33,7 @@ import { MetricsStudioI18nPage } from './pages/MetricsStudioI18nPage';
 import { CustomizersAndIntegrationPage } from './pages/CustomizersAndIntegrationPage';
 import { ZodClientCodegenPage } from './pages/ZodClientCodegenPage';
 import { SpringAiPage } from './pages/SpringAiPage';
+import { AiAgentKitPage } from './pages/AiAgentKitPage';
 
 const STORAGE_LANG_KEY = 'nwvmc_docs_lang';
 const STORAGE_THEME_KEY = 'nwvmc_docs_theme';
@@ -71,6 +74,9 @@ export const App: React.FC = () => {
   const [activeTopicId, setActiveTopicId] = useState<string>(resolveInitialTopic);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
+  const [selectedAnnotationName, setSelectedAnnotationName] = useState<string | undefined>(undefined);
+  const [selectedEndpointId, setSelectedEndpointId] = useState<string | undefined>(undefined);
+  const programmaticNavRef = useRef<boolean>(false);
 
   useEffect(() => {
     document.documentElement.lang = currentLang;
@@ -79,14 +85,40 @@ export const App: React.FC = () => {
   }, [currentLang]);
 
   useEffect(() => {
+    const activeItem = ALL_NAV_ITEMS.find((item) => item.id === activeTopicId);
+    const topicTitle = activeItem ? pickText(activeItem.label, currentLang) : UI_LABELS.brandName;
+    document.title = `${topicTitle} — ${UI_LABELS.brandName} ${UI_LABELS.versionText}`;
+  }, [activeTopicId, currentLang]);
+
+  useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     window.localStorage.setItem(STORAGE_THEME_KEY, theme);
   }, [theme]);
 
   useEffect(() => {
+    const locked = searchOpen || sidebarOpen;
+    if (locked) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+    document.body.style.overflow = '';
+  }, [searchOpen, sidebarOpen]);
+
+  useEffect(() => {
     const handleHashChange = () => {
+      if (programmaticNavRef.current) {
+        programmaticNavRef.current = false;
+        return;
+      }
       const next = window.location.hash.replace('#', '').trim();
-      if (next && ALL_NAV_ITEMS.some((item) => item.id === next)) {
+      if (!next) {
+        setActiveTopicId('overview');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        return;
+      }
+      if (ALL_NAV_ITEMS.some((item) => item.id === next)) {
         setActiveTopicId(next);
         window.scrollTo({ top: 0, behavior: 'auto' });
       }
@@ -121,13 +153,49 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleShortcut);
   }, []);
 
-  const navigateToTopic = (topicId: string) => {
+  const navigateToTopic = (topicId: string, skipScrollTop = false) => {
     setActiveTopicId(topicId);
     setSidebarOpen(false);
     if (window.location.hash !== `#${topicId}`) {
+      programmaticNavRef.current = true;
       window.location.hash = topicId;
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!skipScrollTop) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const navigateWithAnnotation = (topicId: string, annotationName?: string) => {
+    if (annotationName) {
+      setSelectedAnnotationName(annotationName);
+    }
+    navigateToTopic(topicId, false);
+  };
+
+  const handleSearchSelect = (pageId: string, targetSelection?: string) => {
+    if (pageId.startsWith('annotations-') && targetSelection) {
+      setSelectedAnnotationName(targetSelection);
+      navigateToTopic(pageId, false);
+      window.setTimeout(() => {
+        const detailEl = document.getElementById('annotation-detail-card');
+        if (detailEl) {
+          detailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+      return;
+    }
+    if (pageId.startsWith('endpoints-') && targetSelection) {
+      setSelectedEndpointId(targetSelection);
+      navigateToTopic(pageId, false);
+      window.setTimeout(() => {
+        const sampleEl = document.getElementById('endpoint-live-sample');
+        if (sampleEl) {
+          sampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+      return;
+    }
+    navigateToTopic(pageId, false);
   };
 
   const renderActivePage = () => {
@@ -143,9 +211,109 @@ export const App: React.FC = () => {
       case 'escape-hatch':
         return <EscapeHatchPage currentLang={currentLang} />;
       case 'annotations':
-        return <AnnotationsPage currentLang={currentLang} />;
+        return (
+          <AnnotationsPage
+            currentLang={currentLang}
+            onNavigateTopic={navigateWithAnnotation}
+          />
+        );
+      case 'annotations-routing':
+        return (
+          <AnnotationCategoryPage
+            topicId="annotations-routing"
+            category="routing"
+            currentLang={currentLang}
+            initialAnnotationName={selectedAnnotationName}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'annotations-beans':
+        return (
+          <AnnotationCategoryPage
+            topicId="annotations-beans"
+            category="bean"
+            currentLang={currentLang}
+            initialAnnotationName={selectedAnnotationName}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'annotations-entity':
+        return (
+          <AnnotationCategoryPage
+            topicId="annotations-entity"
+            category="entity"
+            currentLang={currentLang}
+            initialAnnotationName={selectedAnnotationName}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'annotations-rbac':
+        return (
+          <AnnotationCategoryPage
+            topicId="annotations-rbac"
+            category="rbac"
+            currentLang={currentLang}
+            initialAnnotationName={selectedAnnotationName}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'annotations-resilience':
+        return (
+          <AnnotationCategoryPage
+            topicId="annotations-resilience"
+            category="resilience"
+            currentLang={currentLang}
+            initialAnnotationName={selectedAnnotationName}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
       case 'endpoints':
-        return <EndpointsPage currentLang={currentLang} />;
+        return (
+          <EndpointsPage
+            currentLang={currentLang}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'endpoints-read':
+        return (
+          <EndpointGroupPage
+            topicId="endpoints-read"
+            group="read"
+            currentLang={currentLang}
+            initialEndpointId={selectedEndpointId}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'endpoints-write':
+        return (
+          <EndpointGroupPage
+            topicId="endpoints-write"
+            group="write"
+            currentLang={currentLang}
+            initialEndpointId={selectedEndpointId}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'endpoints-enterprise':
+        return (
+          <EndpointGroupPage
+            topicId="endpoints-enterprise"
+            group="enterprise"
+            currentLang={currentLang}
+            initialEndpointId={selectedEndpointId}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
+      case 'endpoints-export-import':
+        return (
+          <EndpointGroupPage
+            topicId="endpoints-export-import"
+            group="export-import"
+            currentLang={currentLang}
+            initialEndpointId={selectedEndpointId}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
       case 'custom-endpoints':
         return <CustomEndpointsPage currentLang={currentLang} theme={theme} />;
       case 'query-operators':
@@ -180,13 +348,15 @@ export const App: React.FC = () => {
         return <ZodClientCodegenPage currentLang={currentLang} />;
       case 'spring-ai':
         return <SpringAiPage currentLang={currentLang} />;
+      case 'ai-agent-kit':
+        return <AiAgentKitPage currentLang={currentLang} />;
       default:
         return <OverviewPage currentLang={currentLang} theme={theme} />;
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
       <Navbar
         currentLang={currentLang}
         onChangeLang={(lang) => setCurrentLang(lang)}
@@ -201,7 +371,7 @@ export const App: React.FC = () => {
       <div className="portal-shell">
         <Sidebar
           activeTopicId={activeTopicId}
-          onSelectTopic={navigateToTopic}
+          onSelectTopic={(topicId) => navigateToTopic(topicId)}
           currentLang={currentLang}
           open={sidebarOpen}
           onCloseMobile={() => setSidebarOpen(false)}
@@ -215,7 +385,7 @@ export const App: React.FC = () => {
           <TopicPaginationFooter
             activeTopicId={activeTopicId}
             currentLang={currentLang}
-            onSelectTopic={navigateToTopic}
+            onSelectTopic={(topicId) => navigateToTopic(topicId)}
           />
         </main>
 
@@ -226,7 +396,7 @@ export const App: React.FC = () => {
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
         currentLang={currentLang}
-        onSelectPage={navigateToTopic}
+        onSelectResult={handleSearchSelect}
       />
     </div>
   );

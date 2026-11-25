@@ -1,4 +1,4 @@
-# 05. 8 Interface SPI Tùy Biến, `@CustomEndpoint` & `@ServiceOverride` (`1.0.0`)
+# 05. 8 Interface SPI Tùy Biến, `@CustomEndpoint` & `@ServiceOverride` (`0.1.0`)
 
 > **Ngôn ngữ**: Tiếng Việt | [English](en/05_SPRING_ECOSYSTEM_SPIS.md) | [Sổ Tay Đầy Đủ](../GUIDE_VI.md)
 
@@ -19,7 +19,7 @@ Mọi điểm mở rộng trong `io.github.natswarchuan.customization.customizer
 | 7 | `ArchitectureExtensionCustomizer` | `ArchitectureCustomizerContextDto` | Endpoint tùy biến, mở rộng GraphQL & i18n |
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Chính sách bucket `LOCAL`/`S3`/`GCS`, pre-signed URL |
 
-Kiểm tra danh sách bean đang kích hoạt qua `GET /api/v1/system/customizers`.
+Kiểm tra danh sách bean thuộc 7 nhóm `*Customizer` chuẩn (`CustomizerGroupConstant`) qua `GET /api/v1/system/customizers` (`StorageCustomizer` được quản lý riêng qua `StorageCustomizerRegistryHelper`).
 
 ---
 
@@ -28,7 +28,7 @@ Kiểm tra danh sách bean đang kích hoạt qua `GET /api/v1/system/customizer
 ### `@CustomEndpoint` Cho Nghiệp Vụ Đặc Thù
 
 ```java
-@AutoRestController(path = "/api/v1/advanced-enterprise")
+@AutoRestController(basePath = "/api/v1/advanced-enterprise")
 public interface AdvancedEnterpriseBusinessController extends AutoApiController<CustomerOrder> {
 
   @CustomEndpoint(
@@ -45,16 +45,16 @@ public interface AdvancedEnterpriseBusinessController extends AutoApiController<
 ### `@ServiceOverride` Ghi Đè Một Contract Sinh Tự Động
 
 ```java
-@AutoRestController(path = "/api/v1/tags")
+@AutoRestController(basePath = "/api/v1/tags")
 public interface TagController extends AutoApiController<Tag> {
 
   @ServiceOverride(
-      beanName = "tagCustomOverrideService",
-      methodName = "getCustomTagStats",
+      targetBean = TagEscapeHatchHelper.class,
+      methodName = "buildTaxonomyStats",
       bypassAutoDispatch = true
   )
   @AutoGet("/showcase/escape-hatch-stats")
-  ApiResponse<String> getCustomTagStats();
+  ApiResponse<Map<String, String>> getTaxonomyEscapeHatchStats();
 }
 ```
 
@@ -62,4 +62,4 @@ public interface TagController extends AutoApiController<Tag> {
 
 ## 3. HTTP Client Outbound (`ThirdPartyRestClientHelper`)
 
-`ThirdPartyRestClientHelper` gọi HTTP ra bên ngoài qua Spring `RestClient` hoặc fallback chuẩn Java 21 `java.net.http.HttpClient`, tự động truyền tiếp `X-Request-ID` và W3C `traceparent` từ SLF4J MDC.
+`ThirdPartyRestClientHelper` gọi HTTP ra bên ngoài qua chế độ Java 21 `java.net.http.HttpClient` mặc định hoặc tùy chọn Spring `RestClient` (`RestClientConfig`), đồng thời chèn `X-Request-ID`, W3C `traceparent` và `tracestate` từ SLF4J MDC trên cả hai chế độ.

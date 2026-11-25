@@ -15,25 +15,42 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
+    const container = document.getElementById('doc-reading-canvas');
+    if (!container) {
+      return;
+    }
+
     const collectHeadings = () => {
-      const container = document.getElementById('doc-reading-canvas');
-      if (!container) {
-        return;
-      }
       const elements = Array.from(container.querySelectorAll('h2[id], h3[id]'));
       const collected: TocHeading[] = elements.map((el) => ({
         id: el.id,
         title: (el.textContent ?? '').trim(),
         level: el.tagName === 'H3' ? 3 : 2,
       }));
-      setHeadings(collected);
+      setHeadings((prev) => {
+        const same =
+          prev.length === collected.length &&
+          prev.every(
+            (item, idx) =>
+              item.id === collected[idx].id &&
+              item.title === collected[idx].title &&
+              item.level === collected[idx].level
+          );
+        return same ? prev : collected;
+      });
       if (collected.length > 0) {
-        setActiveId(collected[0].id);
+        setActiveId((prev) => (collected.some((h) => h.id === prev) ? prev : collected[0].id));
       }
     };
 
-    const timer = window.setTimeout(collectHeadings, 40);
-    return () => window.clearTimeout(timer);
+    const timer = window.setTimeout(collectHeadings, 30);
+    const observer = new MutationObserver(() => collectHeadings());
+    observer.observe(container, { childList: true, subtree: true, characterData: true });
+
+    return () => {
+      window.clearTimeout(timer);
+      observer.disconnect();
+    };
   }, [activeTopicId, currentLang]);
 
   useEffect(() => {
@@ -42,11 +59,16 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     }
 
     const onScroll = () => {
-      const scrollY = window.scrollY + 120;
+      const nearBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 16;
+      if (nearBottom) {
+        setActiveId(headings[headings.length - 1].id);
+        return;
+      }
       let current = headings[0].id;
       for (const h of headings) {
         const el = document.getElementById(h.id);
-        if (el && el.offsetTop <= scrollY) {
+        if (el && el.getBoundingClientRect().top <= 128) {
           current = h.id;
         }
       }

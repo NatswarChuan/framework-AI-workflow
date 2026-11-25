@@ -4,6 +4,8 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { UI_LABELS, pickText } from '../data/locales';
+import { RichDocText } from '../components/RichDocText';
+import { STAGE8_CONTENT } from '../data/pages/stage8Content';
 
 interface PageProps {
   currentLang: SupportedLanguage;
@@ -16,7 +18,7 @@ export const CustomizersAndIntegrationPage: React.FC<PageProps> = ({ currentLang
         topicId="customizers"
         currentLang={currentLang}
         badges={[
-          { label: '8 Customizer SPIs', tone: 'purple' },
+          { label: pickText(STAGE8_CONTENT.cuBadgeSpis, currentLang), tone: 'purple' },
           { label: 'SpringEcosystemCustomizerRegistryHelper', tone: 'blue' },
           { label: 'ThirdPartyRestClientHelper', tone: 'emerald' },
         ]}
@@ -26,7 +28,7 @@ export const CustomizersAndIntegrationPage: React.FC<PageProps> = ({ currentLang
         {pickText(UI_LABELS.stepGoal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
-        Application beans can hook into every infrastructure subsystem by implementing any of the 8 framework Customizer Service Provider Interfaces (SPIs) indexed by <code>SpringEcosystemCustomizerRegistryHelper</code> and inspectable at runtime via <code>CustomizerTelemetryApiController</code> (<code>GET /api/v1/system/customizers</code>).
+        <RichDocText text={STAGE8_CONTENT.cuGoalBody} currentLang={currentLang} />
       </p>
 
       <h2 id="customizers-table" className="section-heading">
@@ -37,51 +39,51 @@ export const CustomizersAndIntegrationPage: React.FC<PageProps> = ({ currentLang
         <table className="doc-table">
           <thead>
             <tr>
-              <th>Customizer SPI Interface</th>
-              <th>Context DTO</th>
-              <th>Extension Scope</th>
+              <th>{pickText(STAGE8_CONTENT.cuThSpi, currentLang)}</th>
+              <th>{pickText(STAGE8_CONTENT.cuThDto, currentLang)}</th>
+              <th>{pickText(STAGE8_CONTENT.cuThScope, currentLang)}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><code>SpringCoreCustomizer</code></td>
               <td><code>CoreCustomizerContextDto</code></td>
-              <td>Jackson serialization, web MVC hooks, executor tuning, message bundles</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowCore} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>PlatformAiCustomizer</code></td>
               <td><code>PlatformAiCustomizerContextDto</code></td>
-              <td>LLM system prompt enrichment, AI metadata hooks, NL query preprocessors</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowAi} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>SecurityIdentityCustomizer</code></td>
               <td><code>SecurityCustomizerContextDto</code></td>
-              <td>Custom JWT claim extraction, OAuth2 role mapping, tenant claim resolution</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowSec} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>DataAccessCustomizer</code></td>
               <td><code>DataCustomizerContextDto</code></td>
-              <td>Hibernate dialect customization, query criteria predicates, audit enrichers</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowData} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>SpringCloudCustomizer</code></td>
               <td><code>CloudCustomizerContextDto</code></td>
-              <td>Distributed tracing tags, circuit breaker fallback policies, cloud discovery metadata</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowCloud} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>MessagingIntegrationCustomizer</code></td>
               <td><code>MessagingCustomizerContextDto</code></td>
-              <td>Outbox event serialization headers, webhook signing overrides, STOMP interceptors</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowMsg} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>ArchitectureExtensionCustomizer</code></td>
               <td><code>ArchitectureCustomizerContextDto</code></td>
-              <td>Domain boundary policies, custom proxy advice hooks, cross-cutting interceptors</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowArch} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>StorageCustomizer</code></td>
               <td><code>StorageCustomizerContextDto</code></td>
-              <td>Upload validation hooks, virus scanning, custom key naming, pre-signed URL wrappers</td>
+              <td><RichDocText text={STAGE8_CONTENT.cuRowStorage} currentLang={currentLang} /></td>
             </tr>
           </tbody>
         </table>
@@ -96,33 +98,79 @@ export const CustomizersAndIntegrationPage: React.FC<PageProps> = ({ currentLang
         tabs={[
           {
             id: 'security-customizer',
-            label: 'SPI Implementation',
+            label: 'EnterpriseSecurityIdentityCustomizer.java',
             language: 'java',
-            fileName: 'config/TenantSecurityCustomizer.java',
-            highlightLines: [2],
-            code: `@AutoComponent
-public final class TenantSecurityCustomizer implements SecurityIdentityCustomizer {
+            fileName: 'src/main/java/com/example/implementation/customizer/EnterpriseSecurityIdentityCustomizer.java',
+            highlightLines: [12, 16, 26],
+            code: `package com.example.implementation.customizer;
+
+import io.github.natswarchuan.customization.customizer.SecurityIdentityCustomizer;
+import io.github.natswarchuan.customization.dto.SecurityAuthorizationRequestDto;
+import io.github.natswarchuan.customization.dto.SecurityCustomizerContextDto;
+import java.util.Set;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
+import org.springframework.stereotype.Component;
+
+@Component
+public final class EnterpriseSecurityIdentityCustomizer implements SecurityIdentityCustomizer {
 
   @Override
-  public void customize(final SecurityCustomizerContextDto context) {
-    // Register custom tenant claim resolver or OAuth2 attribute extractor
+  public void customizeSecurityFilterChain(final Object http) throws Exception {
+    if (http instanceof HttpSecurity httpSecurity) {
+      httpSecurity.requestCache(RequestCacheConfigurer::disable);
+    }
+  }
+
+  @Override
+  public void customizeSecurityIdentityContext(final SecurityCustomizerContextDto contextDto) {
+    // Enrich identity diagnostics before downstream authorization hooks execute
+  }
+
+  @Override
+  public Set<String> augmentSubjectAuthorities(final String subject, final Set<String> currentAuthorities) {
+    return currentAuthorities;
+  }
+
+  @Override
+  public Boolean evaluateCustomAuthorization(final SecurityAuthorizationRequestDto requestDto) {
+    return null; // Return TRUE (allow), FALSE (deny), or null (delegate to RBAC/DB policies)
   }
 }`,
           },
           {
             id: 'restclient-helper',
-            label: 'ThirdPartyRestClientHelper',
+            label: 'MarketplacePartnerGatewayHelper.java',
             language: 'java',
-            fileName: 'helper/PartnerGatewayHelper.java',
-            code: `@AutoComponent
+            fileName: 'src/main/java/com/example/implementation/helper/MarketplacePartnerGatewayHelper.java',
+            highlightLines: [14, 18, 25, 26],
+            code: `package com.example.implementation.helper;
+
+import com.example.implementation.dto.PartnerRateCheckResultDto;
+import io.github.natswarchuan.module.integration.dto.ThirdPartyCallRequestDto;
+import io.github.natswarchuan.module.integration.dto.ThirdPartyCallResponseDto;
+import io.github.natswarchuan.module.integration.helper.ThirdPartyRestClientHelper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.stereotype.Component;
+
+@Component
 @RequiredArgsConstructor
-public final class PartnerGatewayHelper {
+public final class MarketplacePartnerGatewayHelper {
 
-  private final ThirdPartyRestClientHelper restClientHelper;
+  // ObjectProvider defers lookup until framework AutoConfiguration finishes registering @AutoComponent beans
+  private final ObjectProvider<ThirdPartyRestClientHelper> restClientProvider;
 
-  public String fetchPartnerInventory(final String url) {
-    // Automatically carries W3C traceparent and X-Request-ID from MDC
-    return restClientHelper.getForObject(url, String.class);
+  public PartnerRateCheckResultDto checkPartnerEndpoint(final String serviceName, final String targetUrl) {
+    final ThirdPartyCallRequestDto request = ThirdPartyCallRequestDto.builder()
+        .serviceName(serviceName)
+        .targetUrl(targetUrl)
+        .httpMethod("GET")
+        .build();
+    // Automatically propagates X-Request-ID, W3C traceparent, and tracestate from SLF4J MDC
+    final ThirdPartyCallResponseDto response = restClientProvider.getObject().executeOutboundCall(request);
+    final boolean healthy = response.getStatusCode() >= 200 && response.getStatusCode() < 300;
+    return PartnerRateCheckResultDto.fromOutboundSummary(response, response.getResponseBody(), healthy);
   }
 }`,
           },
@@ -130,7 +178,7 @@ public final class PartnerGatewayHelper {
       />
 
       <Callout type="note" currentLang={currentLang}>
-        All outbound HTTP integrations use Spring Framework 6 <code>RestClient</code> configured in <code>RestClientConfig</code> rather than legacy blocking <code>RestTemplate</code> instances, maintaining virtual-thread friendliness and automatic W3C trace header forwarding.
+        <RichDocText text={STAGE8_CONTENT.cuCalloutNote} currentLang={currentLang} />
       </Callout>
     </article>
   );

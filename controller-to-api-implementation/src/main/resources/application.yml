@@ -7,27 +7,19 @@ server:
 
 spring:
   application:
-    name: controller-to-api-implementation
+    name: novamart-ecommerce
   threads:
     virtual:
       enabled: true
   datasource:
-    url: jdbc:h2:mem:implementation_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:novamartdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
-    password:
-    hikari:
-      pool-name: ControllerToApiHikariPool
-      maximum-pool-size: 30
-      minimum-idle: 10
-      connection-timeout: 20000
-      idle-timeout: 300000
-      max-lifetime: 1200000
-      leak-detection-threshold: 5000
+    password: ""
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
-    open-in-view: false
     properties:
       hibernate:
         default_batch_fetch_size: 50
@@ -36,32 +28,88 @@ spring:
         order_inserts: true
         order_updates: true
 
+novamart:
+  datasource:
+    primary-url: jdbc:h2:mem:novamartdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    replica-url: jdbc:h2:mem:novamartdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+    maximum-pool-size: 20
+
 app:
   framework:
     base-path-prefix: /api/v1
     default-page-size: 20
     max-page-size: 100
+    eager-fetch-singular-relations: true
+
     query-guardrails:
       max-join-depth: 3
-      max-page-size: 100
       max-filter-criteria: 25
-    studio:
+      max-page-size: 200
+      max-unpaged-fetch-limit: 5000
+      eager-fetch-singular-relations: true
+
+    security:
       enabled: true
-      demo-token-endpoint-enabled: true
-      show-i18n-diagnostics: true
+      data-masking-enabled: true
+      row-level-security-enabled: true
+      dynamic-database-rbac-enabled: true
+      database-rbac-cache-ttl-seconds: 60
+      jwt-secret: ${JWT_SECRET}
+      jwt-expiration-seconds: 86400
+      fail-fast-weak-jwt-secret: true
+      default-deny-unannotated-entities: false
+      require-authenticated-api-paths: false
+
+    studio:
+      enabled: false
+      demo-token-endpoint-enabled: false
+      show-i18n-diagnostics: false
       hide-framework-fingerprint: true
+
+    aop:
+      audit-trail-enabled: true
+      idempotency-enabled: true
+      execution-profiling-enabled: true
+      slow-execution-threshold-ms: 500
+      idempotency-ttl-seconds: 300
+
+    cache:
+      type: CAFFEINE
+      caffeine:
+        initial-capacity: 100
+        maximum-size: 5000
+        expire-after-write-minutes: 10
+
     storage:
       enabled: true
       provider: LOCAL
       max-file-size: 52428800
+      allowed-extensions: []
       local:
-        base-dir: target/uploads
+        base-dir: target/novamart-uploads
         create-dir-if-missing: true
         url-prefix: /api/v1/storage/download/
 
-spring-nwvmc:
-  human-policies:
-    SubscriptionContract:
-      lifecycle: "Starts at DRAFT. From DRAFT can transition to ACTIVE or CANCELLED. From ACTIVE can transition to SUSPENDED or EXPIRED. Allow deletion only when DRAFT or CANCELLED."
-      security: "Allow read for USER, ADMIN, OPERATOR. Allow write for OPERATOR, ADMIN. Allow delete for SUPER_ADMIN."
-      masking: "Mask recurringAmount for USER. Nullify clientTaxNumber for non-ADMIN."
+    realtime:
+      sse-enabled: true
+      heartbeat-seconds: 15
+      max-emitters-per-entity: 1000
+
+    ai:
+      enabled: true
+      natural-language-query-enabled: true
+
+    i18n:
+      default-locale: en
+      cache-seconds: 3600
+
+    date-time:
+      default-timezone: UTC
+      enable-header-timezone: true
+
+    sub-resource:
+      enabled-by-default: false
+      enabled-entities: []

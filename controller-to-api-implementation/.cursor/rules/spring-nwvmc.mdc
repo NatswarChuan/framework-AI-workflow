@@ -1,0 +1,46 @@
+---
+description: Spring-NWVMC (v0.1.0) enterprise adoption rules, exact 6 annotation packages, verified runtime gotchas, and production security lockdown for Java 21 + Spring Boot 3.x projects.
+globs:
+  - "**/*.java"
+  - "**/application*.yml"
+  - "**/application*.yaml"
+  - "**/pom.xml"
+  - "**/build.gradle*"
+alwaysApply: true
+---
+
+# Spring-NWVMC (`v0.1.0`) Cursor Rules
+
+This repository uses **Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0`)** on **Java 21 LTS + Spring Boot 3.x**.
+For full attribute matrices, 40 auto-endpoints, YAML properties, verified recipes, and non-annotation class imports, read `.agents/skills/spring-nwvmc-adoption/SKILL.md` and `references/01..05` before inventing syntax.
+
+## Architecture & Build Requirements
+- Require Java 21 LTS, JitPack `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`, and `<parameters>true</parameters>` in `maven-compiler-plugin`.
+- Follow the **2-Directory Contract**:
+  - `entity/`: JPA `@Entity` extending `BaseAuditEntity` (UUIDv7 `id`, soft-delete, audit columns, `@Version` optimistic locking built-in — NEVER invent `@SoftDelete`, NEVER use Lombok `@Data` on `@Entity`).
+  - `controller/`: `@AutoRestController` Java `interface` extending `AutoApiController<E>` (40 endpoints) or narrow composable interfaces (`AutoReadApi<E>`, `AutoWriteApi<E>`, `AutoBatchApi<E>`, `AutoAuditApi<E>`, `AutoAnalyticsApi<E>`, `AutoStateApi<E>`, `AutoExportImportApi<E>`, `AutoSchemaApi<E>`, `AutoAiApi<E>`).
+- Do NOT generate redundant CRUD repositories, services, or concrete `@RestController` classes for entities managed by `@AutoRestController`.
+
+## Exact 6 Real Annotation Packages (Zero Fictional Annotations)
+1. `io.github.natswarchuan.core.annotation.*` (54 annotations)
+2. `io.github.natswarchuan.module.cache.http.annotation.HttpCacheable`
+3. `io.github.natswarchuan.module.datasource.annotation.{TargetDataSource, TargetDatabasePlatform}`
+4. `io.github.natswarchuan.module.event.annotation.PublishCloudEvent`
+5. `io.github.natswarchuan.module.lock.annotation.DistributedLock`
+6. `io.github.natswarchuan.module.webhook.annotation.EntityWebhook`
+
+## Empirically Verified Runtime Pitfalls (NEVER Violate)
+- **`@StateMachine.transitions`:** Colon syntax `"CREATED:PENDING_PAYMENT,CANCELLED"`, NEVER `"FROM -> TO"`. Invoke via `POST /api/v1/{entity}/{id}/transition?targetState=...`, NEVER JSON body.
+- **Query Operators:** Dot syntax (`retailPrice.gte=1000&productName.like=MacBook`), NEVER `__gte`.
+- **CamelCase Base Paths:** `ECommerceOrder` → `/api/v1/e-commerce-orders`. Set `@AutoRestController(basePath = "...")` if custom URI needed.
+- **`ObjectProvider<T>` Injection:** Consumer `@Component` / `@Service` beans injecting framework `@AutoComponent` helpers (`DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`) MUST inject `ObjectProvider<T>` and call `.getObject()` at runtime.
+- **`@Lazy` Non-Final Services + Lazy Injection:** Consumer `@Service` beans using `@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, or `@TargetDataSource` MUST be **non-final** and **`@Lazy`** (class + method `@TargetDataSource` on `v0.1.0`), AND callers injecting them MUST use **`ObjectProvider<MyService>`** or **`@Lazy`**. NEVER put `@Transactional` on `public final class` Helpers.
+- **Dev JWT & Testing:** Use `POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN` (NOT `/system/studio/demo-token`) and `JwtTokenService.generateToken(username, userId, roles)` (`username` FIRST!).
+- **`readDto` Scoping:** Controllers declaring `readDto = X.class` project ALL responses through `X`. Mount endpoints returning custom DTOs on a controller without `readDto`.
+- **Custom Route Security:** `@ServiceOverride` custom methods default to `writeRoles` (fail-closed); `@CustomEndpoint` dispatches directly to the delegated Spring bean (place security/AOP on the bean).
+- **Outbox & Storage:** Outbox event types use `EventConstant` (`ENTITY_CREATED`); `POST /api/v1/storage/upload` returns `201 Created`.
+
+## Production Security Lockdown
+- Keep `app.framework.studio.enabled: false`, `demo-token-endpoint-enabled: false`, `fail-fast-weak-jwt-secret: true`, and `JWT_SECRET >= 32` UTF-8 bytes in `application.yml` / `application-prod.yml`. Enable Studio ONLY in `application-dev.yml`.
+- Annotate every protected entity with `@EntitySecurity(...)` and mask sensitive columns with `@FieldSecurity(...)`.
+- Before finishing, verify against `.agents/skills/spring-nwvmc-adoption/CHECKLIST.md` and run `mvn clean verify` (`0` failures, `0` `@Disabled`).

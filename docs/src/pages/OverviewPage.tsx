@@ -4,21 +4,24 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { Callout } from '../components/Callout';
 import { CodeBlock } from '../components/CodeBlock';
 import { MermaidDiagram } from '../components/MermaidDiagram';
+import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
+import { STAGE1_CONTENT } from '../data/pages/stage1Content';
 
 interface OverviewPageProps {
   currentLang: SupportedLanguage;
   theme: 'dark' | 'light';
 }
 
-const ARCHITECTURE_CHART = `flowchart LR
-  Client[HTTP / GraphQL / STOMP Client] --> Filter[TraceIdFilter + SecurityFilterChainBridge]
-  Filter --> Router[Spring MVC RequestMappingHandlerMapping]
-  Router --> Proxy[JDK Dynamic Proxy ControllerProxyInvocationHandler]
+const ARCHITECTURE_CHART = `flowchart TD
+  Client["HTTP / GraphQL / STOMP Client"] --> Filter["TraceIdFilter + SecurityFilterChainBridge"]
+  Filter --> Router["Spring MVC RequestMappingHandlerMapping"]
+  Router --> Proxy["JDK Dynamic Proxy\nControllerProxyInvocationHandler"]
   Proxy --> Escape{"@ServiceOverride?"}
-  Escape -- Yes --> EscapeBean[EscapeHatchDispatchHelper + MethodHandleCacheUtil]
-  Escape -- No --> Service[DynamicEntityCrudService + Guardrails]
-  Service --> JPA[(JPA / Multi-Datasource / Cache)]`;
+  Escape -->|Yes| EscapeBean["EscapeHatchDispatchHelper\nMethodHandleCacheUtil"]
+  Escape -->|No| Service["DynamicEntityCrudService\n+ Guardrails"]
+  EscapeBean --> JPA[("JPA / Multi-Datasource / Cache")]
+  Service --> JPA`;
 
 export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }) => {
   return (
@@ -27,9 +30,9 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
         topicId="overview"
         currentLang={currentLang}
         badges={[
-          { label: 'io.github.natswarchuan:spring-nwvmc:1.0.0', tone: 'emerald' },
+          { label: 'io.github.natswarchuan:spring-nwvmc:0.1.0', tone: 'emerald' },
           { label: 'Java 21 LTS', tone: 'blue' },
-          { label: '528 Classes · 42 Annotations · 40 Contracts', tone: 'purple' },
+          { label: pickText(STAGE1_CONTENT.ovBadgeCounts, currentLang), tone: 'purple' },
         ]}
       />
 
@@ -37,36 +40,37 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
         {pickText(UI_LABELS.stepGoal, currentLang)}
       </h2>
 
-      <div className="feature-grid">
+      <div className="feature-grid grid-2col">
         <div className="feature-card">
-          <h4>528 Core Java Files · 215 Test Files</h4>
+          <h4>{pickText(STAGE1_CONTENT.ovCard1Title, currentLang)}</h4>
           <p>
-            Compiles cleanly without Spring MVC or Spring Data annotations on domain interfaces. Only Spring AOT hints (<code>core/aot/</code>) and YAML <code>@ConfigurationProperties</code> metadata retain compile-time Spring imports (10 lines total).
+            <RichDocText text={STAGE1_CONTENT.ovCard1Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
-          <h4>40 Contracts · 38 Default Swagger Routes</h4>
+          <h4>{pickText(STAGE1_CONTENT.ovCard2Title, currentLang)}</h4>
           <p>
-            Extending <code>AutoApiController&lt;E&gt;</code> registers 17 Read, 11 Write, and 12 Enterprise contracts per entity. <code>/events</code> stays <code>@Hidden</code> and <code>/{`{id}`}/**</code> activates on opt-in.
+            <RichDocText text={STAGE1_CONTENT.ovCard2Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
-          <h4>@ServiceOverride &amp; Code Ejection</h4>
+          <h4>{pickText(STAGE1_CONTENT.ovCard3Title, currentLang)}</h4>
           <p>
-            Override any single proxy method inline with <code>@ServiceOverride</code> or export standalone MVC layers via <code>GET /system/studio/eject</code>.
+            <RichDocText text={STAGE1_CONTENT.ovCard3Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
-          <h4>20-Language Studio &amp; RTL Layout</h4>
+          <h4>{pickText(STAGE1_CONTENT.ovCard4Title, currentLang)}</h4>
           <p>
-            Built-in <code>/system/studio</code> and <code>docs/</code> support 20 locales including RTL directionality for <code>ar</code>, <code>fa</code>, and <code>ur</code>.
+            <RichDocText text={STAGE1_CONTENT.ovCard4Body} currentLang={currentLang} />
           </p>
         </div>
       </div>
 
       <MermaidDiagram
         theme={theme}
-        caption="Spring-NWVMC 1.0.0 Request Execution Pipeline"
+        currentLang={currentLang}
+        caption={pickText(STAGE1_CONTENT.ovMermaidCaption, currentLang)}
         chart={ARCHITECTURE_CHART}
       />
 
@@ -86,7 +90,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
             code: `<dependency>
   <groupId>io.github.natswarchuan</groupId>
   <artifactId>spring-nwvmc</artifactId>
-  <version>1.0.0</version>
+  <version>0.1.0</version>
 </dependency>`,
           },
           {
@@ -96,7 +100,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
             fileName: 'build.gradle.kts',
             highlightLines: [2],
             code: `dependencies {
-  implementation("io.github.natswarchuan:spring-nwvmc:1.0.0")
+  implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
 }`,
           },
           {
@@ -104,7 +108,9 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
             label: 'JitPack',
             language: 'xml',
             fileName: 'pom.xml',
-            code: `<repositories>
+            code: `<!-- Monorepo note: framework module lives in controller-to-api-framework/ -->
+<!-- Local install: mvn clean install -f controller-to-api-framework/pom.xml -->
+<repositories>
   <repository>
     <id>jitpack.io</id>
     <url>https://jitpack.io</url>
@@ -114,7 +120,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
 <dependency>
   <groupId>com.github.NatswarChuan</groupId>
   <artifactId>Spring-NWVMC</artifactId>
-  <version>v1.0.0</version>
+  <version>v0.1.0</version>
 </dependency>`,
           },
         ]}
@@ -126,36 +132,86 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
 
       <CodeBlock
         currentLang={currentLang}
-        language="java"
-        fileName="ProductCatalog.java + ProductCatalogController.java"
-        code={`@Entity
-@Table(name = "tbl_product_catalog")
+        tabs={[
+          {
+            id: 'ov-entity',
+            label: 'ProductCatalog.java',
+            language: 'java',
+            fileName: 'src/main/java/com/example/implementation/entity/ProductCatalog.java',
+            highlightLines: [21, 22, 23, 24, 25, 29, 34, 49],
+            code: `package com.example.implementation.entity;
+
+import io.github.natswarchuan.common.constant.RoleConstant;
+import io.github.natswarchuan.common.entity.BaseAuditEntity;
+import io.github.natswarchuan.core.annotation.AutoSlug;
+import io.github.natswarchuan.core.annotation.EntitySecurity;
+import io.github.natswarchuan.core.annotation.FieldSecurity;
+import io.github.natswarchuan.core.annotation.UniqueField;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@Table(name = "tbl_product_catalogs")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder
 @EntitySecurity(
-    readRoles = {RoleConstant.ROLE_USER, RoleConstant.ROLE_ADMIN},
-    writeRoles = {RoleConstant.ROLE_ADMIN},
-    deleteRoles = {RoleConstant.ROLE_ADMIN}
-)
-@AuditTrail
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+    readRoles = {RoleConstant.ROLE_USER, RoleConstant.ROLE_ADMIN, RoleConstant.ROLE_SUPER_ADMIN},
+    writeRoles = {RoleConstant.ROLE_ADMIN, RoleConstant.ROLE_SUPER_ADMIN},
+    deleteRoles = {RoleConstant.ROLE_SUPER_ADMIN})
 public class ProductCatalog extends BaseAuditEntity {
 
-  @AutoCode(prefix = "PRD-")
-  @UniqueField
-  private String code;
+  @UniqueField @NotBlank
+  @Column(name = "sku_code", nullable = false, length = 64)
+  private String skuCode;
 
   @NotBlank
-  private String name;
+  @Column(name = "product_name", nullable = false, length = 200)
+  private String productName;
 
-  @PositiveOrZero
-  private BigDecimal unitPrice;
-}
+  @UniqueField @AutoSlug(sourceField = "productName")
+  @Column(name = "slug", nullable = false, length = 250)
+  private String slug;
 
-@AutoRestController(path = "/api/v1/product-catalogs")
+  @NotBlank private String category;
+  private String brand;
+  @NotBlank private String vendorStoreCode;
+
+  @NotNull @DecimalMin("0.00") private BigDecimal retailPrice;
+  @NotNull @DecimalMin("0.00") private BigDecimal b2bWholesalePrice;
+
+  @FieldSecurity(viewRoles = {RoleConstant.ROLE_ADMIN, RoleConstant.ROLE_SUPER_ADMIN}, nullifyInsteadOfMask = true)
+  private BigDecimal costPrice;
+
+  @Column(nullable = false) private Boolean active;
+}`,
+          },
+          {
+            id: 'ov-controller',
+            label: 'ProductCatalogController.java',
+            language: 'java',
+            fileName: 'src/main/java/com/example/implementation/controller/ProductCatalogController.java',
+            highlightLines: [6, 7],
+            code: `package com.example.implementation.controller;
+
+import com.example.implementation.entity.ProductCatalog;
+import io.github.natswarchuan.core.annotation.AutoRestController;
+import io.github.natswarchuan.core.controller.AutoApiController;
+
+@AutoRestController
 public interface ProductCatalogController extends AutoApiController<ProductCatalog> {
-}`}
+  // Automatically mounts 36 REST/Batch/Keyset/Schema/AI endpoints at /api/v1/product-catalogs
+}`,
+          },
+        ]}
       />
 
       <h2 id="jmh-benchmarks" className="section-heading">
@@ -163,38 +219,38 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
       </h2>
 
       <p style={{ color: 'var(--text-secondary)' }}>
-        Measured in-process JMH <code>1.37</code> throughput (<code>DynamicProxyThroughputBenchmarkTest</code>, <code>Mode.Throughput</code>, <code>ops/ms</code>) and CycloneDX 1.5 SBOM verification across Spring Boot <code>3.2.5</code>, <code>3.3.5</code>, and <code>3.4.0</code> (<code>.github/workflows/ci-matrix.yml</code>):
+        <RichDocText text={STAGE1_CONTENT.ovBenchIntro} currentLang={currentLang} />
       </p>
 
       <div className="table-scroll">
         <table className="doc-table">
           <thead>
             <tr>
-              <th>Dispatch Path (JMH 1.37 Benchmark)</th>
-              <th>Measured Mean Throughput</th>
-              <th>Runtime Mechanism</th>
+              <th>{pickText(STAGE1_CONTENT.ovThPath, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.ovThThroughput, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.ovThMechanism, currentLang)}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><code>measureVanillaDirectDispatch</code></td>
-              <td><code>1457.171 ops/ms</code></td>
-              <td>Direct Spring bean invocation baseline</td>
+              <td><code>432.825 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow1Mech} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>measureCachedMethodHandleDispatch</code></td>
-              <td><code>1029.464 ops/ms</code></td>
-              <td><code>MethodHandleCacheUtil</code> unreflected handle invocation</td>
+              <td><code>182.914 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow2Mech} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>measureDynamicProxyServiceOverrideDispatch</code></td>
-              <td><code>528.621 ops/ms</code></td>
-              <td>JDK Dynamic Proxy routed via <code>@ServiceOverride</code></td>
+              <td><code>68.267 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow3Mech} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>measureDynamicProxyDefaultDispatch</code></td>
-              <td><code>195.486 ops/ms</code></td>
-              <td>JDK Dynamic Proxy via interface <code>default</code> contract</td>
+              <td><code>52.730 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow4Mech} currentLang={currentLang} /></td>
             </tr>
           </tbody>
         </table>
@@ -205,7 +261,7 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
       </h2>
 
       <Callout type="security" currentLang={currentLang}>
-        All developer introspection endpoints (<code>/system/studio</code>, <code>/system/studio/eject</code>) and the demo token minter (<code>POST /api/v1/auth/token</code>) default to disabled (<code>false</code>) in production, returning HTTP <code>401</code> and <code>404</code> respectively via <code>SurfaceAccessGuardrailUtil</code>.
+        <RichDocText text={STAGE1_CONTENT.ovCalloutSecurity} currentLang={currentLang} />
       </Callout>
     </article>
   );

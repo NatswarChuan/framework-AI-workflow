@@ -2,7 +2,7 @@
 
 > **アーティファクト座標**: `io.github.natswarchuan:spring-nwvmc:0.1.0` | JitPack: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`  
 > **実行環境**: Java 21 LTS (Virtual Threads) · Spring Boot `3.2.5` / `3.3.5` / `3.4.0` · GraalVM AOT `RuntimeHints`  
-> **トピック別仕様**: [入門ガイド](topics/en/01_GETTING_STARTED.md) · [40 エンドポイント](topics/en/02_REST_API_CATALOG.md) · [60 アノテーション完全仕様](topics/en/06_DECLARATIVE_ANNOTATIONS.md)  
+> **トピック別仕様（全20言語）**: [入門ガイド](topics/ja/01_GETTING_STARTED.md) · [40 エンドポイント](topics/ja/02_REST_API_CATALOG.md) · [クエリ・GraphQL](topics/ja/03_QUERY_AND_DATA_ACCESS.md) · [セキュリティ・Metrics・i18n](topics/ja/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 SPI Customizers](topics/ja/05_SPRING_ECOSYSTEM_SPIS.md) · [60 アノテーション完全仕様](topics/ja/06_DECLARATIVE_ANNOTATIONS.md) · [AI-Agent キット](topics/ja/07_AI_AGENT_ADOPTION_KIT.md) · [全20言語一覧](topics/README.md)  
 > **言語**: [English](GUIDE_EN.md) | [Tiếng Việt](GUIDE_VI.md) | 日本語 | [中文](GUIDE_ZH.md) | [20言語ポータル](index.html#annotations)
 
 ---
@@ -177,7 +177,7 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ## 8. 宣言的アノテーション（60種）属性・既定値・使い分け指針
 
-全 `60` 個のアノテーションにおける属性、Java 型、デフォルト値、必須/任意、使用方法、推奨ユースケース、禁止・注意事項は **[20言語ポータル（#annotations）](index.html#annotations)** および **[60 アノテーション完全仕様](topics/en/06_DECLARATIVE_ANNOTATIONS.md)** に完全収録しています。
+全 `60` 個のアノテーションにおける属性、Java 型、デフォルト値、必須/任意、使用方法、推奨ユースケース、禁止・注意事項は **[20言語ポータル（#annotations）](index.html#annotations)** および **[60 アノテーション完全仕様](topics/ja/06_DECLARATIVE_ANNOTATIONS.md)** に完全収録しています。
 
 | アノテーション | 主要属性と既定値 | 使用すべきケース | 避けるべきケース・注意点 |
 | :--- | :--- | :--- | :--- |
@@ -198,14 +198,14 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ## 10. AI エージェント導入キット（`ai-agent-kit/`・`llms.txt`）
 
-> 詳細ページ：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 英語トピック：[07. AI-Agent Adoption Kit](topics/en/07_AI_AGENT_ADOPTION_KIT.md) · LLM インデックス：[`llms.txt`](../llms.txt)
+> 詳細ページ：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 日本語トピック：[07. AI エージェント導入キット](topics/ja/07_AI_AGENT_ADOPTION_KIT.md) · LLM インデックス：[`llms.txt`](../llms.txt)
 
 **Spring-NWVMC AI-Agent Adoption Kit**（`INTRO.md`・`RULES.md`・`SKILL.md`・`CHECKLIST.md`・自動検証済み `references/01..05`・8 種の `adapters/`）を導入することで、Antigravity / Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline、ChatGPT / DeepSeek / Qwen などのあらゆる AI エージェントが `v0.1.0` をハルシネーションなく正確に実装できます：
 
 ```bash
-# Windows (PowerShell)
-.\ai-agent-kit\install.ps1 -Target "C:\path\to\your-spring-boot-project" -Agent all
+# Windows（PowerShell — Spring Boot プロジェクト直下でそのまま実行、クローン不要）
+$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
 
-# macOS / Linux / Git Bash
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all
+# macOS / Linux / Git Bash（プロジェクト直下でそのまま実行、クローン不要）
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

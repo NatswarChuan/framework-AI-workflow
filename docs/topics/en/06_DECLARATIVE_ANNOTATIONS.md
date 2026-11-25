@@ -1,8 +1,8 @@
-# 06. Complete Specification of All 60 Declarative Annotations (`v0.1.0`)
+# 06. Complete Specification of All 60 Declarative Annotations (`0.1.0`)
 
-> **[20-Language Interactive Docs](../../index.html#annotations)** · **[English Guide](../../GUIDE_EN.md)** · **[Bản Tiếng Việt](../06_DECLARATIVE_ANNOTATIONS.md)**
+> **Languages**: **English** | [Tiếng Việt](../vi/06_DECLARATIVE_ANNOTATIONS.md) | [日本語](../ja/06_DECLARATIVE_ANNOTATIONS.md) | [中文](../zh/06_DECLARATIVE_ANNOTATIONS.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#annotations)
 
-Exhaustive technical reference for all **60 Declarative Annotations** in `controller-to-api-framework` (`v0.1.0`), extracted verbatim from Java `@interface` declarations: exact package, `@Target`, **every attribute**, Java type, resolved default value, required vs. optional flag, **how to use**, **when to use**, **when NOT to use & common pitfalls**, and verified Java code snippets.
+Exhaustive technical reference for all **60 Declarative Annotations** in `io.github.natswarchuan:spring-nwvmc:0.1.0`, extracted verbatim from Java `@interface` declarations: exact package, `@Target`, **every attribute**, Java type, resolved default value, required vs. optional flag, **how to use**, **when to use**, **when NOT to use & common pitfalls**, and verified Java code snippets.
 
 ## Quick Matrix Index (60 Annotations)
 

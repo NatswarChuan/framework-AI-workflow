@@ -16,7 +16,7 @@
 
 ## AI-Agent Adoption Kit (Core)
 
-- [AI-Agent Kit README](ai-agent-kit/README.md): Bilingual onboarding guide, agent compatibility matrix, 1-command installers (`install.ps1` / `install.sh`), and starter prompts.
+- [AI-Agent Kit README](ai-agent-kit/README.md): English onboarding guide, agent compatibility matrix, zero-clone 1-command installers (`install.ps1` / `install.sh`), and starter prompts.
 - [INTRO](ai-agent-kit/INTRO.md): Architecture overview, JitPack setup, 2-Directory Contract, 9 composable API interfaces, and built-in subsystems.
 - [RULES](ai-agent-kit/RULES.md): Strict consumer rules and empirically verified anti-hallucination guardrails.
 - [SKILL](ai-agent-kit/SKILL.md): Step-by-step adoption workflows (6 workflows + root-cause troubleshooting table).
@@ -43,8 +43,9 @@
 
 ## Human Reference Documentation & Source Modules
 
+- [20-Language Topic Guides Index (140 Guides)](docs/topics/README.md): Focused topic guides (`01`..`07`) in all 20 languages (`en`, `zh`, `hi`, `es`, `fr`, `ar`, `bn`, `pt`, `ru`, `ur`, `id`, `de`, `ja`, `vi`, `ko`, `tr`, `it`, `th`, `fa`, `pl`).
 - [English Reference Manual](docs/GUIDE_EN.md): Comprehensive English specification.
 - [Vietnamese Reference Manual](docs/GUIDE_VI.md): Comprehensive Vietnamese specification.
-- [Interactive 20-Language Portal](docs/index.html): Self-contained React 19 documentation portal with 16-step B2C2B2C Marketplace walkthrough.
-- [Framework Source](controller-to-api-framework/): Core Spring-NWVMC `0.1.0` starter library (`584` unit tests).
-- [Reference Implementation](controller-to-api-implementation/): Verified JitPack consumer showcase (`173` tests + `2,000`-request JMeter `0.0%` error rate).
+- [Interactive 20-Language Portal](docs/index.html): Self-contained React 19 documentation portal with 16-step walkthrough.
+- [Framework Source](controller-to-api-framework/): Core Spring-NWVMC `0.1.0` starter library (`586` unit tests).
+- [Reference Implementation](controller-to-api-implementation/): Verified NovaMart Multi-Merchant E-Commerce consumer on `io.github.natswarchuan:spring-nwvmc:0.1.0` (`23/23` tests + `1,003`-request JMeter `0.0%` error rate).

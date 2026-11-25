@@ -2,7 +2,7 @@
 
 > **制品坐标**: `io.github.natswarchuan:spring-nwvmc:0.1.0` | JitPack: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`  
 > **运行基线**: Java 21 LTS (Virtual Threads) · Spring Boot `3.2.5` / `3.3.5` / `3.4.0` · GraalVM AOT `RuntimeHints`  
-> **专题文档**: [快速上手](topics/en/01_GETTING_STARTED.md) · [40 项端点契约](topics/en/02_REST_API_CATALOG.md) · [60 个声明式注解完整规范](topics/en/06_DECLARATIVE_ANNOTATIONS.md)  
+> **专题文档（支持全部20种语言）**: [快速上手](topics/zh/01_GETTING_STARTED.md) · [40 项端点契约](topics/zh/02_REST_API_CATALOG.md) · [查询与 GraphQL](topics/zh/03_QUERY_AND_DATA_ACCESS.md) · [安全、指标与 i18n](topics/zh/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 个 SPI 扩展点](topics/zh/05_SPRING_ECOSYSTEM_SPIS.md) · [60 个声明式注解完整规范](topics/zh/06_DECLARATIVE_ANNOTATIONS.md) · [AI-Agent 集成工具包](topics/zh/07_AI_AGENT_ADOPTION_KIT.md) · [全部20种语言索引](topics/README.md)  
 > **语言切换**: [English](GUIDE_EN.md) | [Tiếng Việt](GUIDE_VI.md) | [日本語](GUIDE_JA.md) | 中文 | [20语言文档门户](index.html#annotations)
 
 ---
@@ -177,7 +177,7 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ## 8. 60 个声明式注解：属性清单、默认值与选型决策规范
 
-全部 `60` 个框架注解的包名、`@Target`、完整属性、Java 类型、默认值、必填/可选、用法示例及适用/禁忌场景已完整收录于 **[20 语言互动文档 (`#annotations`)](index.html#annotations)** 与 **[60 个注解详细技术规范](topics/en/06_DECLARATIVE_ANNOTATIONS.md)**。核心注解决策速查如下：
+全部 `60` 个框架注解的包名、`@Target`、完整属性、Java 类型、默认值、必填/可选、用法示例及适用/禁忌场景已完整收录于 **[20 语言互动文档 (`#annotations`)](index.html#annotations)** 与 **[60 个注解详细技术规范](topics/zh/06_DECLARATIVE_ANNOTATIONS.md)**。核心注解决策速查如下：
 
 | 注解 | 核心属性与默认值 | 何时使用（推荐场景） | 何时不应使用 / 常见误区 |
 | :--- | :--- | :--- | :--- |
@@ -198,14 +198,14 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ## 10. 通用 AI-Agent 集成工具包（`ai-agent-kit/` 与 `llms.txt`）
 
-> 交互式门户：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 专题文档：[07. AI-Agent Adoption Kit](topics/en/07_AI_AGENT_ADOPTION_KIT.md) · LLM 索引：[`llms.txt`](../llms.txt)
+> 交互式门户：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 中文专题文档：[07. AI-Agent 集成工具包](topics/zh/07_AI_AGENT_ADOPTION_KIT.md) · LLM 索引：[`llms.txt`](../llms.txt)
 
 通过内置的 **AI-Agent Adoption Kit**（`INTRO.md`、`RULES.md`、`SKILL.md`、`CHECKLIST.md`、5 份 1:1 机器校验 `references/01..05` 及 8 套即插 `adapters/`），可让 **所有主流 AI 编程代理与大模型**（Antigravity/Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline/Roo Code、ChatGPT、DeepSeek、Qwen、Grok 等）零幻觉精准接入 Spring-NWVMC `v0.1.0`：
 
 ```bash
-# Windows (PowerShell)
-.\ai-agent-kit\install.ps1 -Target "C:\path\to\your-spring-boot-project" -Agent all
+# Windows（PowerShell — 在您的 Spring Boot 项目根目录直接运行，无需提前克隆仓库）
+$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
 
-# macOS / Linux / Git Bash
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all
+# macOS / Linux / Git Bash（在项目根目录直接运行，无需提前克隆仓库）
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

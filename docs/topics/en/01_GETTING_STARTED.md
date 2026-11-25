@@ -1,6 +1,6 @@
 # 01. Getting Started, Two-Directory Contract & Fail-Fast Diagnostics (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../01_GETTING_STARTED.md) | [Complete Manual](../../GUIDE_EN.md)
+> **Languages**: **English** | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#quickstart)
 
 ---
 

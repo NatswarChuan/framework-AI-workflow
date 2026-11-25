@@ -155,52 +155,58 @@ export const AiAgentKitPage: React.FC<AiAgentKitPageProps> = ({ currentLang }) =
             id: 'kit-ps1',
             label: 'Windows (PowerShell)',
             language: 'powershell',
-            fileName: 'ai-agent-kit/install.ps1',
-            highlightLines: [2, 6, 9],
-            code: `# Install for ALL AI coding agents & models (recommended for multi-tool teams)
-.\\ai-agent-kit\\install.ps1 -Target "C:\\path\\to\\your-spring-boot-project" -Agent all
+            fileName: 'install-nwvmc-kit.ps1 (Zero-Clone 1-Liner)',
+            highlightLines: [2, 6, 10],
+            code: `# Option 1 (Recommended — ZERO clone needed! Run directly inside your Spring Boot project root):
+$s="$env:TEMP\\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
 
-# Or target a single agent:
-# -Agent all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic
-.\\ai-agent-kit\\install.ps1 -Target "C:\\path\\to\\your-spring-boot-project" -Agent claude
+# Target a single agent only (-Agent all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
+$s="$env:TEMP\\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
 
-# Overwrite existing root adapter files (default preserves existing files safely)
-.\\ai-agent-kit\\install.ps1 -Target "C:\\path\\to\\your-spring-boot-project" -Agent all -Force`,
+# Add -Force to overwrite existing root adapter files (default preserves existing files safely)
+
+# Option 2 (Clone repo first — useful behind offline/corporate proxies):
+git clone --depth 1 https://github.com/NatswarChuan/Spring-NWVMC-document.git "$env:TEMP\\nwvmc-docs"; powershell -ExecutionPolicy Bypass -File "$env:TEMP\\nwvmc-docs\\ai-agent-kit\\install.ps1" -Target "." -Agent all; Remove-Item "$env:TEMP\\nwvmc-docs" -Recurse -Force`,
           },
           {
             id: 'kit-sh',
             label: 'macOS / Linux (Bash)',
             language: 'bash',
-            fileName: 'ai-agent-kit/install.sh',
-            highlightLines: [2, 6, 9],
-            code: `# Install for ALL AI coding agents & models
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all
+            fileName: 'install-nwvmc-kit.sh (Zero-Clone 1-Liner)',
+            highlightLines: [2, 5, 11],
+            code: `# Option 1 (Recommended — ZERO clone needed! Run directly inside your Spring Boot project root):
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 
-# Or target a single agent:
-# --agent all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent cursor
+# Target a single agent only (--agent all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent cursor
 
-# Overwrite existing root adapter files
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all --force`,
+# Add --force to overwrite existing root adapter files (default preserves existing files safely)
+
+# Option 2 (Clone repo first — useful behind offline/corporate proxies):
+git clone --depth 1 https://github.com/NatswarChuan/Spring-NWVMC-document.git /tmp/nwvmc-docs
+/tmp/nwvmc-docs/ai-agent-kit/install.sh --target . --agent all
+rm -rf /tmp/nwvmc-docs`,
           },
           {
             id: 'kit-manual',
             label: pickText(STAGE8_CONTENT.kitTabManual, currentLang),
             language: 'bash',
             fileName: 'manual-setup-and-llmstxt.sh',
-            code: `# 1. Copy the progressive-disclosure skill + 4 verified references
-mkdir -p /path/to/your-project/.agents/skills/spring-nwvmc-adoption/references
-cp ai-agent-kit/{SKILL.md,INTRO.md,RULES.md,CHECKLIST.md} \\
-   /path/to/your-project/.agents/skills/spring-nwvmc-adoption/
-cp ai-agent-kit/references/* \\
-   /path/to/your-project/.agents/skills/spring-nwvmc-adoption/references/
+            code: `# 1. Shallow-clone the official documentation & AI-Agent Kit repo
+git clone --depth 1 https://github.com/NatswarChuan/Spring-NWVMC-document.git /tmp/nwvmc-docs
 
-# 2. (Claude Code) Mirror to .claude/skills/spring-nwvmc-adoption/
-# 3. Copy the adapter from ai-agent-kit/adapters/ to your repo root
+# 2. Copy the progressive-disclosure skill + 5 verified references into your Spring Boot project
+mkdir -p .agents/skills/spring-nwvmc-adoption/references
+cp /tmp/nwvmc-docs/ai-agent-kit/{SKILL.md,INTRO.md,RULES.md,CHECKLIST.md} .agents/skills/spring-nwvmc-adoption/
+cp /tmp/nwvmc-docs/ai-agent-kit/references/* .agents/skills/spring-nwvmc-adoption/references/
 
-# 4. Standard llmstxt.org entry points for web crawlers & agent fetchers:
-#    - /llms.txt          (Full repository LLM map)
-#    - /docs/llms.txt     (Documentation portal LLM map)`,
+# 3. (Claude Code) Mirror into .claude/skills/spring-nwvmc-adoption/
+# 4. Copy your tool's adapter from /tmp/nwvmc-docs/ai-agent-kit/adapters/ to your repo root
+rm -rf /tmp/nwvmc-docs
+
+# 5. Direct HTTPS llmstxt.org & raw skill URLs (no download needed for web-capable AI agents):
+#    - https://natswarchuan.github.io/Spring-NWVMC-document/llms.txt
+#    - https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/SKILL.md`,
           },
         ]}
       />

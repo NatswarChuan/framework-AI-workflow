@@ -1,31 +1,36 @@
 <#
 .SYNOPSIS
-    Installs the Spring-NWVMC (v0.1.0) AI-Agent Adoption Kit into a target Spring Boot project.
+    Installs the Spring-NWVMC (0.1.0) AI-Agent Adoption Kit into any Spring Boot project.
 .DESCRIPTION
-    Copies the progressive-disclosure skill (SKILL.md, INTRO.md, RULES.md, CHECKLIST.md, references/*)
-    and the requested platform adapter files (AGENTS.md, CLAUDE.md, GEMINI.md, Cursor .mdc,
-    GitHub Copilot instructions, Windsurf, Cline/Roo Code, Generic LLM prompt) into the target repo.
-    Existing root adapter files are preserved by default unless -Force is passed.
+    Works BOTH locally (when run inside a cloned Spring-NWVMC / Spring-NWVMC-document repo)
+    AND standalone remotely (when downloaded via Invoke-RestMethod with zero local files).
+    Installs .agents/skills/spring-nwvmc-adoption/, .claude/skills/spring-nwvmc-adoption/,
+    and selected platform adapters without overwriting existing root adapter files unless -Force is passed.
 .EXAMPLE
-    .\ai-agent-kit\install.ps1 -Target C:\Projects\my-spring-app
+    # Zero-clone one-liner from inside your Spring Boot project root:
+    $s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
 .EXAMPLE
-    .\ai-agent-kit\install.ps1 -Target C:\Projects\my-spring-app -Agent cursor
-.EXAMPLE
-    .\ai-agent-kit\install.ps1 -Target C:\Projects\my-spring-app -Agent all -Force
+    # Target a specific agent only:
+    .\install.ps1 -Target "C:\Projects\my-spring-app" -Agent cursor
 #>
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)]
-    [string]$Target,
+    [string]$Target = ".",
 
     [ValidateSet("all", "antigravity", "claude", "codex", "cursor", "copilot", "windsurf", "cline", "generic")]
     [string]$Agent = "all",
+
+    [string]$Ref = "main",
+
+    [string]$Repo = "NatswarChuan/Spring-NWVMC-document",
 
     [switch]$Force
 )
 
 $ErrorActionPreference = "Stop"
 $KitRoot = $PSScriptRoot
+$IsLocalKit = (-not [string]::IsNullOrWhiteSpace($KitRoot)) -and (Test-Path -LiteralPath (Join-Path $KitRoot "SKILL.md"))
+$RawBaseUrl = "https://raw.githubusercontent.com/$Repo/$Ref/ai-agent-kit"
 
 if (-not (Test-Path -LiteralPath $Target)) {
     New-Item -ItemType Directory -Path $Target -Force | Out-Null
@@ -35,9 +40,18 @@ $ResolvedTarget = (Resolve-Path -LiteralPath $Target).Path
 $Installed = New-Object System.Collections.Generic.List[string]
 $Skipped = New-Object System.Collections.Generic.List[string]
 
-function Copy-KitFile {
+$CoreFiles = @("SKILL.md", "INTRO.md", "RULES.md", "CHECKLIST.md")
+$ReferenceFiles = @(
+    "01-annotations-exact-matrix.md",
+    "02-endpoints-and-query-dsl.md",
+    "03-yaml-properties-and-profiles.md",
+    "04-cookbook-verified-patterns.md",
+    "05-imports-and-spi-contracts.md"
+)
+
+function Install-KitFile {
     param(
-        [string]$SourcePath,
+        [string]$RelativeKitPath,
         [string]$DestinationPath,
         [bool]$AllowOverwrite
     )
@@ -49,7 +63,13 @@ function Copy-KitFile {
         $Skipped.Add($DestinationPath)
         return
     }
-    Copy-Item -LiteralPath $SourcePath -Destination $DestinationPath -Force
+    if ($IsLocalKit) {
+        $localSrc = Join-Path $KitRoot ($RelativeKitPath -replace '/', '\')
+        Copy-Item -LiteralPath $localSrc -Destination $DestinationPath -Force
+    } else {
+        $url = "$RawBaseUrl/$RelativeKitPath"
+        Invoke-WebRequest -Uri $url -OutFile $DestinationPath -UseBasicParsing
+    }
     $Installed.Add($DestinationPath)
 }
 
@@ -57,18 +77,18 @@ function Install-SkillTree {
     param(
         [string]$SkillBaseDir
     )
-    $coreFiles = @("SKILL.md", "INTRO.md", "RULES.md", "CHECKLIST.md")
-    foreach ($f in $coreFiles) {
-        Copy-KitFile -SourcePath (Join-Path $KitRoot $f) -DestinationPath (Join-Path $SkillBaseDir $f) -AllowOverwrite $true
+    foreach ($f in $CoreFiles) {
+        Install-KitFile -RelativeKitPath $f -DestinationPath (Join-Path $SkillBaseDir $f) -AllowOverwrite $true
     }
-    $refSrcDir = Join-Path $KitRoot "references"
     $refDstDir = Join-Path $SkillBaseDir "references"
-    Get-ChildItem -LiteralPath $refSrcDir -File | ForEach-Object {
-        Copy-KitFile -SourcePath $_.FullName -DestinationPath (Join-Path $refDstDir $_.Name) -AllowOverwrite $true
+    foreach ($r in $ReferenceFiles) {
+        Install-KitFile -RelativeKitPath "references/$r" -DestinationPath (Join-Path $refDstDir $r) -AllowOverwrite $true
     }
 }
 
-Write-Host "Installing Spring-NWVMC (v0.1.0) AI-Agent Adoption Kit -> $ResolvedTarget (Agent=$Agent)" -ForegroundColor Cyan
+$SourceMode = if ($IsLocalKit) { "local ($KitRoot)" } else { "remote ($RawBaseUrl)" }
+Write-Host "Installing Spring-NWVMC (0.1.0) AI-Agent Adoption Kit -> $ResolvedTarget" -ForegroundColor Cyan
+Write-Host "  Source: $SourceMode | Agent: $Agent" -ForegroundColor DarkCyan
 
 # 1. Always install standard workspace skill tree (.agents/skills/spring-nwvmc-adoption)
 $AgentsSkillDir = Join-Path $ResolvedTarget ".agents\skills\spring-nwvmc-adoption"
@@ -81,31 +101,29 @@ if (($Agent -eq "all") -or ($Agent -eq "claude")) {
 }
 
 # 3. Install platform adapters
-$AdaptersDir = Join-Path $KitRoot "adapters"
-
 if (($Agent -eq "all") -or ($Agent -eq "codex") -or ($Agent -eq "antigravity")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "AGENTS.md") -DestinationPath (Join-Path $ResolvedTarget "AGENTS.md") -AllowOverwrite ([bool]$Force)
+    Install-KitFile -RelativeKitPath "adapters/AGENTS.md" -DestinationPath (Join-Path $ResolvedTarget "AGENTS.md") -AllowOverwrite ([bool]$Force)
 }
 if (($Agent -eq "all") -or ($Agent -eq "antigravity")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "GEMINI.md") -DestinationPath (Join-Path $ResolvedTarget "GEMINI.md") -AllowOverwrite ([bool]$Force)
+    Install-KitFile -RelativeKitPath "adapters/GEMINI.md" -DestinationPath (Join-Path $ResolvedTarget "GEMINI.md") -AllowOverwrite ([bool]$Force)
 }
 if (($Agent -eq "all") -or ($Agent -eq "claude")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "CLAUDE.md") -DestinationPath (Join-Path $ResolvedTarget "CLAUDE.md") -AllowOverwrite ([bool]$Force)
+    Install-KitFile -RelativeKitPath "adapters/CLAUDE.md" -DestinationPath (Join-Path $ResolvedTarget "CLAUDE.md") -AllowOverwrite ([bool]$Force)
 }
 if (($Agent -eq "all") -or ($Agent -eq "cursor")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "cursor\spring-nwvmc.mdc") -DestinationPath (Join-Path $ResolvedTarget ".cursor\rules\spring-nwvmc.mdc") -AllowOverwrite ([bool]$Force)
+    Install-KitFile -RelativeKitPath "adapters/cursor/spring-nwvmc.mdc" -DestinationPath (Join-Path $ResolvedTarget ".cursor\rules\spring-nwvmc.mdc") -AllowOverwrite ([bool]$Force)
 }
 if (($Agent -eq "all") -or ($Agent -eq "copilot")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "copilot-instructions.md") -DestinationPath (Join-Path $ResolvedTarget ".github\copilot-instructions.md") -AllowOverwrite ([bool]$Force)
+    Install-KitFile -RelativeKitPath "adapters/copilot-instructions.md" -DestinationPath (Join-Path $ResolvedTarget ".github\copilot-instructions.md") -AllowOverwrite ([bool]$Force)
 }
 if (($Agent -eq "all") -or ($Agent -eq "windsurf")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "windsurfrules") -DestinationPath (Join-Path $ResolvedTarget ".windsurfrules") -AllowOverwrite ([bool]$Force)
+    Install-KitFile -RelativeKitPath "adapters/windsurfrules" -DestinationPath (Join-Path $ResolvedTarget ".windsurfrules") -AllowOverwrite ([bool]$Force)
 }
 if (($Agent -eq "all") -or ($Agent -eq "cline")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "clinerules") -DestinationPath (Join-Path $ResolvedTarget ".clinerules") -AllowOverwrite ([bool]$Force)
+    Install-KitFile -RelativeKitPath "adapters/clinerules" -DestinationPath (Join-Path $ResolvedTarget ".clinerules") -AllowOverwrite ([bool]$Force)
 }
 if (($Agent -eq "all") -or ($Agent -eq "generic")) {
-    Copy-KitFile -SourcePath (Join-Path $AdaptersDir "GENERIC_LLM_PROMPT.md") -DestinationPath (Join-Path $AgentsSkillDir "GENERIC_LLM_PROMPT.md") -AllowOverwrite $true
+    Install-KitFile -RelativeKitPath "adapters/GENERIC_LLM_PROMPT.md" -DestinationPath (Join-Path $AgentsSkillDir "GENERIC_LLM_PROMPT.md") -AllowOverwrite $true
 }
 
 Write-Host ""
@@ -125,4 +143,4 @@ if ($Skipped.Count -gt 0) {
 }
 
 Write-Host ""
-Write-Host "Done! Open your project with any AI coding agent and ask it to adopt Spring-NWVMC v0.1.0." -ForegroundColor Cyan
+Write-Host "Done! Open your project with any AI coding agent and ask it to adopt Spring-NWVMC 0.1.0." -ForegroundColor Cyan

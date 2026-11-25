@@ -1,6 +1,6 @@
 # 04. Security, Multi-Cloud Storage, `@ServiceOverride`, Metrics & 20-Language i18n (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../04_ADVANCED_ENTERPRISE_FEATURES.md) | [Complete Manual](../../GUIDE_EN.md)
+> **Languages**: **English** | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#security-rbac)
 
 ---
 

@@ -1,6 +1,6 @@
 # 03. 13 Dynamic Filter Operators, Query Guardrails, Keyset O(1) & GraphQL SDL (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../03_QUERY_AND_DATA_ACCESS.md) | [Complete Manual](../../GUIDE_EN.md)
+> **Languages**: **English** | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#query-dsl)
 
 ---
 

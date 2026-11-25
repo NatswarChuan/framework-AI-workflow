@@ -1,6 +1,6 @@
 # 02. Catalog of 40 Auto-Generated REST Contracts & Platform Controllers (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../02_REST_API_CATALOG.md) | [Complete Manual](../../GUIDE_EN.md)
+> **Languages**: **English** | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#endpoints)
 
 ---
 

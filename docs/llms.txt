@@ -1,11 +1,11 @@
-# Spring-NWVMC (`v0.1.0`) — Documentation Index for LLMs & AI Agents
+# Spring-NWVMC (`0.1.0`) — Documentation Index for LLMs & AI Agents
 
-> Enterprise declarative REST, GraphQL, persistence, RBAC/ABAC security, resilience, and observability starter for **Java 21 LTS** and **Spring Boot 3.x** (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0` on JitPack).
+> Enterprise declarative REST, GraphQL, persistence, RBAC/ABAC security, resilience, and observability starter for **Java 21 LTS** and **Spring Boot 3.x** (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; optional JitPack mirror: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`).
 
 ## Quick Adoption Kit Links
 
-- [AI-Agent Adoption Kit README](../ai-agent-kit/README.md): Compatibility matrix for every AI coding tool and LLM, plus 1-command installers (`install.ps1` / `install.sh`).
-- [INTRO](../ai-agent-kit/INTRO.md): Architecture, JitPack setup, 2-Directory Contract, 9 composable API interfaces.
+- [AI-Agent Adoption Kit README](../ai-agent-kit/README.md): English onboarding guide, compatibility matrix for every AI coding tool and LLM, plus zero-clone 1-command installers (`install.ps1` / `install.sh`).
+- [INTRO](../ai-agent-kit/INTRO.md): Architecture, Maven Central / JitPack setup, 2-Directory Contract, 9 composable API interfaces.
 - [RULES](../ai-agent-kit/RULES.md): Strict anti-hallucination guardrails & verified runtime pitfalls.
 - [SKILL](../ai-agent-kit/SKILL.md): Step-by-step adoption workflows & troubleshooting matrix.
 - [CHECKLIST](../ai-agent-kit/CHECKLIST.md): 6-phase Pre-Flight, Design, Security Lockdown & Verification checklist.
@@ -15,11 +15,14 @@
 - [Verified Cookbook Patterns](../ai-agent-kit/references/04-cookbook-verified-patterns.md): Copy-paste Java, YAML, `@MultiTenant`, DB-RBAC, Multi-Datasource, and `MockMvc` recipes.
 - [Exact Non-Annotation Class & SPI Imports](../ai-agent-kit/references/05-imports-and-spi-contracts.md): Verified imports & signatures for all non-annotation classes, constants, DTOs, helpers, and SPIs.
 
-## Multi-Language Documentation Guides
+## Multi-Language Documentation Guides (20 Languages × 7 Topics = 140 Guides)
 
-- [Interactive Portal (20 Languages)](index.html): Searchable Hub-and-Spoke portal (`34` pages) with 16-step continuous B2C2B2C Marketplace walkthrough and dedicated [`#ai-agent-kit`](index.html#ai-agent-kit) page.
+- [Interactive Portal (20 Languages)](index.html): Searchable Hub-and-Spoke portal (`34` pages) with 16-step continuous walkthrough and dedicated [`#ai-agent-kit`](index.html#ai-agent-kit) page.
+- [All 20-Language Topic Guides Index (`topics/README.md`)](topics/README.md)
 - [AI-Agent Adoption Kit Topic Guide (EN)](topics/en/07_AI_AGENT_ADOPTION_KIT.md)
-- [AI-Agent Adoption Kit Topic Guide (VI)](topics/07_AI_AGENT_ADOPTION_KIT.md)
+- [AI-Agent Adoption Kit Topic Guide (VI)](topics/vi/07_AI_AGENT_ADOPTION_KIT.md)
+- [AI-Agent Adoption Kit Topic Guide (JA)](topics/ja/07_AI_AGENT_ADOPTION_KIT.md)
+- [AI-Agent Adoption Kit Topic Guide (ZH)](topics/zh/07_AI_AGENT_ADOPTION_KIT.md)
 - [English Manual](GUIDE_EN.md)
 - [Tiếng Việt Manual](GUIDE_VI.md)
 - [日本語マニュアル](GUIDE_JA.md)

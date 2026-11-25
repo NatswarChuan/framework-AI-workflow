@@ -2,7 +2,7 @@
 
 > **Artifact Coordinates**: `io.github.natswarchuan:spring-nwvmc:0.1.0` | JitPack: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`  
 > **Runtime Baseline**: Java 21 LTS (Virtual Threads) · Spring Boot `3.2.5` / `3.3.5` / `3.4.0` · GraalVM AOT `RuntimeHints`  
-> **Topic Guides**: [Getting Started](topics/en/01_GETTING_STARTED.md) · [40 Endpoints](topics/en/02_REST_API_CATALOG.md) · [Query & GraphQL](topics/en/03_QUERY_AND_DATA_ACCESS.md) · [Security, Metrics & i18n](topics/en/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 SPI Customizers](topics/en/05_SPRING_ECOSYSTEM_SPIS.md) · [60 Annotations](topics/en/06_DECLARATIVE_ANNOTATIONS.md)  
+> **Topic Guides (20 Languages)**: [Getting Started](topics/en/01_GETTING_STARTED.md) · [40 Endpoints](topics/en/02_REST_API_CATALOG.md) · [Query & GraphQL](topics/en/03_QUERY_AND_DATA_ACCESS.md) · [Security, Metrics & i18n](topics/en/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 SPI Customizers](topics/en/05_SPRING_ECOSYSTEM_SPIS.md) · [60 Annotations](topics/en/06_DECLARATIVE_ANNOTATIONS.md) · [AI-Agent Kit](topics/en/07_AI_AGENT_ADOPTION_KIT.md) · [All 20 Languages](topics/README.md)  
 > **Languages**: English | [Tiếng Việt](GUIDE_VI.md) | [日本語](GUIDE_JA.md) | [中文](GUIDE_ZH.md) | [20-Language Portal](index.html)
 
 ---
@@ -230,16 +230,16 @@ For the exhaustive specification of every attribute, Java type, default value, *
 
 ---
 
-## 10. Universal AI-Agent Adoption Kit (`ai-agent-kit/` & `llms.txt`)
+## 11. Universal AI-Agent Adoption Kit (`ai-agent-kit/` & `llms.txt`)
 
 > Full guide: [07. AI-Agent Adoption Kit](topics/en/07_AI_AGENT_ADOPTION_KIT.md) · Interactive portal: [`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · LLM index: [`llms.txt`](../llms.txt)
 
 Use the model-agnostic **AI-Agent Adoption Kit** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 5 machine-verified `references/01..05`, and 8 drop-in `adapters/`) so **any AI coding agent or LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) integrates Spring-NWVMC `v0.1.0` accurately without hallucinating annotations or hitting runtime pitfalls:
 
 ```bash
-# Windows (PowerShell)
-.\ai-agent-kit\install.ps1 -Target "C:\path\to\your-spring-boot-project" -Agent all
+# Windows (PowerShell — run directly inside your Spring Boot project root, zero clone needed)
+$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
 
-# macOS / Linux / Git Bash
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all
+# macOS / Linux / Git Bash (run directly inside your Spring Boot project root, zero clone needed)
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

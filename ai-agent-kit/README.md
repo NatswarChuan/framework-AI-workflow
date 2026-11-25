@@ -1,89 +1,106 @@
-# Spring-NWVMC (`v0.1.0`) — Universal AI-Agent Adoption Kit
+# Spring-NWVMC (`0.1.0`) — Universal AI-Agent Adoption Kit
 
-> **Tiếng Việt:** Bộ công cụ **INTRO + RULES + SKILL + CHECKLIST + Adapters + `llms.txt`** giúp **mọi AI-Agent & mọi mô hình LLM trên thị trường** (Google Antigravity/Gemini, Anthropic Claude Code, OpenAI Codex/ChatGPT, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, DeepSeek, Qwen, Grok, Mistral, Ollama/Llama, Aider…) hiểu chính xác 100% kiến trúc **Spring-NWVMC `v0.1.0`** và áp dụng vào dự án Spring Boot mới hoặc đang chạy chỉ trong vài phút — **không ảo giác annotation, không dính bẫy runtime**.
+> A universal, model-agnostic **INTRO + RULES + SKILL + CHECKLIST + Multi-Agent Adapter Kit + `llms.txt`** that enables **every AI coding agent and LLM on the market** (Google Antigravity / Gemini, Anthropic Claude Code, OpenAI Codex / ChatGPT, Cursor, GitHub Copilot, Windsurf, Cline / Roo Code, DeepSeek, Qwen, Grok, Mistral, Ollama / Llama, Aider, Continue.dev, Amazon Q) to adopt **Spring-NWVMC `0.1.0`** (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central) accurately on the first attempt — **zero hallucinated annotations, zero runtime traps**.
 >
-> **English:** A universal, model-agnostic **INTRO + RULES + SKILL + CHECKLIST + Multi-Agent Adapter Kit** grounded 1:1 in the verified source code of `controller-to-api-framework/` (`584/584` tests) and `controller-to-api-implementation/` (`173/173` tests + `2,000`-request JMeter `0.0%` error rate).
+> Grounded 1:1 in the verified source code of `controller-to-api-framework/` (`586/586` unit tests) and validated via clean-room build of **NovaMart Multi-Merchant E-Commerce** (`23/23` integration & unit tests + `1,003`-request Apache JMeter run at `0.0%` error rate).
 
 ---
 
-## 1. Cấu Trúc Bộ Kit / What Is Inside
+## 1. What Is Inside
 
-| File / Folder | Vai trò (Role) | Khi nào dùng (When Loaded) |
+| File / Folder | Role | When Loaded |
 | :--- | :--- | :--- |
-| **[`INTRO.md`](./INTRO.md)** | Tổng quan kiến trúc: Maven/Gradle JitPack `v0.1.0`, Hợp đồng 2 thư mục (`entity/` + `controller/`), 9 capability interfaces, 6 packages annotation, 11 subsystem có sẵn | Đọc đầu tiên để định hướng tổng thể |
-| **[`RULES.md`](./RULES.md)** | Luật sắt chống ảo giác (Anti-Hallucination Guardrails) & mọi bẫy runtime đã kiểm chứng thực tế (`ObjectProvider<T>`, `@Lazy`, `@StateMachine` dấu `:`, toán tử `.gte`, kebab-case, `readDto` scoping, `prod` lockdown) | Bắt buộc nạp trong system/project rules (< 24 KB) |
-| **[`SKILL.md`](./SKILL.md)** | Kỹ năng triển khai từng bước (6 Workflows: Bootstrap → 2-Directory Resource → Custom Routes & Resilience → Events/AI/Storage → Troubleshooting Matrix → Verification Gate) | Tự động kích hoạt trong `.agents/skills/` & `.claude/skills/` |
-| **[`CHECKLIST.md`](./CHECKLIST.md)** | Danh mục kiểm tra 6 giai đoạn (Pre-Flight → Design → Runtime Pitfalls → Security Lockdown → Performance → Automated Verification & Go-Live) | Chạy soát xét trước khi hoàn tất PR / bàn giao |
-| **[`references/01-annotations-exact-matrix.md`](./references/01-annotations-exact-matrix.md)** | Bảng tra cứu chuẩn xác **100% kiểm chứng bằng máy** cho toàn bộ **60 annotation** (6 packages) & **133 attributes** | Đọc theo nhu cầu (Progressive Disclosure) trước khi viết annotation |
-| **[`references/02-endpoints-and-query-dsl.md`](./references/02-endpoints-and-query-dsl.md)** | Toàn bộ **40 auto-endpoints**, **13 toán tử filter dạng dấu chấm (`.gte`, `.like`...)**, GraphQL, Storage, Time-Travel, `curl` mẫu | Đọc khi viết client, frontend, integration test hoặc Swagger |
-| **[`references/03-yaml-properties-and-profiles.md`](./references/03-yaml-properties-and-profiles.md)** | Toàn bộ thuộc tính `app.framework.*` & `spring-nwvmc.human-policies.*`, mẫu `application.yml` (`prod`) và `application-dev.yml` | Đọc khi cấu hình Spring Boot profiles & bảo mật |
-| **[`references/04-cookbook-verified-patterns.md`](./references/04-cookbook-verified-patterns.md)** | Công thức copy-paste đã chạy thật 100% (Entity, ReadOnly DTO, `@HttpCacheable` helper, StateMachine, `@CustomEndpoint`, `@DistributedLock`, Multi-Datasource `PRIMARY`+`REPLICA`, `@AutoCacheable`, `@Idempotent`, `@MultiTenant`, 4-entity DB-RBAC, Outbox, Webhook, Spring AI, `JwtTokenService` + `MockMvc` tests) | Đọc khi triển khai tính năng tương ứng |
-| **[`references/05-imports-and-spi-contracts.md`](./references/05-imports-and-spi-contracts.md)** | Bảng tra cứu chính xác mọi `import` & chữ ký lớp ngoài Annotation (`BaseBusinessException`, `StandardHttpStatus`, `UuidUtil`, `ApiResponse`, `*Constant`, `JwtTokenService`, `DynamicRoutingDataSource`, `OutboxEvent*`, AI/Webhook/RestClient DTOs, 8 `*Customizer` SPI) | Tra cứu tức thì — triệt tiêu hoàn toàn việc phải đoán package hay chạy `javap` |
-| **[`adapters/`](./adapters/)** | 8 tệp cấu hình thả-vào-là-chạy (drop-in) cho mọi AI coding tool / LLM | Cài vào gốc dự án mục tiêu bằng script |
-| **[`../llms.txt`](../llms.txt)** | Tệp điều hướng chuẩn [`llmstxt.org`](https://llmstxt.org/) giúp crawler / agent đọc repo tự động | Đọc tự động từ root hoặc GitHub Pages |
+| **[`INTRO.md`](./INTRO.md)** | Architecture orientation: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` (and optional JitPack `v0.1.0` mirror), strict 2-Directory Contract (`entity/` + `controller/`), 9 composable capability interfaces, 6 annotation packages, 11 built-in subsystems | Read first for end-to-end orientation |
+| **[`RULES.md`](./RULES.md)** | Strict anti-hallucination guardrails encoding every empirically verified runtime pitfall (`ObjectProvider<T>`, `@Lazy` non-final AOP services, `@StateMachine` colon syntax, `.gte` dot operators, kebab-case auto paths, `readDto` scoping, `POST /api/v1/auth/token`, production lockdown) | Always loaded in project/system rules (`< 24 KB` budget) |
+| **[`SKILL.md`](./SKILL.md)** | Progressive-disclosure `spring-nwvmc-adoption` runbook with 6 step-by-step workflows (Bootstrap → 2-Directory Resource → Custom Routes & Resilience → Events / AI / Storage → 10-Row Troubleshooting Matrix → Verification Gate) | Auto-discovered in `.agents/skills/` and `.claude/skills/` |
+| **[`CHECKLIST.md`](./CHECKLIST.md)** | 6-phase pre-handover sign-off gate (Pre-Flight → Design → Runtime Pitfalls → Production Security Lockdown → Performance → Automated Verification & Go-Live) | Run before opening a PR or releasing |
+| **[`references/01-annotations-exact-matrix.md`](./references/01-annotations-exact-matrix.md)** | Machine-verified 1:1 reference of all **60 declarative annotations** across **6 exact Java packages** and **133 attributes** | Loaded on demand before declaring annotations |
+| **[`references/02-endpoints-and-query-dsl.md`](./references/02-endpoints-and-query-dsl.md)** | All **40 auto-generated endpoints**, **13 dot-syntax filter operators** (`.gte`, `.like`, …), GraphQL, Storage, Time-Travel, and verified `curl` examples | Loaded when writing clients, frontends, or integration tests |
+| **[`references/03-yaml-properties-and-profiles.md`](./references/03-yaml-properties-and-profiles.md)** | Exact `app.framework.*` and `spring-nwvmc.human-policies.*` YAML keys, secure `application.yml` (`prod`) baseline, `application-dev.yml`, and Multi-Datasource setup | Loaded when configuring Spring Boot profiles and security |
+| **[`references/04-cookbook-verified-patterns.md`](./references/04-cookbook-verified-patterns.md)** | Verified copy-paste Java recipes (Entity, ReadOnly DTO, `@HttpCacheable`, `@StateMachine`, `@CustomEndpoint`, `@DistributedLock`, Multi-Datasource `PRIMARY`+`REPLICA`, `@AutoCacheable`, `@Idempotent`, `@MultiTenant`, 4-entity DB-RBAC, Outbox, Webhook, Spring AI, `JwtTokenService` + `MockMvc` tests) | Loaded when implementing specific capabilities |
+| **[`references/05-imports-and-spi-contracts.md`](./references/05-imports-and-spi-contracts.md)** | Exact non-annotation class imports and signatures (`BaseBusinessException`, `StandardHttpStatus`, `UuidUtil`, `ApiResponse`, `*Constant`, `JwtTokenService`, `DynamicRoutingDataSource`, `OutboxEvent*`, AI/Webhook/RestClient DTOs, 8 `*Customizer` SPIs) | Instant lookup — eliminates package guessing and `javap` inspection |
+| **[`adapters/`](./adapters/)** | 8 drop-in instruction files tailored to every major AI coding agent and LLM | Installed into your project root via the installer script |
+| **[`../llms.txt`](../llms.txt)** | [`llmstxt.org`](https://llmstxt.org/)-compliant index for automated AI crawlers and agent fetchers | Consumed automatically from repository root or GitHub Pages |
 
 ---
 
-## 2. Hỗ Trợ Mọi AI-Agent & Mọi Model LLM Trên Thị Trường
+## 2. Universal AI-Agent & LLM Compatibility Matrix
 
-| AI Agent / IDE / Model | Tệp Adapter | Vị trí cài đặt trong dự án của bạn | Cơ chế Skill tự động |
+| AI Agent / IDE / Model | Adapter Source | Target Path in Your Project | Auto-Discovered Skill |
 | :--- | :--- | :--- | :--- |
 | **Google Antigravity / Gemini CLI / Gemini 2.5–3.x** | `adapters/GEMINI.md` + `adapters/AGENTS.md` | `GEMINI.md` + `AGENTS.md` | `.agents/skills/spring-nwvmc-adoption/SKILL.md` |
 | **Anthropic Claude Code (Opus / Sonnet / Haiku)** | `adapters/CLAUDE.md` | `CLAUDE.md` | `.claude/skills/spring-nwvmc-adoption/SKILL.md` |
 | **OpenAI Codex CLI / OpenCode / Zed / Amp / Jules** | `adapters/AGENTS.md` | `AGENTS.md` | `.agents/skills/spring-nwvmc-adoption/SKILL.md` |
-| **Cursor IDE** | `adapters/cursor/spring-nwvmc.mdc` | `.cursor/rules/spring-nwvmc.mdc` | Đọc `.agents/skills/spring-nwvmc-adoption/` |
-| **GitHub Copilot (VS Code, JetBrains, Coding Agent)** | `adapters/copilot-instructions.md` | `.github/copilot-instructions.md` | Đọc `.agents/skills/spring-nwvmc-adoption/` |
-| **Windsurf / Codeium Cascade** | `adapters/windsurfrules` | `.windsurfrules` | Đọc `.agents/skills/spring-nwvmc-adoption/` |
-| **Cline & Roo Code** | `adapters/clinerules` | `.clinerules` | Đọc `.agents/skills/spring-nwvmc-adoption/` |
-| **ChatGPT, Claude Web, Gemini Web, DeepSeek, Qwen, Grok, Mistral, Ollama/Llama, Aider, Continue.dev, Amazon Q** | `adapters/GENERIC_LLM_PROMPT.md` | Dán vào System Prompt / Project Instructions (và đính kèm `references/01` + `04` nếu hỗ trợ upload file) | N/A (self-contained prompt) |
+| **Cursor IDE** | `adapters/cursor/spring-nwvmc.mdc` | `.cursor/rules/spring-nwvmc.mdc` | Reads `.agents/skills/spring-nwvmc-adoption/` |
+| **GitHub Copilot (VS Code, JetBrains, Coding Agent)** | `adapters/copilot-instructions.md` | `.github/copilot-instructions.md` | Reads `.agents/skills/spring-nwvmc-adoption/` |
+| **Windsurf / Codeium Cascade** | `adapters/windsurfrules` | `.windsurfrules` | Reads `.agents/skills/spring-nwvmc-adoption/` |
+| **Cline & Roo Code** | `adapters/clinerules` | `.clinerules` | Reads `.agents/skills/spring-nwvmc-adoption/` |
+| **ChatGPT, Claude Web, Gemini Web, DeepSeek, Qwen, Grok, Mistral, Ollama/Llama, Aider, Continue.dev, Amazon Q** | `adapters/GENERIC_LLM_PROMPT.md` | Paste into System Prompt / Project Instructions (attach `references/01` + `04` + `05` if file upload is supported) | N/A (self-contained prompt) |
 
 ---
 
-## 3. Cài Đặt Trong 1 Lệnh (1-Command Installation)
+## 3. 1-Command Zero-Clone Installation
+
+Open a terminal **directly inside your Spring Boot project root** and run one of the commands below. No local clone or pre-existing files are required — the installer automatically downloads all verified kit files directly from `https://github.com/NatswarChuan/Spring-NWVMC-document`.
 
 ### Windows (PowerShell)
 
 ```powershell
-# Cài đầy đủ cho TẤT CẢ các AI Agent (khuyên dùng cho team dùng nhiều IDE/model khác nhau)
-.\ai-agent-kit\install.ps1 -Target "C:\path\to\your-spring-boot-project"
+# Install for ALL AI coding agents & models into the current directory (".")
+$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
 
-# Hoặc chỉ cài cho 1 AI Agent cụ thể:
-# Giá trị -Agent: all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic
-.\ai-agent-kit\install.ps1 -Target "C:\path\to\your-spring-boot-project" -Agent claude
+# Or target a single agent (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
+$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
 
-# Ghi đè các tệp root adapter đã tồn tại (mặc định script giữ nguyên tệp cũ để tránh mất rule riêng của bạn):
-.\ai-agent-kit\install.ps1 -Target "C:\path\to\your-spring-boot-project" -Agent all -Force
+# Add -Force to overwrite existing root adapter files (default safely preserves existing files)
 ```
 
 ### macOS / Linux / Git Bash
 
 ```bash
-# Cài đầy đủ cho TẤT CẢ các AI Agent
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project
+# Install for ALL AI coding agents & models into the current directory (".")
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 
-# Hoặc chỉ cài cho 1 AI Agent cụ thể:
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent cursor
+# Or target a single agent:
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent cursor
 
-# Ghi đè tệp root adapter đã tồn tại:
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all --force
+# Add --force to overwrite existing root adapter files:
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all --force
 ```
 
-### Cài thủ công (Không dùng script)
+### Offline / Corporate Proxy (`git clone`) or Manual Setup
 
-1. Copy `ai-agent-kit/{SKILL.md, INTRO.md, RULES.md, CHECKLIST.md, references/}` vào `<your-project>/.agents/skills/spring-nwvmc-adoption/` (và `.claude/skills/spring-nwvmc-adoption/` nếu dùng Claude Code).
-2. Copy tệp adapter tương ứng trong `ai-agent-kit/adapters/` vào đúng vị trí theo bảng mục 2 ở trên.
+```bash
+git clone --depth 1 https://github.com/NatswarChuan/Spring-NWVMC-document.git /tmp/nwvmc-docs
+/tmp/nwvmc-docs/ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all
+rm -rf /tmp/nwvmc-docs
+```
+
+Or copy manually from the `Spring-NWVMC-document` repository:
+1. Copy `ai-agent-kit/{SKILL.md, INTRO.md, RULES.md, CHECKLIST.md, references/}` into `<your-project>/.agents/skills/spring-nwvmc-adoption/` (and `.claude/skills/spring-nwvmc-adoption/` if using Claude Code).
+2. Copy the matching file from `ai-agent-kit/adapters/` to the target path shown in Section 2.
 
 ---
 
-## 4. Câu Lệnh Mẫu Gửi Cho AI-Agent (Copy-Paste First Prompts)
+## 4. Ready-to-Paste First Prompts for Your AI Agent
 
-Sau khi cài kit vào dự án của bạn, chỉ cần gửi 1 trong các prompt sau cho AI Agent:
+Once installed into your Spring Boot project, send any of the prompts below to your AI coding agent:
 
-### Prompt 1 — Tích hợp Spring-NWVMC vào dự án mới hoặc dự án Spring Boot sẵn có
-> *"Hãy đọc skill `spring-nwvmc-adoption` (`INTRO.md`, `RULES.md`, `SKILL.md`) và tích hợp Spring-NWVMC `v0.1.0` (JitPack) vào dự án Spring Boot này: cập nhật `pom.xml` với `<parameters>true</parameters>`, tạo `application.yml` an toàn cho production và `application-dev.yml` bật Dev Studio, tạo entity `Product` + `ProductController`, và viết test `MockMvc` chạy pass 100%."*
+### Prompt 1 — Bootstrap Spring-NWVMC in a New or Existing Spring Boot App
+> *"Read the `spring-nwvmc-adoption` skill (`INTRO.md`, `RULES.md`, `SKILL.md`) and integrate `io.github.natswarchuan:spring-nwvmc:0.1.0` (Maven Central) into this Spring Boot project: update `pom.xml` with `<parameters>true</parameters>`, create a production-hardened `application.yml` and a dev-only `application-dev.yml` enabling Dev Studio, scaffold a `Product` entity + `ProductController`, and add passing `MockMvc` integration tests."*
 
-### Prompt 2 — Thêm nghiệp vụ đặt hàng có StateMachine + DistributedLock + Idempotency
-> *"Dựa theo `spring-nwvmc-adoption` (`references/01` và `references/04`), hãy tạo module `Order` dùng `@StateMachine` (cú pháp dấu hai chấm `FROM:TO1,TO2`), `@AutoCode(prefix = "ORD-")`, `@EntitySecurity`, `@Idempotent` cho thanh toán và `@Lazy @Service` non-final với `@DistributedLock` giữ tồn kho. Kiểm tra lại toàn bộ mục trong `CHECKLIST.md` và chạy `mvn clean verify`."*
+### Prompt 2 — Add Order Workflow with StateMachine, DistributedLock & Idempotency
+> *"Following `spring-nwvmc-adoption` (`references/01`, `04`, and `05`), build an `Order` module using `@StateMachine` (colon syntax `FROM:TO1,TO2`), `@AutoCode(prefix = "ORD-")`, `@EntitySecurity`, `@Idempotent` on checkout, and a non-final `@Lazy @Service` with `@DistributedLock` for inventory reservation. Verify every item in `CHECKLIST.md` and run `mvn clean verify`."*
 
-### Prompt 3 — Kiểm toán bảo mật & tối ưu trước khi Go-Live Production
-> *"Hãy chạy kiểm toán toàn bộ dự án dựa trên `CHECKLIST.md` và `RULES.md` của `spring-nwvmc-adoption`: kiểm tra `app.framework.studio.enabled`, `JWT_SECRET`, `@EntitySecurity`, `@FieldSecurity`, các lỗi `ObjectProvider<T>` / `@Lazy` / `readDto` scoping, và xác nhận `mvn clean verify` pass 100%."*
+### Prompt 3 — Production Security & Architecture Readiness Audit
+> *"Audit this entire repository against `CHECKLIST.md` and `RULES.md` in `spring-nwvmc-adoption`: verify `app.framework.studio.enabled=false`, `demo-token-endpoint-enabled=false`, `JWT_SECRET >= 32` bytes, `@EntitySecurity`, `@FieldSecurity`, `ObjectProvider<T>` / `@Lazy` AOP rules, `readDto` scoping, and confirm `mvn clean verify` passes 100%."*
+
+---
+
+## 5. Official Links
+
+- **Interactive Documentation Portal (20 Languages):** https://natswarchuan.github.io/Spring-NWVMC-document/
+- **AI-Agent Adoption Kit Web Guide:** https://natswarchuan.github.io/Spring-NWVMC-document/#ai-agent-kit
+- **Maven Central Artifact:** https://central.sonatype.com/artifact/io.github.natswarchuan/spring-nwvmc
+- **Framework Source Repository:** https://github.com/NatswarChuan/Spring-NWVMC
+- **Documentation & Kit Repository:** https://github.com/NatswarChuan/Spring-NWVMC-document

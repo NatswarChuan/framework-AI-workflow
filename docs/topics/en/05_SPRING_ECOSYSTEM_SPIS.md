@@ -1,6 +1,6 @@
 # 05. 8 SPI Customizer Interfaces, `@CustomEndpoint` & `@ServiceOverride` (`0.1.0`)
 
-> **Language**: English | [Tiếng Việt](../05_SPRING_ECOSYSTEM_SPIS.md) | [Complete Manual](../../GUIDE_EN.md)
+> **Languages**: **English** | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#spi-customizers)
 
 ---
 

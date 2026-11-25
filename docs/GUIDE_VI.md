@@ -2,7 +2,7 @@
 
 > **Tọa Độ Artifact**: `io.github.natswarchuan:spring-nwvmc:0.1.0` | JitPack: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`  
 > **Nền Tảng Runtime**: Java 21 LTS (Virtual Threads) · Spring Boot `3.2.5` / `3.3.5` / `3.4.0` · GraalVM AOT `RuntimeHints`  
-> **Chuyên Đề Chi Tiết**: [Khởi Động](topics/01_GETTING_STARTED.md) · [40 Endpoints](topics/02_REST_API_CATALOG.md) · [Truy Vấn & GraphQL](topics/03_QUERY_AND_DATA_ACCESS.md) · [Bảo Mật, Metrics & i18n](topics/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 SPI Customizer](topics/05_SPRING_ECOSYSTEM_SPIS.md) · [60 Annotations](topics/06_DECLARATIVE_ANNOTATIONS.md)  
+> **Chuyên Đề Chi Tiết (20 Ngôn Ngữ)**: [Khởi Động](topics/vi/01_GETTING_STARTED.md) · [40 Endpoints](topics/vi/02_REST_API_CATALOG.md) · [Truy Vấn & GraphQL](topics/vi/03_QUERY_AND_DATA_ACCESS.md) · [Bảo Mật, Metrics & i18n](topics/vi/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 SPI Customizer](topics/vi/05_SPRING_ECOSYSTEM_SPIS.md) · [60 Annotations](topics/vi/06_DECLARATIVE_ANNOTATIONS.md) · [AI-Agent Kit](topics/vi/07_AI_AGENT_ADOPTION_KIT.md) · [Đủ 20 Ngôn Ngữ](topics/README.md)  
 > **Ngôn Ngữ**: [English](GUIDE_EN.md) | Tiếng Việt | [日本語](GUIDE_JA.md) | [中文](GUIDE_ZH.md) | [Cổng Tài Liệu 20 Ngôn Ngữ](index.html)
 
 ---
@@ -209,7 +209,7 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ## 10. Tham Chiếu Nhanh 60 Annotations: Thuộc Tính, Giá Trị Mặc Định & Khi Nào Dùng
 
-Để tra cứu chi tiết **toàn bộ 60 Annotation** (package, `@Target`, kiểu dữ liệu từng thuộc tính, giá trị mặc định, bắt buộc/tùy chọn, **cách dùng**, **khi nào nên dùng**, **khi nào không nên dùng & bẫy thường gặp** kèm ví dụ Java), xem **[Đặc Tả Toàn Diện 60 Annotations](topics/06_DECLARATIVE_ANNOTATIONS.md)** hoặc giao diện tương tác tại **[`index.html#annotations`](index.html#annotations)**. Bảng quyết định cho các annotation trọng yếu:
+Để tra cứu chi tiết **toàn bộ 60 Annotation** (package, `@Target`, kiểu dữ liệu từng thuộc tính, giá trị mặc định, bắt buộc/tùy chọn, **cách dùng**, **khi nào nên dùng**, **khi nào không nên dùng & bẫy thường gặp** kèm ví dụ Java), xem **[Đặc Tả Toàn Diện 60 Annotations](topics/vi/06_DECLARATIVE_ANNOTATIONS.md)** hoặc giao diện tương tác tại **[`index.html#annotations`](index.html#annotations)**. Bảng quyết định cho các annotation trọng yếu:
 
 | Annotation | Package | Thuộc Tính & Giá Trị Mặc Định | Khi Nào Nên Dùng | Khi Nào KHÔNG Nên Dùng / Lưu Ý |
 | :--- | :--- | :--- | :--- | :--- |
@@ -228,16 +228,16 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ---
 
-## 10. Bộ Kit Hướng Dẫn AI-Agent Toàn Diện (`ai-agent-kit/` & `llms.txt`)
+## 11. Bộ Kit Hướng Dẫn AI-Agent Toàn Diện (`ai-agent-kit/` & `llms.txt`)
 
-> Hướng dẫn chi tiết: [07. Bộ Kit Hướng Dẫn AI-Agent](topics/07_AI_AGENT_ADOPTION_KIT.md) · Cổng tương tác: [`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · Chỉ mục LLM: [`llms.txt`](../llms.txt)
+> Hướng dẫn chi tiết: [07. Bộ Kit Hướng Dẫn AI-Agent](topics/vi/07_AI_AGENT_ADOPTION_KIT.md) · Cổng tương tác: [`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · Chỉ mục LLM: [`llms.txt`](../llms.txt)
 
 Bộ **AI-Agent Adoption Kit** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 5 tài liệu tham chiếu sâu `references/01..05` kiểm chứng máy 1:1 và 8 tệp `adapters/`) giúp **mọi AI-Agent và mô hình LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) triển khai Spring-NWVMC `v0.1.0` chính xác ngay lần đầu:
 
 ```bash
-# Windows (PowerShell)
-.\ai-agent-kit\install.ps1 -Target "C:\path\to\your-spring-boot-project" -Agent all
+# Windows (PowerShell — chạy trực tiếp trong thư mục gốc dự án Spring Boot của bạn, không cần clone repo)
+$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
 
-# macOS / Linux / Git Bash
-./ai-agent-kit/install.sh --target /path/to/your-spring-boot-project --agent all
+# macOS / Linux / Git Bash (chạy trực tiếp trong thư mục gốc dự án Spring Boot của bạn, không cần clone repo)
+curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

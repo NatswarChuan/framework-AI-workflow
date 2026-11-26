@@ -2,6 +2,7 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE1_CONTENT } from '../data/pages/stage1Content';
@@ -16,21 +17,17 @@ export const TwoDirectoryPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="two-directory"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'warning',
-          content: <RichDocText text={STAGE1_CONTENT.tdCalloutWarn} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="two-dir-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE1_CONTENT.tdH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE1_CONTENT.tdGoalBody} currentLang={currentLang} />
       </p>
 
       <h2 id="two-dir-layout" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE1_CONTENT.tdH2Layout, currentLang)}
       </h2>
 
       <CodeBlock
@@ -59,8 +56,33 @@ export const TwoDirectoryPage: React.FC<PageProps> = ({ currentLang }) => {
 └── customizer/                             # Security/framework hooks (EnterpriseSecurityIdentityCustomizer)`}
       />
 
+      <h2 id="two-dir-jpa-tx" className="section-heading">
+        {pickText(STAGE1_CONTENT.tdH2JpaTx, currentLang)}
+      </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE1_CONTENT.tdJpaTxLead} currentLang={currentLang} />
+      </p>
+
+      <div className="feature-grid">
+        <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">01</span>
+          <h3>{pickText(STAGE1_CONTENT.tdJpa1Title, currentLang)}</h3>
+          <p><RichDocText text={STAGE1_CONTENT.tdJpa1Body} currentLang={currentLang} /></p>
+        </div>
+        <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">02</span>
+          <h3>{pickText(STAGE1_CONTENT.tdJpa2Title, currentLang)}</h3>
+          <p><RichDocText text={STAGE1_CONTENT.tdJpa2Body} currentLang={currentLang} /></p>
+        </div>
+        <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">03</span>
+          <h3>{pickText(STAGE1_CONTENT.tdJpa3Title, currentLang)}</h3>
+          <p><RichDocText text={STAGE1_CONTENT.tdJpa3Body} currentLang={currentLang} /></p>
+        </div>
+      </div>
+
       <h2 id="two-dir-impl" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE1_CONTENT.tdH2Impl, currentLang)}
       </h2>
 
       <CodeBlock
@@ -96,6 +118,13 @@ public final class OrderSummaryHelper {
   }
 }`}
       />
+
+      <h2 id="two-dir-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="warning" currentLang={currentLang}>
+        <RichDocText text={STAGE1_CONTENT.tdCalloutWarn} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

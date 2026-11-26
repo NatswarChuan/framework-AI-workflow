@@ -4,13 +4,19 @@ import { SupportedLanguage } from '../types/docs';
 import { ALL_NAV_ITEMS } from '../data/navigation';
 import { STORY_STEPS, STORY_UI } from '../data/storySteps';
 import { pickText } from '../data/locales';
+import { buildTopicHref, isPlainLeftClick } from '../utils/navLinks';
 
 interface StoryBannerProps {
   topicId: string;
   currentLang: SupportedLanguage;
+  onSelectTopic?: (topicId: string) => void;
 }
 
-export const StoryBanner: React.FC<StoryBannerProps> = ({ topicId, currentLang }) => {
+export const StoryBanner: React.FC<StoryBannerProps> = ({
+  topicId,
+  currentLang,
+  onSelectTopic,
+}) => {
   const step = STORY_STEPS[topicId];
   if (!step) {
     return null;
@@ -43,7 +49,17 @@ export const StoryBanner: React.FC<StoryBannerProps> = ({ topicId, currentLang }
         </span>
         <div className="story-nav-links">
           {prevNav && (
-            <a className="story-nav-link" href={`#${prevNav.id}`}>
+            <a
+              className="story-nav-link"
+              href={buildTopicHref(prevNav.id, currentLang)}
+              onClick={(event) => {
+                if (!onSelectTopic || !isPlainLeftClick(event)) {
+                  return;
+                }
+                event.preventDefault();
+                onSelectTopic(prevNav.id);
+              }}
+            >
               <ArrowLeft size={13} className="rtl-flip-icon" aria-hidden="true" />
               <span>
                 {pickText(STORY_UI.prevStep, currentLang)}: {pickText(prevNav.label, currentLang)}
@@ -51,7 +67,17 @@ export const StoryBanner: React.FC<StoryBannerProps> = ({ topicId, currentLang }
             </a>
           )}
           {nextNav && (
-            <a className="story-nav-link story-nav-link-next" href={`#${nextNav.id}`}>
+            <a
+              className="story-nav-link story-nav-link-next"
+              href={buildTopicHref(nextNav.id, currentLang)}
+              onClick={(event) => {
+                if (!onSelectTopic || !isPlainLeftClick(event)) {
+                  return;
+                }
+                event.preventDefault();
+                onSelectTopic(nextNav.id);
+              }}
+            >
               <span>
                 {pickText(STORY_UI.nextStep, currentLang)}: {pickText(nextNav.label, currentLang)}
               </span>

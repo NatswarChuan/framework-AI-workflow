@@ -3,6 +3,7 @@ import { SupportedLanguage } from '../types/docs';
 import { OPERATORS_DATA } from '../data/operatorsData';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { UI_CONTROLS } from '../data/uiControls';
@@ -18,21 +19,17 @@ export const QueryOperatorsPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="query-operators"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'security',
-          content: <RichDocText text={STAGE3_CONTENT.qoCalloutSecurity} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="query-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE3_CONTENT.qoH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE3_CONTENT.qoGoalBody} currentLang={currentLang} />
       </p>
 
-      <h2 id="query-guardrails" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+      <h2 id="query-guardrails-config" className="section-heading">
+        {pickText(STAGE3_CONTENT.qoH2Config, currentLang)}
       </h2>
 
       <CodeBlock
@@ -52,7 +49,7 @@ export const QueryOperatorsPage: React.FC<PageProps> = ({ currentLang }) => {
       />
 
       <h2 id="query-operators-table" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE3_CONTENT.qoH2Table, currentLang)}
       </h2>
 
       <div className="table-scroll">
@@ -79,7 +76,7 @@ export const QueryOperatorsPage: React.FC<PageProps> = ({ currentLang }) => {
       </div>
 
       <h2 id="query-verification" className="section-heading">
-        {pickText(UI_LABELS.stepVerification, currentLang)}
+        {pickText(STAGE3_CONTENT.qoH2Verify, currentLang)}
       </h2>
 
       <CodeBlock
@@ -98,6 +95,13 @@ curl -s "http://localhost:8080/api/v1/product-catalogs/keyset?dir=desc&size=5&fi
 curl -s "http://localhost:8080/api/v1/customer-orders?expand=customer&page=0&size=10" \\
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq`}
       />
+
+      <h2 id="query-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="security" currentLang={currentLang}>
+        <RichDocText text={STAGE3_CONTENT.qoCalloutSecurity} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

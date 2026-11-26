@@ -146,81 +146,6 @@ export const AiAgentKitPage: React.FC<AiAgentKitPageProps> = ({ currentLang }) =
       <DocPageHeader
         topicId="ai-agent-kit"
         currentLang={currentLang}
-        badges={[
-          { label: 'ai-agent-kit/', tone: 'emerald' },
-          { label: 'SDD + TDD Built-In', tone: 'amber' },
-          { label: 'SKILL · RULES · INTRO · CHECKLIST', tone: 'purple' },
-          { label: '8 Adapters + llms.txt', tone: 'blue' },
-        ]}
-      />
-
-      <h2 id="kit-overview" className="section-heading">
-        {pickText(STAGE8_CONTENT.kitH2Overview, currentLang)}
-      </h2>
-      <p style={{ color: 'var(--text-secondary)' }}>
-        <RichDocText text={STAGE8_CONTENT.kitGoalBody} currentLang={currentLang} />
-      </p>
-
-      <div className="feature-grid grid-2col">
-        <div className="feature-card">
-          <h4>{pickText(STAGE8_CONTENT.kitCardIntroTitle, currentLang)}</h4>
-          <p>
-            <RichDocText text={STAGE8_CONTENT.kitCardIntroBody} currentLang={currentLang} />
-          </p>
-        </div>
-        <div className="feature-card">
-          <h4>{pickText(STAGE8_CONTENT.kitCardRulesTitle, currentLang)}</h4>
-          <p>
-            <RichDocText text={STAGE8_CONTENT.kitCardRulesBody} currentLang={currentLang} />
-          </p>
-        </div>
-        <div className="feature-card">
-          <h4>{pickText(STAGE8_CONTENT.kitCardSkillTitle, currentLang)}</h4>
-          <p>
-            <RichDocText text={STAGE8_CONTENT.kitCardSkillBody} currentLang={currentLang} />
-          </p>
-        </div>
-        <div className="feature-card">
-          <h4>{pickText(STAGE8_CONTENT.kitCardChecklistTitle, currentLang)}</h4>
-          <p>
-            <RichDocText text={STAGE8_CONTENT.kitCardChecklistBody} currentLang={currentLang} />
-          </p>
-        </div>
-      </div>
-
-      <h2 id="kit-sdd-tdd" className="section-heading">
-        {pickText(STAGE8_CONTENT.kitH2SddTdd, currentLang)}
-      </h2>
-      <p style={{ color: 'var(--text-secondary)' }}>
-        <RichDocText text={STAGE8_CONTENT.kitSddTddLead} currentLang={currentLang} />
-      </p>
-
-      <div className="feature-grid grid-2col">
-        <div className="feature-card">
-          <h4><RichDocText text={STAGE8_CONTENT.kitCardSddTitle} currentLang={currentLang} /></h4>
-          <p>
-            <RichDocText text={STAGE8_CONTENT.kitCardSddBody} currentLang={currentLang} />
-          </p>
-        </div>
-        <div className="feature-card">
-          <h4>{pickText(STAGE8_CONTENT.kitCardTddTitle, currentLang)}</h4>
-          <p>
-            <RichDocText text={STAGE8_CONTENT.kitCardTddBody} currentLang={currentLang} />
-          </p>
-        </div>
-      </div>
-
-      <CodeBlock
-        currentLang={currentLang}
-        tabs={[
-          {
-            id: 'sdd-tdd-loop',
-            label: 'SDD + TDD Workflow (06-sdd-and-tdd-playbook.md)',
-            language: 'markdown',
-            fileName: 'specs/discount-voucher/ + Red-Green-Refactor',
-            code: SDD_TDD_FLOW_SNIPPET,
-          },
-        ]}
       />
 
       <h2 id="kit-install" className="section-heading">
@@ -290,6 +215,124 @@ rm -rf /tmp/nwvmc-docs
 # 5. Direct HTTPS llmstxt.org & raw skill URLs (no download needed for web-capable AI agents):
 #    - https://natswarchuan.github.io/Spring-NWVMC-document/llms.txt
 #    - https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/SKILL.md`,
+          },
+        ]}
+      />
+
+      <h2 id="kit-prompts" className="section-heading">
+        {pickText(STAGE8_CONTENT.kitH2Prompts, currentLang)}
+      </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE8_CONTENT.kitPromptsLead} currentLang={currentLang} />
+      </p>
+
+      <CodeBlock
+        currentLang={currentLang}
+        tabs={[
+          {
+            id: 'prompt-bootstrap',
+            label: pickText(STAGE8_CONTENT.kitTabPrompt1, currentLang),
+            language: 'text',
+            fileName: 'prompt-1-bootstrap.txt',
+            code: `Read the spring-nwvmc-adoption skill (INTRO.md, RULES.md, SKILL.md, references/03-yaml-properties-and-profiles.md, references/06-sdd-and-tdd-playbook.md) and integrate io.github.natswarchuan:spring-nwvmc:0.1.0 (Maven Central) into this Spring Boot 3.x project using SDD + TDD:
+1. Update pom.xml with Java 21, io.github.natswarchuan:spring-nwvmc:0.1.0, and <parameters>true</parameters>.
+2. Create a hardened application.yml (studio.enabled=false, default-deny-unannotated-entities=true, require-authenticated-api-paths=true, fail-fast-weak-jwt-secret=true), a bootable application-dev.yml (H2 + Dev Studio + fallback JWT_SECRET), and application-test.yml.
+3. Draft specs/product-catalog/spec.md (REQ-ID Given/When/Then criteria), plan.md, and tasks.md; pause if any [NEEDS CLARIFICATION] exists.
+4. Execute strict TDD: write failing MockMvc tests first (RED) covering create (201), dot-syntax filtering, RBAC masking, and /v3/api-docs drift -> implement ProductCatalog + ProductCatalogController (GREEN) -> refactor and run mvn clean verify until 100% pass.`,
+          },
+          {
+            id: 'prompt-workflow',
+            label: pickText(STAGE8_CONTENT.kitTabPrompt2, currentLang),
+            language: 'text',
+            fileName: 'prompt-2-order-lock-idempotent.txt',
+            code: `Follow Workflow 0 and references/01, 04, 06 in spring-nwvmc-adoption to build an Order & Inventory workflow using SDD + TDD:
+1. Draft specs/order-inventory/spec.md (REQ-ID Given/When/Then criteria, RBAC matrix, @StateMachine graph, @CustomEndpoint auth guard) and pause on any [NEEDS CLARIFICATION] items.
+2. After approval, generate plan.md (Traceability Matrix) and tasks.md, then execute strict RED -> GREEN -> REFACTOR:
+   - ECommerceOrder entity with @AutoCode(prefix = "ORD-"), @StateMachine colon transitions ("CREATED:PENDING_PAYMENT,CANCELLED"), and @EntitySecurity (assert 422 on illegal jumps).
+   - PaymentTransaction controller with @Idempotent(headerName = HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY) (assert 201 -> 409).
+   - Non-final @Lazy @Service implementing atomic stock reservation guarded by @DistributedLock(key = "'SKU_STOCK_' + #skuCode") + Tier 4 RANDOM_PORT concurrency test (zero 500s).
+3. Verify every phase in CHECKLIST.md (Phases 0-6) and pass mvn clean verify with 0 failures and 0 @Disabled tests.`,
+          },
+          {
+            id: 'prompt-audit',
+            label: pickText(STAGE8_CONTENT.kitTabPrompt3, currentLang),
+            language: 'text',
+            fileName: 'prompt-3-production-audit.txt',
+            code: `Audit this Spring-NWVMC repository against CHECKLIST.md (Phases 0-6), RULES.md, and references/06-sdd-and-tdd-playbook.md:
+1. Verify specs/*/spec.md matches live /v3/api-docs, /metadata, and /schema/zod with zero secret-field leakage or contract drift.
+2. Verify production lockdown in application.yml / application-prod.yml: studio.enabled=false, demo-token-endpoint-enabled=false, default-deny-unannotated-entities=true, require-authenticated-api-paths=true, Springdoc disabled, ddl-auto=validate, JWT_SECRET >= 32 bytes (HS256) / >= 64 bytes (HS512).
+3. Confirm every business entity (and all 4 DB-RBAC entities if present) declares @EntitySecurity, masks PII via @FieldSecurity, verifies @MultiTenant JWT claim parity via SecurityIdentityCustomizer, guards @CustomEndpoint beans, and never uses Lombok @Data.
+4. Check runtime pitfalls: ObjectProvider<T> for framework helpers, non-final @Lazy @Service for AOP, HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY, colon @StateMachine syntax, exact 13 dot-syntax filter operators, and readDto scoping.
+5. Fix any findings (starting with failing regression tests!) and verify 100% pass with mvn clean verify (0 @Disabled).`,
+          },
+        ]}
+      />
+
+      <h2 id="kit-overview" className="section-heading">
+        {pickText(STAGE8_CONTENT.kitH2Overview, currentLang)}
+      </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE8_CONTENT.kitGoalBody} currentLang={currentLang} />
+      </p>
+
+      <div className="feature-grid grid-2col">
+        <div className="feature-card">
+          <h3>{pickText(STAGE8_CONTENT.kitCardIntroTitle, currentLang)}</h3>
+          <p>
+            <RichDocText text={STAGE8_CONTENT.kitCardIntroBody} currentLang={currentLang} />
+          </p>
+        </div>
+        <div className="feature-card">
+          <h3>{pickText(STAGE8_CONTENT.kitCardRulesTitle, currentLang)}</h3>
+          <p>
+            <RichDocText text={STAGE8_CONTENT.kitCardRulesBody} currentLang={currentLang} />
+          </p>
+        </div>
+        <div className="feature-card">
+          <h3>{pickText(STAGE8_CONTENT.kitCardSkillTitle, currentLang)}</h3>
+          <p>
+            <RichDocText text={STAGE8_CONTENT.kitCardSkillBody} currentLang={currentLang} />
+          </p>
+        </div>
+        <div className="feature-card">
+          <h3>{pickText(STAGE8_CONTENT.kitCardChecklistTitle, currentLang)}</h3>
+          <p>
+            <RichDocText text={STAGE8_CONTENT.kitCardChecklistBody} currentLang={currentLang} />
+          </p>
+        </div>
+      </div>
+
+      <h2 id="kit-sdd-tdd" className="section-heading">
+        {pickText(STAGE8_CONTENT.kitH2SddTdd, currentLang)}
+      </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE8_CONTENT.kitSddTddLead} currentLang={currentLang} />
+      </p>
+
+      <div className="feature-grid grid-2col">
+        <div className="feature-card">
+          <h3><RichDocText text={STAGE8_CONTENT.kitCardSddTitle} currentLang={currentLang} /></h3>
+          <p>
+            <RichDocText text={STAGE8_CONTENT.kitCardSddBody} currentLang={currentLang} />
+          </p>
+        </div>
+        <div className="feature-card">
+          <h3>{pickText(STAGE8_CONTENT.kitCardTddTitle, currentLang)}</h3>
+          <p>
+            <RichDocText text={STAGE8_CONTENT.kitCardTddBody} currentLang={currentLang} />
+          </p>
+        </div>
+      </div>
+
+      <CodeBlock
+        currentLang={currentLang}
+        tabs={[
+          {
+            id: 'sdd-tdd-loop',
+            label: 'SDD + TDD Workflow (06-sdd-and-tdd-playbook.md)',
+            language: 'markdown',
+            fileName: 'specs/discount-voucher/ + Red-Green-Refactor',
+            code: SDD_TDD_FLOW_SNIPPET,
           },
         ]}
       />
@@ -459,55 +502,6 @@ rm -rf /tmp/nwvmc-docs
           </tbody>
         </table>
       </div>
-
-      <h2 id="kit-prompts" className="section-heading">
-        {pickText(STAGE8_CONTENT.kitH2Prompts, currentLang)}
-      </h2>
-      <p style={{ color: 'var(--text-secondary)' }}>
-        <RichDocText text={STAGE8_CONTENT.kitPromptsLead} currentLang={currentLang} />
-      </p>
-
-      <CodeBlock
-        currentLang={currentLang}
-        tabs={[
-          {
-            id: 'prompt-bootstrap',
-            label: pickText(STAGE8_CONTENT.kitTabPrompt1, currentLang),
-            language: 'text',
-            fileName: 'prompt-1-bootstrap.txt',
-            code: `Read the spring-nwvmc-adoption skill (INTRO.md, RULES.md, SKILL.md, references/03-yaml-properties-and-profiles.md, references/06-sdd-and-tdd-playbook.md) and integrate io.github.natswarchuan:spring-nwvmc:0.1.0 (Maven Central) into this Spring Boot 3.x project using SDD + TDD:
-1. Update pom.xml with Java 21, io.github.natswarchuan:spring-nwvmc:0.1.0, and <parameters>true</parameters>.
-2. Create a hardened application.yml (studio.enabled=false, default-deny-unannotated-entities=true, require-authenticated-api-paths=true, fail-fast-weak-jwt-secret=true), a bootable application-dev.yml (H2 + Dev Studio + fallback JWT_SECRET), and application-test.yml.
-3. Draft specs/product-catalog/spec.md (REQ-ID Given/When/Then criteria), plan.md, and tasks.md; pause if any [NEEDS CLARIFICATION] exists.
-4. Execute strict TDD: write failing MockMvc tests first (RED) covering create (201), dot-syntax filtering, RBAC masking, and /v3/api-docs drift -> implement ProductCatalog + ProductCatalogController (GREEN) -> refactor and run mvn clean verify until 100% pass.`,
-          },
-          {
-            id: 'prompt-workflow',
-            label: pickText(STAGE8_CONTENT.kitTabPrompt2, currentLang),
-            language: 'text',
-            fileName: 'prompt-2-order-lock-idempotent.txt',
-            code: `Follow Workflow 0 and references/01, 04, 06 in spring-nwvmc-adoption to build an Order & Inventory workflow using SDD + TDD:
-1. Draft specs/order-inventory/spec.md (REQ-ID Given/When/Then criteria, RBAC matrix, @StateMachine graph, @CustomEndpoint auth guard) and pause on any [NEEDS CLARIFICATION] items.
-2. After approval, generate plan.md (Traceability Matrix) and tasks.md, then execute strict RED -> GREEN -> REFACTOR:
-   - ECommerceOrder entity with @AutoCode(prefix = "ORD-"), @StateMachine colon transitions ("CREATED:PENDING_PAYMENT,CANCELLED"), and @EntitySecurity (assert 422 on illegal jumps).
-   - PaymentTransaction controller with @Idempotent(headerName = HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY) (assert 201 -> 409).
-   - Non-final @Lazy @Service implementing atomic stock reservation guarded by @DistributedLock(key = "'SKU_STOCK_' + #skuCode") + Tier 4 RANDOM_PORT concurrency test (zero 500s).
-3. Verify every phase in CHECKLIST.md (Phases 0-6) and pass mvn clean verify with 0 failures and 0 @Disabled tests.`,
-          },
-          {
-            id: 'prompt-audit',
-            label: pickText(STAGE8_CONTENT.kitTabPrompt3, currentLang),
-            language: 'text',
-            fileName: 'prompt-3-production-audit.txt',
-            code: `Audit this Spring-NWVMC repository against CHECKLIST.md (Phases 0-6), RULES.md, and references/06-sdd-and-tdd-playbook.md:
-1. Verify specs/*/spec.md matches live /v3/api-docs, /metadata, and /schema/zod with zero secret-field leakage or contract drift.
-2. Verify production lockdown in application.yml / application-prod.yml: studio.enabled=false, demo-token-endpoint-enabled=false, default-deny-unannotated-entities=true, require-authenticated-api-paths=true, Springdoc disabled, ddl-auto=validate, JWT_SECRET >= 32 bytes (HS256) / >= 64 bytes (HS512).
-3. Confirm every business entity (and all 4 DB-RBAC entities if present) declares @EntitySecurity, masks PII via @FieldSecurity, verifies @MultiTenant JWT claim parity via SecurityIdentityCustomizer, guards @CustomEndpoint beans, and never uses Lombok @Data.
-4. Check runtime pitfalls: ObjectProvider<T> for framework helpers, non-final @Lazy @Service for AOP, HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY, colon @StateMachine syntax, exact 13 dot-syntax filter operators, and readDto scoping.
-5. Fix any findings (starting with failing regression tests!) and verify 100% pass with mvn clean verify (0 @Disabled).`,
-          },
-        ]}
-      />
 
       <Callout type="tip" currentLang={currentLang}>
         <RichDocText text={STAGE8_CONTENT.kitCalloutVerify} currentLang={currentLang} />

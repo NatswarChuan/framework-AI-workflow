@@ -2,8 +2,9 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { STAGE4_CONTENT } from '../data/pages/stage4Content';
 
 interface PageProps {
@@ -16,21 +17,17 @@ export const FileStoragePage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="file-storage"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'tip',
-          content: <RichDocText text={STAGE4_CONTENT.fsCalloutTip} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="storage-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE4_CONTENT.fsH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE4_CONTENT.fsGoalBody} currentLang={currentLang} />
       </p>
 
       <h2 id="storage-config" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE4_CONTENT.fsH2Config, currentLang)}
       </h2>
 
       <CodeBlock
@@ -91,7 +88,7 @@ curl -s -X DELETE "http://localhost:8080/api/v1/storage/$FILE_ID" -H "Authorizat
       />
 
       <h2 id="storage-endpoints" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE4_CONTENT.fsH2Endpoints, currentLang)}
       </h2>
 
       <div className="table-scroll">
@@ -137,6 +134,13 @@ curl -s -X DELETE "http://localhost:8080/api/v1/storage/$FILE_ID" -H "Authorizat
           </tbody>
         </table>
       </div>
+
+      <h2 id="storage-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="tip" currentLang={currentLang}>
+        <RichDocText text={STAGE4_CONTENT.fsCalloutTip} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

@@ -1,8 +1,10 @@
 import React from 'react';
 import { AnnotationSpec, SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
+import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { AnnotationWorkbench } from '../components/AnnotationWorkbench';
+import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE2_CONTENT } from '../data/pages/stage2Content';
 
 interface AnnotationsHubPageProps {
@@ -29,10 +31,6 @@ export const AnnotationsPage: React.FC<AnnotationsHubPageProps> = ({
       <DocPageHeader
         topicId="annotations"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'note',
-          content: <RichDocText text={STAGE2_CONTENT.annCalloutNote} currentLang={currentLang} />,
-        }}
       />
 
       <AnnotationWorkbench
@@ -43,6 +41,13 @@ export const AnnotationsPage: React.FC<AnnotationsHubPageProps> = ({
           onNavigateTopic(category === 'all' ? 'annotations' : CATEGORY_TO_TOPIC_ID[category])
         }
       />
+
+      <h2 id="annotations-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang).replace(/^\d+\.\s*/, '')}
+      </h2>
+      <Callout type="note" currentLang={currentLang}>
+        <RichDocText text={STAGE2_CONTENT.annCalloutNote} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
@@ -29,77 +30,51 @@ export const SecurityRbacPage: React.FC<PageProps> = ({ currentLang, theme = 'da
       <DocPageHeader
         topicId="security-rbac"
         currentLang={currentLang}
-        badges={[
-          { label: '@EntitySecurity · @FieldSecurity', tone: 'rose' },
-          { label: pickText(STAGE5_CONTENT.srBadgeDbRbac, currentLang), tone: 'purple' },
-          { label: pickText(STAGE5_CONTENT.srBadgeProd, currentLang), tone: 'emerald' },
-        ]}
       />
 
-      <h2 id="security-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+      <h2 id="security-decision" className="section-heading">
+        {pickText(STAGE5_CONTENT.srH2Decision, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE5_CONTENT.srGoalBody} currentLang={currentLang} />
       </p>
 
-      <MermaidDiagram
-        theme={theme}
-        currentLang={currentLang}
-        caption={pickText(STAGE5_CONTENT.srMermaidCaption, currentLang)}
-        chart={SECURITY_FLOW}
-      />
-
-      <h2 id="security-annotations" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
-      </h2>
-
       <div className="table-scroll">
         <table className="doc-table">
           <thead>
             <tr>
-              <th>{pickText(STAGE5_CONTENT.srThComp, currentLang)}</th>
-              <th>{pickText(STAGE5_CONTENT.srThAttrs, currentLang)}</th>
-              <th>{pickText(STAGE5_CONTENT.srThEnforce, currentLang)}</th>
+              <th>{pickText(STAGE5_CONTENT.srDecThNeed, currentLang)}</th>
+              <th>{pickText(STAGE5_CONTENT.srDecThUse, currentLang)}</th>
+              <th>{pickText(STAGE5_CONTENT.srDecThNote, currentLang)}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
+              <td><RichDocText text={STAGE5_CONTENT.srDecRow1Need} currentLang={currentLang} /></td>
               <td><code>@EntitySecurity</code></td>
-              <td><code>readRoles</code>, <code>writeRoles</code>, <code>deleteRoles</code>, <code>permissions</code>, <code>permitAll</code>, <code>ownerField</code>, <code>bypassOwnerRoles</code></td>
-              <td><RichDocText text={STAGE5_CONTENT.srRowEntitySec} currentLang={currentLang} /></td>
+              <td><code>readRoles</code>, <code>writeRoles</code>, <code>deleteRoles</code>, <code>ownerField</code></td>
             </tr>
             <tr>
+              <td><RichDocText text={STAGE5_CONTENT.srDecRow2Need} currentLang={currentLang} /></td>
               <td><code>@FieldSecurity</code></td>
-              <td><code>viewRoles</code>, <code>maskPattern ("******")</code>, <code>nullifyInsteadOfMask (false)</code></td>
-              <td><RichDocText text={STAGE5_CONTENT.srRowFieldSec} currentLang={currentLang} /></td>
+              <td><code>viewRoles</code>, <code>maskPattern</code>, <code>nullifyInsteadOfMask</code></td>
             </tr>
             <tr>
+              <td><RichDocText text={STAGE5_CONTENT.srDecRow3Need} currentLang={currentLang} /></td>
               <td><code>@MultiTenant</code></td>
               <td><code>tenantField</code>, <code>bypassTenantRoles</code></td>
-              <td><RichDocText text={STAGE5_CONTENT.srRowTenant} currentLang={currentLang} /></td>
             </tr>
             <tr>
-              <td><code>@SecurityRoleEntity</code> · <code>@SecurityPermissionEntity</code> · <code>@SecurityUserRoleEntity</code> · <code>@SecurityPolicyEntity</code></td>
-              <td><code>@RoleCode</code>, <code>@RolePermissions</code>, <code>@PermissionFieldMask</code>, <code>@UserRoleSubject</code>, <code>@PolicyEffect (DENY &gt; ALLOW)</code></td>
-              <td><RichDocText text={STAGE5_CONTENT.srRowDbRbac} currentLang={currentLang} /></td>
-            </tr>
-            <tr>
-              <td><code>SecurityFilterChainBridge</code></td>
-              <td><code>SecurityIdentityCustomizer</code></td>
-              <td><RichDocText text={STAGE5_CONTENT.srRowChain} currentLang={currentLang} /></td>
-            </tr>
-            <tr>
-              <td><code>SurfaceAccessGuardrailUtil</code></td>
-              <td><code>studio.enabled=false</code></td>
-              <td><RichDocText text={STAGE5_CONTENT.srRowSurface} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE5_CONTENT.srDecRow4Need} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE5_CONTENT.srDecRow4Use} currentLang={currentLang} /></td>
+              <td><code>@SecurityRoleEntity</code>, <code>@SecurityPermissionEntity</code>, <code>@SecurityPolicyEntity</code></td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <h2 id="security-impl" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE5_CONTENT.srH2Impl, currentLang)}
       </h2>
 
       <CodeBlock
@@ -242,6 +217,89 @@ curl -s "http://localhost:8080/api/v1/product-catalogs/$PRODUCT_ID" -H "Authoriz
         ]}
       />
 
+      <h2 id="security-owasp" className="section-heading">
+        {pickText(STAGE5_CONTENT.srH2Owasp, currentLang)}
+      </h2>
+
+      <div className="feature-grid grid-2col">
+        <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">01</span>
+          <h3>{pickText(STAGE5_CONTENT.srOwaspBolaTitle, currentLang)}</h3>
+          <p><RichDocText text={STAGE5_CONTENT.srOwaspBolaBody} currentLang={currentLang} /></p>
+        </div>
+        <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">02</span>
+          <h3>{pickText(STAGE5_CONTENT.srOwaspDosTitle, currentLang)}</h3>
+          <p><RichDocText text={STAGE5_CONTENT.srOwaspDosBody} currentLang={currentLang} /></p>
+        </div>
+      </div>
+
+      <h2 id="security-annotations" className="section-heading">
+        {pickText(STAGE5_CONTENT.srH2Annotations, currentLang)}
+      </h2>
+
+      <div className="table-scroll">
+        <table className="doc-table">
+          <thead>
+            <tr>
+              <th>{pickText(STAGE5_CONTENT.srThComp, currentLang)}</th>
+              <th>{pickText(STAGE5_CONTENT.srThAttrs, currentLang)}</th>
+              <th>{pickText(STAGE5_CONTENT.srThEnforce, currentLang)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>@EntitySecurity</code></td>
+              <td><code>readRoles</code>, <code>writeRoles</code>, <code>deleteRoles</code>, <code>permissions</code>, <code>permitAll</code>, <code>ownerField</code>, <code>bypassOwnerRoles</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.srRowEntitySec} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>@FieldSecurity</code></td>
+              <td><code>viewRoles</code>, <code>maskPattern ("******")</code>, <code>nullifyInsteadOfMask (false)</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.srRowFieldSec} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>@MultiTenant</code></td>
+              <td><code>tenantField</code>, <code>bypassTenantRoles</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.srRowTenant} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>@SecurityRoleEntity</code> · <code>@SecurityPermissionEntity</code> · <code>@SecurityUserRoleEntity</code> · <code>@SecurityPolicyEntity</code></td>
+              <td><code>@RoleCode</code>, <code>@RolePermissions</code>, <code>@PermissionFieldMask</code>, <code>@UserRoleSubject</code>, <code>@PolicyEffect (DENY &gt; ALLOW)</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.srRowDbRbac} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>SecurityFilterChainBridge</code></td>
+              <td><code>SecurityIdentityCustomizer</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.srRowChain} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>SurfaceAccessGuardrailUtil</code></td>
+              <td><code>studio.enabled=false</code></td>
+              <td><RichDocText text={STAGE5_CONTENT.srRowSurface} currentLang={currentLang} /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <details className="under-the-hood-details">
+        <summary className="under-the-hood-summary">
+          <span>{pickText(STAGE5_CONTENT.srUnderHoodSummary, currentLang)}</span>
+          <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <div className="under-the-hood-body">
+          <MermaidDiagram
+            theme={theme}
+            currentLang={currentLang}
+            caption={pickText(STAGE5_CONTENT.srMermaidCaption, currentLang)}
+            chart={SECURITY_FLOW}
+          />
+        </div>
+      </details>
+
+      <h2 id="security-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="security" currentLang={currentLang}>
         <RichDocText text={STAGE5_CONTENT.srCalloutSec} currentLang={currentLang} />
       </Callout>

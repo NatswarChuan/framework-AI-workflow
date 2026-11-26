@@ -2,8 +2,9 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { STAGE1_CONTENT } from '../data/pages/stage1Content';
 
 interface QuickstartPageProps {
@@ -16,15 +17,14 @@ export const QuickstartPage: React.FC<QuickstartPageProps> = ({ currentLang }) =
       <DocPageHeader
         topicId="quickstart"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'tip',
-          content: <RichDocText text={STAGE1_CONTENT.qsCalloutTip} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="quickstart-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE1_CONTENT.qsH2Starter, currentLang)}
       </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE1_CONTENT.qsStarterLead} currentLang={currentLang} />
+      </p>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE1_CONTENT.qsGoalBody} currentLang={currentLang} />
       </p>
@@ -90,7 +90,7 @@ tasks.withType<JavaCompile> {
       />
 
       <h2 id="quickstart-config" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE1_CONTENT.qsH2Config, currentLang)}
       </h2>
 
       <CodeBlock
@@ -159,7 +159,7 @@ app:
       />
 
       <h2 id="quickstart-impl" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE1_CONTENT.qsH2Impl, currentLang)}
       </h2>
 
       <CodeBlock
@@ -239,8 +239,168 @@ public class ProductReadDto {
         <RichDocText text={STAGE1_CONTENT.qsImplBody} currentLang={currentLang} />
       </p>
 
+      <h2 id="quickstart-first-errors" className="section-heading">
+        {pickText(STAGE1_CONTENT.qsH2FirstErrors, currentLang)}
+      </h2>
+
+      <div className="table-scroll">
+        <table className="doc-table">
+          <thead>
+            <tr>
+              <th>{pickText(STAGE1_CONTENT.qsErrThSymptom, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.qsErrThCause, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.qsErrThFix, currentLang)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr1Sym} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr1Cause} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr1Fix} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr2Sym} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr2Cause} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr2Fix} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr3Sym} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr3Cause} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsErr3Fix} currentLang={currentLang} /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="quickstart-error-contract" className="section-heading">
+        {pickText(STAGE1_CONTENT.qsH2ErrorContract, currentLang)}
+      </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE1_CONTENT.qsErrorContractLead} currentLang={currentLang} />
+      </p>
+
+      <CodeBlock
+        currentLang={currentLang}
+        language="json"
+        fileName="ApiResponse<List<ValidationErrorDetail>> (HTTP 400 / 401 / 403 / 404 / 409 / 422 / 429 / 503)"
+        code={`{
+  "code": "error.validation.failed",
+  "message": "Input validation failed",
+  "data": [
+    {
+      "field": "retailPrice",
+      "rejectedValue": "-5.00",
+      "message": "must be greater than or equal to 0.00"
+    }
+  ],
+  "traceId": "0194e1a0-7f20-7000-8000-000000000101",
+  "timestamp": "2026-11-26T10:15:30.412"
+}`}
+      />
+
+      <h2 id="quickstart-testing" className="section-heading">
+        {pickText(STAGE1_CONTENT.qsH2Testing, currentLang)}
+      </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE1_CONTENT.qsTestingLead} currentLang={currentLang} />
+      </p>
+
+      <CodeBlock
+        currentLang={currentLang}
+        tabs={[
+          {
+            id: 'qs-test-mockmvc',
+            label: 'MockMvc Slice / Integration',
+            language: 'java',
+            fileName: 'src/test/java/com/example/implementation/ProductCatalogIntegrationTest.java',
+            highlightLines: [12, 16, 21, 22],
+            code: `@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class ProductCatalogIntegrationTest {
+
+  @Autowired
+  private MockMvc mockMvc;
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void shouldRejectNegativePriceWithApiResponse400() throws Exception {
+    mockMvc.perform(post("/api/v1/product-catalogs")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\\"skuCode\\":\\"SKU-1\\",\\"productName\\":\\"Test\\",\\"category\\":\\"TECH\\",\\"vendorStoreCode\\":\\"V1\\",\\"retailPrice\\":-5.00,\\"b2bWholesalePrice\\":1.00,\\"active\\":true}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("error.validation.failed"))
+        .andExpect(jsonPath("$.traceId").isNotEmpty())
+        .andExpect(jsonPath("$.data[0].field").value("retailPrice"));
+  }
+}`,
+          },
+          {
+            id: 'qs-test-tc',
+            label: 'Testcontainers PostgreSQL',
+            language: 'java',
+            fileName: 'src/test/java/com/example/implementation/PostgresContainerSmokeTest.java',
+            highlightLines: [1, 2, 5, 6],
+            code: `@Testcontainers
+@SpringBootTest
+class PostgresContainerSmokeTest {
+
+  @Container
+  @ServiceConnection
+  static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine");
+
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
+
+  @Test
+  void shouldBootstrapFlywayAndQueryPostgres() {
+    assertThat(jdbcTemplate.queryForObject("SELECT 1", Integer.class)).isEqualTo(1);
+  }
+}`,
+          },
+        ]}
+      />
+
+      <h2 id="quickstart-failfast" className="section-heading">
+        {pickText(STAGE1_CONTENT.qsH2FailFast, currentLang)}
+      </h2>
+
+      <div className="table-scroll">
+        <table className="doc-table">
+          <thead>
+            <tr>
+              <th>{pickText(STAGE1_CONTENT.qsThEx, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.qsThTrig, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.qsThRem, currentLang)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>UnsupportedJavaVersionException</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow1Trig} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow1Rem} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>InvalidConfigurationException</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow2Trig} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow2Rem} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>InvalidConfigurationException</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow3Trig} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow3Rem} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><code>InvalidConfigurationException</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow4Trig} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.qsRow4Rem} currentLang={currentLang} /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <h2 id="quickstart-verify" className="section-heading">
-        {pickText(UI_LABELS.stepVerification, currentLang)}
+        {pickText(STAGE1_CONTENT.qsH2Verify, currentLang)}
       </h2>
 
       <CodeBlock
@@ -292,43 +452,12 @@ mvn -Pjmeter jmeter:configure jmeter:jmeter jmeter:results`,
         ]}
       />
 
-      <h2 id="quickstart-failfast" className="section-heading">
-        {pickText(STAGE1_CONTENT.qsBadgeFailFast, currentLang)}
+      <h2 id="quickstart-guardrails" className="section-heading">
+        {formatStepHeading(9, UI_LABELS.stepNotes, currentLang)}
       </h2>
-
-      <div className="table-scroll">
-        <table className="doc-table">
-          <thead>
-            <tr>
-              <th>{pickText(STAGE1_CONTENT.qsThEx, currentLang)}</th>
-              <th>{pickText(STAGE1_CONTENT.qsThTrig, currentLang)}</th>
-              <th>{pickText(STAGE1_CONTENT.qsThRem, currentLang)}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>UnsupportedJavaVersionException</code></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow1Trig} currentLang={currentLang} /></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow1Rem} currentLang={currentLang} /></td>
-            </tr>
-            <tr>
-              <td><code>InvalidConfigurationException</code></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow2Trig} currentLang={currentLang} /></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow2Rem} currentLang={currentLang} /></td>
-            </tr>
-            <tr>
-              <td><code>InvalidConfigurationException</code></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow3Trig} currentLang={currentLang} /></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow3Rem} currentLang={currentLang} /></td>
-            </tr>
-            <tr>
-              <td><code>InvalidConfigurationException</code></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow4Trig} currentLang={currentLang} /></td>
-              <td><RichDocText text={STAGE1_CONTENT.qsRow4Rem} currentLang={currentLang} /></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <Callout type="tip" currentLang={currentLang}>
+        <RichDocText text={STAGE1_CONTENT.qsCalloutTip} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

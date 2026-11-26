@@ -3,7 +3,7 @@ import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { RichDocText } from '../components/RichDocText';
 import { STAGE8_CONTENT } from '../data/pages/stage8Content';
 
@@ -17,22 +17,20 @@ export const CustomizersAndIntegrationPage: React.FC<PageProps> = ({ currentLang
       <DocPageHeader
         topicId="customizers"
         currentLang={currentLang}
-        badges={[
-          { label: pickText(STAGE8_CONTENT.cuBadgeSpis, currentLang), tone: 'purple' },
-          { label: 'SpringEcosystemCustomizerRegistryHelper', tone: 'blue' },
-          { label: 'ThirdPartyRestClientHelper', tone: 'emerald' },
-        ]}
       />
 
       <h2 id="customizers-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE8_CONTENT.cuH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE8_CONTENT.cuGoalBody} currentLang={currentLang} />
       </p>
+      <Callout type="tip" currentLang={currentLang}>
+        <RichDocText text={STAGE8_CONTENT.cuSpiDistinction} currentLang={currentLang} />
+      </Callout>
 
       <h2 id="customizers-table" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE8_CONTENT.cuH2Table, currentLang)}
       </h2>
 
       <div className="table-scroll">
@@ -90,7 +88,7 @@ export const CustomizersAndIntegrationPage: React.FC<PageProps> = ({ currentLang
       </div>
 
       <h2 id="customizers-restclient" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)} — <code>ThirdPartyRestClientHelper</code>
+        {pickText(STAGE8_CONTENT.cuH2RestClient, currentLang)}
       </h2>
 
       <CodeBlock
@@ -177,6 +175,9 @@ public final class MarketplacePartnerGatewayHelper {
         ]}
       />
 
+      <h2 id="customizers-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="note" currentLang={currentLang}>
         <RichDocText text={STAGE8_CONTENT.cuCalloutNote} currentLang={currentLang} />
       </Callout>

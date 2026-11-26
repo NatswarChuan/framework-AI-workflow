@@ -1,10 +1,12 @@
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { STAGE2_CONTENT } from '../data/pages/stage2Content';
 
 interface PageProps {
@@ -27,32 +29,39 @@ export const DynamicProxyPage: React.FC<PageProps> = ({ currentLang, theme }) =>
       <DocPageHeader
         topicId="dynamic-proxy"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'tip',
-          content: <RichDocText text={STAGE2_CONTENT.dpCalloutTip} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="proxy-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE2_CONTENT.dpH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE2_CONTENT.dpGoalBody} currentLang={currentLang} />
       </p>
 
-      <MermaidDiagram
-        theme={theme}
-        currentLang={currentLang}
-        caption={pickText(STAGE2_CONTENT.dpMermaidCaption, currentLang)}
-        chart={PROXY_FLOW_CHART}
-      />
+      <details className="under-the-hood-details">
+        <summary className="under-the-hood-summary">
+          <span>{pickText(STAGE2_CONTENT.dpUnderHoodSummary, currentLang)}</span>
+          <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <div className="under-the-hood-body">
+          <MermaidDiagram
+            theme={theme}
+            currentLang={currentLang}
+            caption={pickText(STAGE2_CONTENT.dpMermaidCaption, currentLang)}
+            chart={PROXY_FLOW_CHART}
+          />
+        </div>
+      </details>
 
       <h2 id="proxy-aot" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE2_CONTENT.dpH2Aot, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE2_CONTENT.dpConfigBody} currentLang={currentLang} />
       </p>
+      <Callout type="note" currentLang={currentLang}>
+        <RichDocText text={STAGE2_CONTENT.dpAotLimitNote} currentLang={currentLang} />
+      </Callout>
 
       <CodeBlock
         currentLang={currentLang}
@@ -63,7 +72,7 @@ io.github.natswarchuan.autoconfigure.NwvmcRuntimeHintsRegistrar`}
       />
 
       <h2 id="proxy-accessors" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE2_CONTENT.dpH2Accessors, currentLang)}
       </h2>
 
       <CodeBlock
@@ -78,6 +87,13 @@ final Object result = handle.bindTo(beanInstance).invokeWithArguments(args);
 final Function<Object, Object> getter = LambdaAccessorUtil.resolveLambdaGetter(entityClass, "status");
 final Object statusValue = getter.apply(entity);`}
       />
+
+      <h2 id="proxy-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="tip" currentLang={currentLang}>
+        <RichDocText text={STAGE2_CONTENT.dpCalloutTip} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

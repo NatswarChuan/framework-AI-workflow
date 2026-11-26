@@ -9,6 +9,7 @@ interface MermaidDiagramProps {
   caption?: string;
   theme?: 'dark' | 'light';
   currentLang?: SupportedLanguage;
+  blueprint?: boolean;
 }
 
 let renderQueue: Promise<void> = Promise.resolve();
@@ -17,62 +18,62 @@ function buildMermaidThemeVars(theme: 'dark' | 'light'): Record<string, string> 
   if (theme === 'dark') {
     return {
       darkMode: 'true',
-      background: '#0F1018',
-      primaryColor: '#161722',
-      primaryTextColor: '#F1F2F7',
-      primaryBorderColor: '#FF4A90',
-      secondaryColor: '#121824',
-      secondaryTextColor: '#E5F7FF',
-      secondaryBorderColor: '#14D8FF',
-      tertiaryColor: '#181926',
-      tertiaryTextColor: '#E8E6F2',
-      lineColor: '#56607A',
-      textColor: '#F1F2F7',
-      edgeLabelBackground: '#14151E',
-      actorBkg: '#161722',
-      actorBorder: '#FF4A90',
-      actorTextColor: '#F1F2F7',
-      actorLineColor: '#454C63',
-      signalColor: '#14D8FF',
-      signalTextColor: '#F1F2F7',
-      labelBoxBkgColor: '#14151E',
-      labelBoxBorderColor: '#363B4E',
-      labelTextColor: '#F1F2F7',
-      noteBkgColor: '#1B1622',
-      noteBorderColor: '#FF4A90',
-      noteTextColor: '#F1F2F7',
+      background: '#0B0D14',
+      primaryColor: '#121522',
+      primaryTextColor: '#E6EAF5',
+      primaryBorderColor: '#22D3EE',
+      secondaryColor: '#181C2E',
+      secondaryTextColor: '#E6EAF5',
+      secondaryBorderColor: '#FF3B8B',
+      tertiaryColor: '#181C2E',
+      tertiaryTextColor: '#E6EAF5',
+      lineColor: '#22D3EE',
+      textColor: '#E6EAF5',
+      edgeLabelBackground: '#121522',
+      actorBkg: '#121522',
+      actorBorder: '#22D3EE',
+      actorTextColor: '#E6EAF5',
+      actorLineColor: '#323A58',
+      signalColor: '#22D3EE',
+      signalTextColor: '#E6EAF5',
+      labelBoxBkgColor: '#121522',
+      labelBoxBorderColor: '#262C44',
+      labelTextColor: '#E6EAF5',
+      noteBkgColor: '#181C2E',
+      noteBorderColor: '#FF3B8B',
+      noteTextColor: '#E6EAF5',
       fontSize: '14px',
-      fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif',
+      fontFamily: 'Be Vietnam Pro, Inter, system-ui, sans-serif',
     };
   }
   return {
     darkMode: 'false',
     background: '#FFFFFF',
-    primaryColor: '#FFF5F8',
-    primaryTextColor: '#11131C',
-    primaryBorderColor: '#D61F69',
-    secondaryColor: '#F0FAFF',
-    secondaryTextColor: '#11131C',
-    secondaryBorderColor: '#0284C7',
+    primaryColor: '#F0FAFF',
+    primaryTextColor: '#11131D',
+    primaryBorderColor: '#0369A1',
+    secondaryColor: '#FFF5F9',
+    secondaryTextColor: '#11131D',
+    secondaryBorderColor: '#D61F69',
     tertiaryColor: '#F6F7FB',
-    tertiaryTextColor: '#11131C',
-    lineColor: '#64748B',
-    textColor: '#11131C',
-    edgeLabelBackground: '#F4F5FA',
-    actorBkg: '#FFF5F8',
-    actorBorder: '#D61F69',
-    actorTextColor: '#11131C',
+    tertiaryTextColor: '#11131D',
+    lineColor: '#0369A1',
+    textColor: '#11131D',
+    edgeLabelBackground: '#F6F7FB',
+    actorBkg: '#F0FAFF',
+    actorBorder: '#0369A1',
+    actorTextColor: '#11131D',
     actorLineColor: '#64748B',
-    signalColor: '#0284C7',
-    signalTextColor: '#11131C',
+    signalColor: '#0369A1',
+    signalTextColor: '#11131D',
     labelBoxBkgColor: '#F0FAFF',
-    labelBoxBorderColor: '#0284C7',
-    labelTextColor: '#11131C',
-    noteBkgColor: '#FEF9EB',
-    noteBorderColor: '#D97706',
-    noteTextColor: '#11131C',
+    labelBoxBorderColor: '#0369A1',
+    labelTextColor: '#11131D',
+    noteBkgColor: '#FFF5F9',
+    noteBorderColor: '#D61F69',
+    noteTextColor: '#11131D',
     fontSize: '14px',
-    fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif',
+    fontFamily: 'Be Vietnam Pro, Inter, system-ui, sans-serif',
   };
 }
 
@@ -81,6 +82,7 @@ export const MermaidDiagram: React.FC<MermaidDiagramProps> = ({
   caption,
   theme = 'dark',
   currentLang = 'en',
+  blueprint = true,
 }) => {
   const reactId = useId().replace(/:/g, '');
   const [svgMarkup, setSvgMarkup] = useState<string>('');
@@ -128,14 +130,14 @@ export const MermaidDiagram: React.FC<MermaidDiagramProps> = ({
           securityLevel: 'strict',
           theme: 'base',
           themeVariables: buildMermaidThemeVars(theme),
-          fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif',
+          fontFamily: 'Be Vietnam Pro, Inter, system-ui, sans-serif',
           flowchart: {
             htmlLabels: false,
             useMaxWidth: true,
             curve: 'basis',
             padding: 14,
-            nodeSpacing: 34,
-            rankSpacing: 44,
+            nodeSpacing: 32,
+            rankSpacing: 42,
           },
           sequence: {
             useMaxWidth: false,
@@ -169,7 +171,7 @@ export const MermaidDiagram: React.FC<MermaidDiagramProps> = ({
 
   return (
     <>
-      <div className="mermaid-card">
+      <div className={`mermaid-card ${blueprint ? 'mermaid-blueprint' : ''}`}>
         <div className="mermaid-card-header">
           {caption ? <div className="mermaid-caption">{caption}</div> : <span />}
           {svgMarkup && !renderFailed && (

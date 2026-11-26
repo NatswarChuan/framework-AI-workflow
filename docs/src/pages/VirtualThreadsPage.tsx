@@ -2,6 +2,7 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { UI_CONTROLS } from '../data/uiControls';
@@ -17,21 +18,17 @@ export const VirtualThreadsPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="virtual-threads"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'warning',
-          content: <RichDocText text={STAGE6_CONTENT.vtCalloutWarn} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="vt-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE6_CONTENT.vtH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE6_CONTENT.vtGoalBody} currentLang={currentLang} />
       </p>
 
       <h2 id="vt-config" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE6_CONTENT.vtH2Config, currentLang)}
       </h2>
 
       <CodeBlock
@@ -59,8 +56,12 @@ app:
         expire-after-write-minutes: 10`}
       />
 
+      <Callout type="warning" currentLang={currentLang}>
+        <RichDocText text={STAGE6_CONTENT.vtPinningWarn} currentLang={currentLang} />
+      </Callout>
+
       <h2 id="vt-impl" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE6_CONTENT.vtH2Impl, currentLang)}
       </h2>
 
       <CodeBlock
@@ -150,7 +151,7 @@ curl -i "http://localhost:8080/api/v1/readonly/product-catalogs/cached/$PRODUCT_
       />
 
       <h2 id="vt-metrics" className="section-heading">
-        {pickText(UI_LABELS.stepVerification, currentLang)}
+        {pickText(STAGE6_CONTENT.vtH2Metrics, currentLang)}
       </h2>
 
       <div className="table-scroll">
@@ -186,6 +187,13 @@ curl -i "http://localhost:8080/api/v1/readonly/product-catalogs/cached/$PRODUCT_
           </tbody>
         </table>
       </div>
+
+      <h2 id="vt-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="warning" currentLang={currentLang}>
+        <RichDocText text={STAGE6_CONTENT.vtCalloutWarn} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

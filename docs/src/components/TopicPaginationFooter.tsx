@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { ALL_NAV_ITEMS } from '../data/navigation';
 import { UI_LABELS, pickText } from '../data/locales';
+import { buildTopicHref, isPlainLeftClick } from '../utils/navLinks';
 
 interface TopicPaginationFooterProps {
   activeTopicId: string;
@@ -22,33 +23,43 @@ export const TopicPaginationFooter: React.FC<TopicPaginationFooterProps> = ({
   return (
     <div className="doc-pagination">
       {prevItem ? (
-        <button
-          type="button"
+        <a
+          href={buildTopicHref(prevItem.id, currentLang)}
           className="pagination-card"
-          onClick={() => onSelectTopic(prevItem.id)}
+          onClick={(event) => {
+            if (isPlainLeftClick(event)) {
+              event.preventDefault();
+              onSelectTopic(prevItem.id);
+            }
+          }}
         >
           <span className="pagination-dir">
-            <ArrowLeft size={13} className="rtl-flip-icon" />
+            <ArrowLeft size={13} className="rtl-flip-icon" aria-hidden="true" />
             <span>{pickText(UI_LABELS.previous, currentLang)}</span>
           </span>
           <span className="pagination-title">{pickText(prevItem.label, currentLang)}</span>
-        </button>
+        </a>
       ) : (
         <div className="pagination-spacer" aria-hidden="true" />
       )}
 
       {nextItem && (
-        <button
-          type="button"
+        <a
+          href={buildTopicHref(nextItem.id, currentLang)}
           className="pagination-card next"
-          onClick={() => onSelectTopic(nextItem.id)}
+          onClick={(event) => {
+            if (isPlainLeftClick(event)) {
+              event.preventDefault();
+              onSelectTopic(nextItem.id);
+            }
+          }}
         >
           <span className="pagination-dir">
             <span>{pickText(UI_LABELS.next, currentLang)}</span>
-            <ArrowRight size={13} className="rtl-flip-icon" />
+            <ArrowRight size={13} className="rtl-flip-icon" aria-hidden="true" />
           </span>
           <span className="pagination-title">{pickText(nextItem.label, currentLang)}</span>
-        </button>
+        </a>
       )}
     </div>
   );

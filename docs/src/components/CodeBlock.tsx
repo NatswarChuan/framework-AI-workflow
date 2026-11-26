@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Check, Copy, FileCode } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Check, ChevronDown, ChevronUp, Copy, FileCode, WrapText } from 'lucide-react';
 import { CodeTab, SupportedLanguage } from '../types/docs';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_CONTROLS, UI_LABELS, pickText } from '../data/locales';
 
 interface CodeBlockProps {
   code?: string;
@@ -93,6 +93,30 @@ function highlightLineTokens(line: string, lineIdx: number): React.ReactNode {
   return nodes.length > 0 ? nodes : ' ';
 }
 
+function findJavaPreambleCount(lines: string[], lang: string): number {
+  if (lang.toLowerCase() !== 'java') {
+    return 0;
+  }
+  let importCount = 0;
+  let endIndex = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (trimmed === '' || trimmed.startsWith('package ')) {
+      if (importCount > 0 || trimmed.startsWith('package ')) {
+        endIndex = i + 1;
+      }
+      continue;
+    }
+    if (trimmed.startsWith('import ')) {
+      importCount++;
+      endIndex = i + 1;
+      continue;
+    }
+    break;
+  }
+  return importCount >= 4 ? endIndex : 0;
+}
+
 export const CodeBlock: React.FC<CodeBlockProps> = ({
   code = '',
   language = 'java',
@@ -103,17 +127,20 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
 }) => {
   const [activeTabId, setActiveTabId] = useState<string>(tabs && tabs.length > 0 ? tabs[0].id : '');
   const [copied, setCopied] = useState(false);
+  const [wrapLines, setWrapLines] = useState(false);
+  const [showImports, setShowImports] = useState(false);
   const copyTimerRef = useRef<number | null>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const activeTab = tabs?.find((t) => t.id === activeTabId) ?? tabs?.[0];
   const displayCode = activeTab ? activeTab.code : code;
-  const displayLang = activeTab ? activeTab.language : language;
+  const displayLang = (activeTab ? activeTab.language : language) || 'text';
   const displayFile = activeTab ? activeTab.fileName : fileName;
   const displayHighlights = activeTab?.highlightLines ?? highlightLines;
 
   useEffect(() => {
     setCopied(false);
+    setShowImports(false);
     if (copyTimerRef.current !== null) {
       window.clearTimeout(copyTimerRef.current);
       copyTimerRef.current = null;
@@ -128,7 +155,18 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     };
   }, []);
 
-  const lines = displayCode.replace(/\r\n/g, '\n').split('\n');
+  const lines = useMemo(() => displayCode.replace(/\r\n/g, '\n').split('\n'), [displayCode]);
+  const preambleCount = useMemo(
+    () => findJavaPreambleCount(lines, displayLang),
+    [lines, displayLang],
+  );
+  const importLineTotal = useMemo(
+    () => lines.slice(0, preambleCount).filter((l) => l.trim().startsWith('import ')).length,
+    [lines, preambleCount],
+  );
+
+  const visibleStartIndex = preambleCount > 0 && !showImports ? preambleCount : 0;
+  const visibleLines = lines.slice(visibleStartIndex);
 
   const handleCopy = () => {
     if (navigator.clipboard) {
@@ -165,11 +203,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
     <div className="code-block-shell">
       <div className="code-block-header">
         <div className="code-header-leading">
-          <span className="code-window-dots" aria-hidden="true">
-            <span className="code-dot dot-pink" />
-            <span className="code-dot dot-cyan" />
-            <span className="code-dot dot-purple" />
-          </span>
+          <span className="code-lang-badge">[{displayLang}]</span>
           {tabs && tabs.length > 0 ? (
             <div className="code-tabs" role="tablist">
               {tabs.map((tab, idx) => (
@@ -207,10 +241,20 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
           )}
           <button
             type="button"
-            className="copy-code-btn"
+            className={`code-wrap-btn ${wrapLines ? 'active' : ''}`}
+            onClick={() => setWrapLines((prev) => !prev)}
+            aria-pressed={wrapLines}
+            title={pickText(UI_CONTROLS.codeWrap, currentLang)}
+          >
+            <WrapText size={13} aria-hidden="true" />
+            <span>{pickText(UI_CONTROLS.codeWrap, currentLang)}</span>
+          </button>
+          <button
+            type="button"
+            className={`copy-code-btn ${copied ? 'copied' : ''}`}
             onClick={handleCopy}
           >
-            {copied ? <Check size={13} /> : <Copy size={13} />}
+            {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
             <span>
               {copied
                 ? pickText(UI_LABELS.copied, currentLang)
@@ -220,14 +264,32 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         </div>
       </div>
 
-      <div className="code-scroll-area">
-        {lines.map((line, index) => {
-          const lineNumber = index + 1;
+      {preambleCount > 0 && (
+        <div className="code-imports-bar">
+          <button
+            type="button"
+            className="code-imports-toggle"
+            onClick={() => setShowImports((prev) => !prev)}
+            aria-expanded={showImports}
+          >
+            {showImports ? <ChevronUp size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
+            <span>
+              {showImports
+                ? pickText(UI_CONTROLS.hideImports, currentLang)
+                : `${pickText(UI_CONTROLS.showImports, currentLang)} (${importLineTotal})`}
+            </span>
+          </button>
+        </div>
+      )}
+
+      <div className={`code-scroll-area ${wrapLines ? 'wrap-lines' : ''}`}>
+        {visibleLines.map((line, index) => {
+          const lineNumber = visibleStartIndex + index + 1;
           const isHighlighted = displayHighlights.includes(lineNumber);
           return (
             <div key={lineNumber} className={`code-line ${isHighlighted ? 'highlighted' : ''}`}>
               <span className="code-line-num">{lineNumber}</span>
-              <span className="code-line-text">{highlightLineTokens(line, index)}</span>
+              <span className="code-line-text">{highlightLineTokens(line, lineNumber - 1)}</span>
             </div>
           );
         })}

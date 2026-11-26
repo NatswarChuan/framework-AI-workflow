@@ -26,6 +26,27 @@ interface SearchModalProps {
   onSelectResult: (pageId: string, targetSelection?: string) => void;
 }
 
+function renderHighlighted(text: string, query: string): React.ReactNode {
+  const q = query.trim();
+  if (!q) {
+    return text;
+  }
+  const idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if (idx < 0) {
+    return text;
+  }
+  const before = text.slice(0, idx);
+  const match = text.slice(idx, idx + q.length);
+  const after = text.slice(idx + q.length);
+  return (
+    <>
+      {before}
+      <mark className="search-mark">{match}</mark>
+      {after}
+    </>
+  );
+}
+
 function scoreEntry(entry: SearchEntry, query: string): number {
   const titleLower = entry.title.toLowerCase();
   const titleNorm = titleLower.replace(/^[@./]/, '');
@@ -270,8 +291,22 @@ export const SearchModal: React.FC<SearchModalProps> = ({
 
         <div className="search-results-list" role="listbox">
           {filtered.length === 0 ? (
-            <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-              {pickText(UI_LABELS.searchNoResults, currentLang)}
+            <div className="search-empty-chibi">
+              <svg
+                width="68"
+                height="68"
+                viewBox="0 0 96 96"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <rect x="14" y="20" width="68" height="56" rx="14" stroke="#22D3EE" strokeWidth="2.5" fill="rgba(34,211,238,0.08)" />
+                <path d="M22 20L32 10H64L74 20" stroke="#FF3B8B" strokeWidth="2.5" strokeLinecap="round" />
+                <circle cx="36" cy="46" r="5" fill="#FF3B8B" />
+                <circle cx="60" cy="46" r="5" fill="#22D3EE" />
+                <path d="M38 61C42 57 54 57 58 61" stroke="#FF3B8B" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+              <span>{pickText(UI_LABELS.searchNoResults, currentLang)}</span>
             </div>
           ) : (
             filtered.map((item, idx) => {
@@ -292,13 +327,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.15rem', flexWrap: 'wrap' }}>
                       <span className="sidebar-item-badge">{item.category}</span>
-                      <span style={{ fontWeight: 600, fontSize: '0.9rem', overflowWrap: 'anywhere' }}>{item.title}</span>
+                      <span style={{ fontWeight: 600, fontSize: '0.9rem', overflowWrap: 'anywhere' }}>
+                        {renderHighlighted(item.title, query)}
+                      </span>
                     </div>
                     <div
                       className="search-result-meta"
                       style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                     >
-                      {item.subtitle}
+                      {renderHighlighted(item.subtitle, query)}
                     </div>
                   </div>
                   <ArrowRight size={15} className="rtl-flip-icon" style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
@@ -306,6 +343,21 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               );
             })
           )}
+        </div>
+
+        <div className="search-modal-footer">
+          <span className="search-footer-hint">
+            <kbd>↑↓</kbd>
+            <span>{pickText(UI_CONTROLS.searchFooterNav, currentLang)}</span>
+          </span>
+          <span className="search-footer-hint">
+            <kbd>↵</kbd>
+            <span>{pickText(UI_CONTROLS.searchFooterOpen, currentLang)}</span>
+          </span>
+          <span className="search-footer-hint">
+            <kbd>ESC</kbd>
+            <span>{pickText(UI_CONTROLS.searchFooterClose, currentLang)}</span>
+          </span>
         </div>
       </div>
     </div>

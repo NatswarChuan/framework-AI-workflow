@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
@@ -33,19 +34,18 @@ export const MetricsStudioI18nPage: React.FC<PageProps> = ({ currentLang, theme 
       <DocPageHeader
         topicId="metrics-studio-i18n"
         currentLang={currentLang}
-        badges={[
-          { label: pickText(STAGE7_CONTENT.msBadgeMetrics, currentLang), tone: 'emerald' },
-          { label: pickText(STAGE7_CONTENT.msBadgeLocales, currentLang), tone: 'blue' },
-          { label: pickText(STAGE7_CONTENT.msBadgeHost, currentLang), tone: 'purple' },
-        ]}
       />
 
       <h2 id="metrics-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)} — {pickText(STAGE7_CONTENT.msSecMetrics, currentLang)}
+        {pickText(STAGE7_CONTENT.msH2Overview, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE7_CONTENT.msGoalBody} currentLang={currentLang} />
       </p>
+
+      <h2 id="metrics-inventory" className="section-heading">
+        {pickText(STAGE7_CONTENT.msH2Metrics, currentLang)}
+      </h2>
 
       <div className="table-scroll">
         <table className="doc-table">
@@ -116,24 +116,79 @@ export const MetricsStudioI18nPage: React.FC<PageProps> = ({ currentLang, theme 
         </table>
       </div>
 
-      <h2 id="studio-i18n" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)} — {pickText(STAGE7_CONTENT.msSecStudio, currentLang)}
+      <h2 id="metrics-ops-alerts" className="section-heading">
+        {pickText(STAGE7_CONTENT.msH2OpsAlert, currentLang)}
       </h2>
+      <p style={{ color: 'var(--text-secondary)' }}>
+        <RichDocText text={STAGE7_CONTENT.msOpsLead} currentLang={currentLang} />
+      </p>
 
-      <MermaidDiagram
-        theme={theme}
+      <CodeBlock
         currentLang={currentLang}
-        caption={pickText(STAGE7_CONTENT.msMermaidCaption, currentLang)}
-        chart={LOCALE_PRIORITY_CHART}
+        tabs={[
+          {
+            id: 'ms-promql',
+            label: 'PromQL Alerts',
+            language: 'yaml',
+            fileName: 'prometheus-nwvmc-alerts.yml',
+            code: `groups:
+  - name: spring-nwvmc-slo
+    rules:
+      - alert: HighEntityErrorRate
+        expr: |
+          sum(rate(dynamic_entity_requests_total{status=~"5..|ERROR"}[5m])) by (entity)
+          / clamp_min(sum(rate(dynamic_entity_requests_total[5m])) by (entity), 1) > 0.05
+        for: 3m
+      - alert: HighEntityP99Latency
+        expr: histogram_quantile(0.99, sum(rate(dynamic_entity_duration_seconds_bucket[5m])) by (le, entity)) > 0.50
+        for: 5m`,
+          },
+          {
+            id: 'ms-otlp-k8s',
+            label: 'OTLP + K8s Probes',
+            language: 'yaml',
+            fileName: 'application-prod.yml (Actuator + OTLP)',
+            code: `management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,info
+  endpoint:
+    health:
+      probes:
+        enabled: true # exposes /actuator/health/liveness and /actuator/health/readiness
+  tracing:
+    sampling:
+      probability: 0.1
+  otlp:
+    tracing:
+      endpoint: https://otel-collector.internal:4318/v1/traces`,
+          },
+        ]}
       />
+
+      <h2 id="i18n-diag" className="section-heading">
+        {pickText(STAGE7_CONTENT.msH2I18n, currentLang)}
+      </h2>
 
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE7_CONTENT.msI18nBody} currentLang={currentLang} />
       </p>
 
-      <h2 id="i18n-diag" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
-      </h2>
+      <details className="under-the-hood-details">
+        <summary className="under-the-hood-summary">
+          <span>{pickText(STAGE7_CONTENT.msUnderHoodSummary, currentLang)}</span>
+          <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <div className="under-the-hood-body">
+          <MermaidDiagram
+            theme={theme}
+            currentLang={currentLang}
+            caption={pickText(STAGE7_CONTENT.msMermaidCaption, currentLang)}
+            chart={LOCALE_PRIORITY_CHART}
+          />
+        </div>
+      </details>
 
       <CodeBlock
         currentLang={currentLang}
@@ -168,6 +223,9 @@ studio.tagline=Cổng Quản Trị API Động Doanh Nghiệp (Java 21 LTS · v0
         ]}
       />
 
+      <h2 id="metrics-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="tip" currentLang={currentLang}>
         <RichDocText text={STAGE7_CONTENT.msCalloutTip} currentLang={currentLang} />
       </Callout>

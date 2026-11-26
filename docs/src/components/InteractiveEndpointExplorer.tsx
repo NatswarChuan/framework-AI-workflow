@@ -72,9 +72,6 @@ export const InteractiveEndpointExplorer: React.FC<InteractiveEndpointExplorerPr
     return visibleEndpoints.slice(start, start + PAGE_SIZE);
   }, [visibleEndpoints, safePageIndex, showAllRows]);
 
-  const activeEndpoint =
-    visibleEndpoints.find((ep) => ep.id === selectedId) ?? visibleEndpoints[0] ?? ENDPOINTS_DATA[0];
-
   return (
     <div style={{ marginTop: '1.15rem' }}>
       <div className="filter-bar">
@@ -147,37 +144,71 @@ export const InteractiveEndpointExplorer: React.FC<InteractiveEndpointExplorerPr
               </tr>
             ) : (
               pagedRows.map((ep) => {
-                const isSelected = ep.id === activeEndpoint.id;
+                const isSelected = ep.id === selectedId;
                 return (
-                  <tr
-                    key={ep.id}
-                    tabIndex={0}
-                    aria-selected={isSelected}
-                    className={`interactive-row ${isSelected ? 'selected' : ''}`}
-                    onClick={() => setSelectedId(ep.id)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        setSelectedId(ep.id);
-                      }
-                    }}
-                  >
-                    <td style={{ whiteSpace: 'nowrap' }}>
-                      <span className={METHOD_BADGE_CLASS[ep.method] ?? 'badge'}>{ep.method}</span>
-                    </td>
-                    <td>
-                      <span className="endpoint-path-wrap">
-                        <code>{ep.path || '/'}</code>
-                        {ep.hiddenInSwagger && (
-                          <span className="badge badge-amber">@Hidden</span>
-                        )}
-                      </span>
-                    </td>
-                    <td className="endpoint-contract-cell">
-                      <code>{ep.methodName}</code>
-                    </td>
-                    <td><RichDocText text={ep.summary} currentLang={currentLang} /></td>
-                  </tr>
+                  <React.Fragment key={ep.id}>
+                    <tr
+                      tabIndex={0}
+                      aria-selected={isSelected}
+                      aria-expanded={isSelected}
+                      title={pickText(UI_CONTROLS.expandRowHint, currentLang)}
+                      className={`interactive-row ${isSelected ? 'selected' : ''}`}
+                      onClick={() => setSelectedId((prev) => (prev === ep.id ? '' : ep.id))}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setSelectedId((prev) => (prev === ep.id ? '' : ep.id));
+                        }
+                      }}
+                    >
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        <span className={METHOD_BADGE_CLASS[ep.method] ?? 'badge'}>{ep.method}</span>
+                      </td>
+                      <td>
+                        <span className="endpoint-path-wrap">
+                          <code>{ep.path || '/'}</code>
+                          {ep.hiddenInSwagger && (
+                            <span className="badge badge-amber">@Hidden</span>
+                          )}
+                        </span>
+                      </td>
+                      <td className="endpoint-contract-cell">
+                        <code>{ep.methodName}</code>
+                        <ChevronRight size={14} className="ep-expand-chevron rtl-flip-icon" aria-hidden="true" />
+                      </td>
+                      <td><RichDocText text={ep.summary} currentLang={currentLang} /></td>
+                    </tr>
+                    {isSelected && (
+                      <tr className="ep-expand-row">
+                        <td colSpan={4}>
+                          <div id="endpoint-live-sample" className="ep-inline-drawer">
+                            <p className="ep-inline-summary">
+                              <RichDocText text={ep.summary} currentLang={currentLang} />
+                            </p>
+                            <CodeBlock
+                              currentLang={currentLang}
+                              tabs={[
+                                {
+                                  id: 'req',
+                                  label: pickText(UI_CONTROLS.tabHttpRequest, currentLang),
+                                  language: 'bash',
+                                  fileName: `${ep.method} ${ep.path || '/'}`,
+                                  code: ep.sampleRequest,
+                                },
+                                {
+                                  id: 'res',
+                                  label: pickText(UI_CONTROLS.tabResponsePayload, currentLang),
+                                  language: 'json',
+                                  fileName: ep.methodName,
+                                  code: ep.sampleResponse,
+                                },
+                              ]}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 );
               })
             )}
@@ -233,28 +264,6 @@ export const InteractiveEndpointExplorer: React.FC<InteractiveEndpointExplorerPr
             </button>
           </div>
         </div>
-      )}
-
-      {activeEndpoint && (
-        <CodeBlock
-          currentLang={currentLang}
-          tabs={[
-            {
-              id: 'req',
-              label: pickText(UI_CONTROLS.tabHttpRequest, currentLang),
-              language: 'bash',
-              fileName: `${activeEndpoint.method} ${activeEndpoint.path || '/'}`,
-              code: activeEndpoint.sampleRequest,
-            },
-            {
-              id: 'res',
-              label: pickText(UI_CONTROLS.tabResponsePayload, currentLang),
-              language: 'json',
-              fileName: activeEndpoint.methodName,
-              code: activeEndpoint.sampleResponse,
-            },
-          ]}
-        />
       )}
     </div>
   );

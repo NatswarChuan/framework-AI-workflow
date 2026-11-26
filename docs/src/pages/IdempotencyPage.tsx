@@ -2,9 +2,10 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { STAGE5_CONTENT } from '../data/pages/stage5Content';
 
 interface PageProps {
@@ -32,14 +33,10 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
       <DocPageHeader
         topicId="idempotency"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'warning',
-          content: <RichDocText text={STAGE5_CONTENT.idCalloutWarn} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="idempotency-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE5_CONTENT.idH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE5_CONTENT.idGoalBody} currentLang={currentLang} />
@@ -53,7 +50,7 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
       />
 
       <h2 id="idempotency-config" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE5_CONTENT.idH2Config, currentLang)}
       </h2>
 
       <div className="table-scroll">
@@ -91,7 +88,7 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
       </div>
 
       <h2 id="idempotency-impl" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE5_CONTENT.idH2Impl, currentLang)}
       </h2>
 
       <CodeBlock
@@ -177,6 +174,13 @@ curl -i -X POST "http://localhost:8080/api/v1/payment-transactions" \\
           },
         ]}
       />
+
+      <h2 id="idempotency-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="warning" currentLang={currentLang}>
+        <RichDocText text={STAGE5_CONTENT.idCalloutWarn} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

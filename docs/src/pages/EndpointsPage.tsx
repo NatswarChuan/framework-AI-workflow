@@ -5,10 +5,11 @@ import { ENDPOINTS_DATA } from '../data/endpointsData';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { pickText } from '../data/locales';
+import { UI_LABELS, pickText } from '../data/locales';
 import { UI_CONTROLS } from '../data/uiControls';
 import { STAGE3_CONTENT } from '../data/pages/stage3Content';
 import { HUB_CONTENT } from '../data/hubContent';
+import { buildTopicHref, isPlainLeftClick } from '../utils/navLinks';
 
 interface EndpointsHubProps {
   currentLang: SupportedLanguage;
@@ -81,11 +82,6 @@ export const EndpointsPage: React.FC<EndpointsHubProps> = ({
       <DocPageHeader
         topicId="endpoints"
         currentLang={currentLang}
-        badges={[
-          { label: pickText(STAGE3_CONTENT.epBadgeDeclared, currentLang), tone: 'emerald' },
-          { label: pickText(STAGE3_CONTENT.epBadgeSwagger, currentLang), tone: 'blue' },
-          { label: pickText(STAGE3_CONTENT.epBadgeSplit, currentLang), tone: 'amber' },
-        ]}
       />
 
       <section className="plain-guide-box">
@@ -106,17 +102,23 @@ export const EndpointsPage: React.FC<EndpointsHubProps> = ({
         {GROUP_CARDS.map((card) => {
           const items = byGroup[card.group];
           return (
-            <button
+            <a
               key={card.topicId}
-              type="button"
+              href={buildTopicHref(card.topicId, currentLang)}
               className="hub-group-card"
-              onClick={() => onNavigateTopic(card.topicId)}
+              onClick={(event) => {
+                if (!isPlainLeftClick(event)) {
+                  return;
+                }
+                event.preventDefault();
+                onNavigateTopic(card.topicId);
+              }}
             >
               <div className="hub-group-card-top">
                 <span className={card.badgeClass}>
-                  {items.length} {pickText(HUB_CONTENT.endpointsUnit, currentLang)}
+                  {card.group.toUpperCase()}
                 </span>
-                <ArrowRight size={16} className="rtl-flip-icon hub-card-arrow" />
+                <ArrowRight size={16} className="rtl-flip-icon hub-card-arrow" aria-hidden="true" />
               </div>
               <h3 className="hub-group-card-title">
                 {pickText(card.title, currentLang)}
@@ -130,14 +132,11 @@ export const EndpointsPage: React.FC<EndpointsHubProps> = ({
                     {ep.method} {ep.path || '/'}
                   </code>
                 ))}
-                {items.length > 4 && (
-                  <span className="hub-more-chip">+{items.length - 4}</span>
-                )}
               </div>
               <span className="hub-group-cta">
                 {pickText(HUB_CONTENT.exploreGroupCta, currentLang)}
               </span>
-            </button>
+            </a>
           );
         })}
       </div>
@@ -148,23 +147,26 @@ export const EndpointsPage: React.FC<EndpointsHubProps> = ({
 
       <div className="feature-grid grid-2col">
         <div className="feature-card">
-          <h4><code>GET /api/v1/system/studio</code></h4>
+          <h3><code>GET /api/v1/system/studio</code></h3>
           <p><RichDocText text={STAGE3_CONTENT.epSysStudio} currentLang={currentLang} /></p>
         </div>
         <div className="feature-card">
-          <h4><code>GET /api/v1/system/databases/health</code></h4>
+          <h3><code>GET /api/v1/system/databases/health</code></h3>
           <p><RichDocText text={STAGE3_CONTENT.epSysDb} currentLang={currentLang} /></p>
         </div>
         <div className="feature-card">
-          <h4><code>GET /api/v1/system/trace-context</code></h4>
+          <h3><code>GET /api/v1/system/trace-context</code></h3>
           <p><RichDocText text={STAGE3_CONTENT.epSysTrace} currentLang={currentLang} /></p>
         </div>
         <div className="feature-card">
-          <h4><code>GET /api/v1/system/eject/*</code></h4>
+          <h3><code>GET /system/studio/eject</code></h3>
           <p><RichDocText text={STAGE3_CONTENT.epSysEject} currentLang={currentLang} /></p>
         </div>
       </div>
 
+      <h2 id="endpoints-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang).replace(/^\d+\.\s*/, '')}
+      </h2>
       <Callout type="tip" currentLang={currentLang}>
         <RichDocText text={STAGE3_CONTENT.epCalloutTip} currentLang={currentLang} />
       </Callout>

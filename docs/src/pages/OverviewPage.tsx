@@ -1,14 +1,16 @@
 import React from 'react';
-import { ArrowRight, Terminal } from 'lucide-react';
+import { ArrowRight, ChevronDown, Terminal } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { CodeBlock } from '../components/CodeBlock';
-import { GuardrailHintIcon } from '../components/GuardrailHintIcon';
+import { Callout } from '../components/Callout';
+import { GlossaryTerm } from '../components/GlossaryTerm';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
-import { StoryBanner } from '../components/StoryBanner';
 import { ALL_NAV_ITEMS } from '../data/navigation';
 import { UI_CONTROLS, UI_LABELS, pickText } from '../data/locales';
 import { STAGE1_CONTENT } from '../data/pages/stage1Content';
+import { buildTopicHref, isPlainLeftClick } from '../utils/navLinks';
+import logoUrl from '../assets/logo.jpeg';
 
 interface OverviewPageProps {
   currentLang: SupportedLanguage;
@@ -42,9 +44,6 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
               <h1 className="page-title hero-title">
                 {overviewItem ? pickText(overviewItem.label, currentLang) : UI_LABELS.brandName}
               </h1>
-              <GuardrailHintIcon type="security" currentLang={currentLang}>
-                <RichDocText text={STAGE1_CONTENT.ovCalloutSecurity} currentLang={currentLang} />
-              </GuardrailHintIcon>
             </div>
 
             <p className="hero-subtitle">
@@ -52,22 +51,34 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
             </p>
 
             <div className="hero-actions">
-              <button
-                type="button"
+              <a
+                href={buildTopicHref('quickstart', currentLang)}
                 className="hero-btn-primary"
-                onClick={() => onNavigateTopic?.('quickstart')}
+                onClick={(event) => {
+                  if (!isPlainLeftClick(event)) {
+                    return;
+                  }
+                  event.preventDefault();
+                  onNavigateTopic?.('quickstart');
+                }}
               >
                 <span>{pickText(UI_CONTROLS.heroStartCta, currentLang)}</span>
                 <ArrowRight size={16} className="rtl-flip-icon" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
+              </a>
+              <a
+                href={buildTopicHref('ai-agent-kit', currentLang)}
                 className="hero-btn-secondary"
-                onClick={() => onNavigateTopic?.('ai-agent-kit')}
+                onClick={(event) => {
+                  if (!isPlainLeftClick(event)) {
+                    return;
+                  }
+                  event.preventDefault();
+                  onNavigateTopic?.('ai-agent-kit');
+                }}
               >
                 <Terminal size={15} aria-hidden="true" />
                 <span>{pickText(UI_CONTROLS.heroKitCta, currentLang)}</span>
-              </button>
+              </a>
             </div>
           </div>
 
@@ -80,7 +91,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
 
               <div className="hero-logo-stage">
                 <img
-                  src="./logo.jpeg"
+                  src={logoUrl}
                   alt="Spring-NWVMC Official Logo"
                   className="hero-logo-art"
                   width={220}
@@ -92,53 +103,148 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
         </div>
       </section>
 
-      <StoryBanner topicId="overview" currentLang={currentLang} />
+      <section className="core-insight-section" aria-label={pickText(STAGE1_CONTENT.ovBentoKicker, currentLang)}>
+        <div className="core-insight-bar">
+          <span className="core-insight-kicker">{pickText(STAGE1_CONTENT.ovBentoKicker, currentLang)}</span>
+        </div>
+        <div className="core-insight-grid">
+          <div className="core-insight-card">
+            <h3>{pickText(STAGE1_CONTENT.ovBento1Title, currentLang)}</h3>
+            <p><RichDocText text={STAGE1_CONTENT.ovBento1Body} currentLang={currentLang} /></p>
+          </div>
+          <div className="core-insight-card">
+            <h3>{pickText(STAGE1_CONTENT.ovBento2Title, currentLang)}</h3>
+            <p><RichDocText text={STAGE1_CONTENT.ovBento2Body} currentLang={currentLang} /></p>
+          </div>
+          <div className="core-insight-card">
+            <h3>{pickText(STAGE1_CONTENT.ovBento3Title, currentLang)}</h3>
+            <p><RichDocText text={STAGE1_CONTENT.ovBento3Body} currentLang={currentLang} /></p>
+          </div>
+        </div>
+        <div className="glossary-strip" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', alignItems: 'center', marginTop: '0.85rem' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+            {pickText(UI_CONTROLS.glossaryKicker, currentLang)}
+          </span>
+          <GlossaryTerm termKey="JPA" currentLang={currentLang} />
+          <GlossaryTerm termKey="RBAC" currentLang={currentLang} />
+          <GlossaryTerm termKey="Keyset" currentLang={currentLang} />
+          <GlossaryTerm termKey="Idempotency" currentLang={currentLang} />
+          <GlossaryTerm termKey="AOT" currentLang={currentLang} />
+        </div>
+      </section>
 
       <h2 id="goal-architecture" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE1_CONTENT.ovH2Architecture, currentLang)}
       </h2>
 
       <div className="feature-grid grid-2col">
         <div className="feature-card">
           <span className="feature-card-index" dir="ltr">01</span>
-          <h4>{pickText(STAGE1_CONTENT.ovCard1Title, currentLang)}</h4>
+          <h3>{pickText(STAGE1_CONTENT.ovCard1Title, currentLang)}</h3>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard1Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
           <span className="feature-card-index" dir="ltr">02</span>
-          <h4>{pickText(STAGE1_CONTENT.ovCard2Title, currentLang)}</h4>
+          <h3>{pickText(STAGE1_CONTENT.ovCard2Title, currentLang)}</h3>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard2Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
           <span className="feature-card-index" dir="ltr">03</span>
-          <h4>{pickText(STAGE1_CONTENT.ovCard3Title, currentLang)}</h4>
+          <h3>{pickText(STAGE1_CONTENT.ovCard3Title, currentLang)}</h3>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard3Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
           <span className="feature-card-index" dir="ltr">04</span>
-          <h4>{pickText(STAGE1_CONTENT.ovCard4Title, currentLang)}</h4>
+          <h3>{pickText(STAGE1_CONTENT.ovCard4Title, currentLang)}</h3>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard4Body} currentLang={currentLang} />
           </p>
         </div>
       </div>
 
-      <MermaidDiagram
-        theme={theme}
-        currentLang={currentLang}
-        caption={pickText(STAGE1_CONTENT.ovMermaidCaption, currentLang)}
-        chart={ARCHITECTURE_CHART}
-      />
+      <details className="under-the-hood-details">
+        <summary className="under-the-hood-summary">
+          <span>{pickText(STAGE1_CONTENT.ovHudInternalSummary, currentLang)}</span>
+          <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <div className="under-the-hood-body">
+          <MermaidDiagram
+            theme={theme}
+            currentLang={currentLang}
+            caption={pickText(STAGE1_CONTENT.ovMermaidCaption, currentLang)}
+            chart={ARCHITECTURE_CHART}
+          />
+        </div>
+      </details>
 
       <h2 id="config-footprint" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE1_CONTENT.ovH2Compat, currentLang)}
       </h2>
+
+      <div className="table-scroll">
+        <table className="doc-table">
+          <thead>
+            <tr>
+              <th>{pickText(STAGE1_CONTENT.ovCompatThStack, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.ovCompatThReq, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.ovCompatThNote, currentLang)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{pickText(STAGE1_CONTENT.ovCompatRowRuntime, currentLang)}</td>
+              <td><code>Java 21 LTS · Spring Boot 3.2.5 / 3.3.5 / 3.4.0</code></td>
+              <td><code>spring.threads.virtual.enabled=true</code></td>
+            </tr>
+            <tr>
+              <td>{pickText(STAGE1_CONTENT.ovCompatRowLicense, currentLang)}</td>
+              <td><code>io.github.natswarchuan:spring-nwvmc:0.1.0</code></td>
+              <td><code>Apache-2.0 · &lt;parameters&gt;true&lt;/parameters&gt;</code></td>
+            </tr>
+            <tr>
+              <td>{pickText(STAGE1_CONTENT.ovCompatRowCore, currentLang)}</td>
+              <td><code>web · data-jpa · validation · security · actuator</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovCompatRowCoreDesc} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td>{pickText(STAGE1_CONTENT.ovCompatRowOpt, currentLang)}</td>
+              <td><code>redis (optional=true) · spring-ai · s3/gcs</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovCompatRowOptDesc} currentLang={currentLang} /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 className="section-heading" style={{ fontSize: '1.08rem', marginTop: '1.5rem' }}>
+        {pickText(STAGE1_CONTENT.ovTradeTitle, currentLang)}
+      </h3>
+
+      <div className="table-scroll">
+        <table className="doc-table">
+          <thead>
+            <tr>
+              <th>{pickText(STAGE1_CONTENT.ovTradeThFit, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.ovTradeThSkip, currentLang)}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><RichDocText text={STAGE1_CONTENT.ovTradeRow1Fit} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovTradeRow1Skip} currentLang={currentLang} /></td>
+            </tr>
+            <tr>
+              <td><RichDocText text={STAGE1_CONTENT.ovTradeRow2Fit} currentLang={currentLang} /></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovTradeRow2Skip} currentLang={currentLang} /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <CodeBlock
         currentLang={currentLang}
@@ -202,7 +308,7 @@ tasks.withType<JavaCompile> {
       />
 
       <h2 id="minimal-implementation" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE1_CONTENT.ovH2QuickExample, currentLang)}
       </h2>
 
       <CodeBlock
@@ -213,7 +319,7 @@ tasks.withType<JavaCompile> {
             label: 'ProductCatalog.java',
             language: 'java',
             fileName: 'src/main/java/com/example/implementation/entity/ProductCatalog.java',
-            highlightLines: [21, 22, 23, 24, 25, 29, 34, 49],
+            highlightLines: [25, 26, 27, 28, 31, 39, 50],
             code: `package com.example.implementation.entity;
 
 import io.github.natswarchuan.common.constant.RoleConstant;
@@ -290,7 +396,7 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
       />
 
       <h2 id="jmh-benchmarks" className="section-heading">
-        {pickText(UI_LABELS.stepVerification, currentLang)}
+        {pickText(STAGE1_CONTENT.ovH2Benchmarks, currentLang)}
       </h2>
 
       <p className="section-intro">
@@ -303,6 +409,7 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
             <tr>
               <th>{pickText(STAGE1_CONTENT.ovThPath, currentLang)}</th>
               <th>{pickText(STAGE1_CONTENT.ovThThroughput, currentLang)}</th>
+              <th>{pickText(STAGE1_CONTENT.ovThLatency, currentLang)}</th>
               <th>{pickText(STAGE1_CONTENT.ovThMechanism, currentLang)}</th>
             </tr>
           </thead>
@@ -310,26 +417,37 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
             <tr>
               <td><code>measureVanillaDirectDispatch</code></td>
               <td><code>432.825 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow1Lat} currentLang={currentLang} /></td>
               <td><RichDocText text={STAGE1_CONTENT.ovRow1Mech} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>measureCachedMethodHandleDispatch</code></td>
               <td><code>182.914 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow2Lat} currentLang={currentLang} /></td>
               <td><RichDocText text={STAGE1_CONTENT.ovRow2Mech} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>measureDynamicProxyServiceOverrideDispatch</code></td>
               <td><code>68.267 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow3Lat} currentLang={currentLang} /></td>
               <td><RichDocText text={STAGE1_CONTENT.ovRow3Mech} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td><code>measureDynamicProxyDefaultDispatch</code></td>
               <td><code>52.730 ops/ms</code></td>
+              <td><RichDocText text={STAGE1_CONTENT.ovRow4Lat} currentLang={currentLang} /></td>
               <td><RichDocText text={STAGE1_CONTENT.ovRow4Mech} currentLang={currentLang} /></td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <h2 id="overview-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="security" currentLang={currentLang}>
+        <RichDocText text={STAGE1_CONTENT.ovCalloutSecurity} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

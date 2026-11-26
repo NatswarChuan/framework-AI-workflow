@@ -1,7 +1,9 @@
 import React from 'react';
+import { ChevronDown } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
@@ -30,28 +32,32 @@ export const MultiDatabasePage: React.FC<PageProps> = ({ currentLang, theme = 'd
       <DocPageHeader
         topicId="multi-database"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'warning',
-          content: <RichDocText text={STAGE4_CONTENT.mdbCalloutWarn} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="multidb-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE4_CONTENT.mdbH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE4_CONTENT.mdbGoalBody} currentLang={currentLang} />
       </p>
 
-      <MermaidDiagram
-        theme={theme}
-        currentLang={currentLang}
-        caption={pickText(STAGE4_CONTENT.mdbMermaidCaption, currentLang)}
-        chart={ROUTING_FLOW}
-      />
+      <details className="under-the-hood-details">
+        <summary className="under-the-hood-summary">
+          <span>{pickText(STAGE4_CONTENT.mdbUnderHoodSummary, currentLang)}</span>
+          <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <div className="under-the-hood-body">
+          <MermaidDiagram
+            theme={theme}
+            currentLang={currentLang}
+            caption={pickText(STAGE4_CONTENT.mdbMermaidCaption, currentLang)}
+            chart={ROUTING_FLOW}
+          />
+        </div>
+      </details>
 
       <h2 id="multidb-config" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE4_CONTENT.mdbH2Config, currentLang)}
       </h2>
 
       <CodeBlock
@@ -81,7 +87,7 @@ public class RoutingDataSourceConfig {
       />
 
       <h2 id="multidb-impl" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE4_CONTENT.mdbH2Impl, currentLang)}
       </h2>
 
       <CodeBlock
@@ -179,8 +185,12 @@ public interface MarketplaceAnalyticsService {
         ]}
       />
 
+      <Callout type="note" currentLang={currentLang}>
+        <RichDocText text={STAGE4_CONTENT.mdbDistributedNote} currentLang={currentLang} />
+      </Callout>
+
       <h2 id="multidb-verify" className="section-heading">
-        {pickText(UI_LABELS.stepVerification, currentLang)}
+        {pickText(STAGE4_CONTENT.mdbH2Verify, currentLang)}
       </h2>
 
       <CodeBlock
@@ -195,6 +205,13 @@ curl -s "http://localhost:8080/api/v1/product-catalogs/analytics/ELECTRONICS" \\
 curl -s "http://localhost:8080/api/v1/system/databases/health" \\
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq`}
       />
+
+      <h2 id="multidb-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="warning" currentLang={currentLang}>
+        <RichDocText text={STAGE4_CONTENT.mdbCalloutWarn} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

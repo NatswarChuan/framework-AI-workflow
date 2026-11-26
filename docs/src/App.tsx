@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SupportedLanguage } from './types/docs';
 import { ALL_NAV_ITEMS } from './data/navigation';
-import { SUPPORTED_LANGUAGES, UI_LABELS, isRtlLanguage, pickText } from './data/locales';
+import { SUPPORTED_LANGUAGES, UI_CONTROLS, UI_LABELS, isRtlLanguage, pickText } from './data/locales';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { SearchModal } from './components/SearchModal';
-import { TableOfContents } from './components/TableOfContents';
+import { MobileTableOfContents, TableOfContents, openAncestorDetails } from './components/TableOfContents';
 import { TopicPaginationFooter } from './components/TopicPaginationFooter';
+import { StoryBanner } from './components/StoryBanner';
+import { DocFooter } from './components/DocFooter';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { buildTopicHref } from './utils/navLinks';
 import { OverviewPage } from './pages/OverviewPage';
 import { QuickstartPage } from './pages/QuickstartPage';
 import { TwoDirectoryPage } from './pages/TwoDirectoryPage';
@@ -40,6 +44,10 @@ const STORAGE_THEME_KEY = 'nwvmc_docs_theme';
 
 function resolveInitialLanguage(): SupportedLanguage {
   if (typeof window !== 'undefined') {
+    const queryLang = new URLSearchParams(window.location.search).get('lang');
+    if (queryLang && SUPPORTED_LANGUAGES.some((item) => item.code === queryLang)) {
+      return queryLang as SupportedLanguage;
+    }
     const saved = window.localStorage.getItem(STORAGE_LANG_KEY);
     if (saved && SUPPORTED_LANGUAGES.some((item) => item.code === saved)) {
       return saved as SupportedLanguage;
@@ -63,47 +71,68 @@ const HASH_TOPIC_ALIASES: Record<string, string> = {
   'spi-customizers': 'customizers',
 };
 
-function parseHashTarget(raw: string): { topicId: string; sectionId?: string } {
+function parseHashTarget(raw: string): {
+  topicId: string;
+  sectionId?: string;
+  notFound: boolean;
+  rawHash?: string;
+} {
   const cleaned = raw.replace(/^#/, '').trim();
   if (!cleaned) {
-    return { topicId: 'overview' };
+    return { topicId: 'overview', notFound: false };
   }
   const [rawTopic, rawSection] = cleaned.split('/');
   const mappedTopic = HASH_TOPIC_ALIASES[rawTopic] ?? rawTopic;
   if (ALL_NAV_ITEMS.some((item) => item.id === mappedTopic)) {
-    return { topicId: mappedTopic, sectionId: rawSection || undefined };
+    return { topicId: mappedTopic, sectionId: rawSection || undefined, notFound: false };
   }
-  return { topicId: 'overview' };
+  return { topicId: 'not-found', notFound: true, rawHash: cleaned };
 }
 
-function resolveInitialTopic(): string {
+function resolveInitialRoute(): {
+  topicId: string;
+  sectionId?: string;
+  notFound: boolean;
+  rawHash?: string;
+} {
   if (typeof window !== 'undefined') {
-    return parseHashTarget(window.location.hash).topicId;
+    return parseHashTarget(window.location.hash);
   }
-  return 'overview';
+  return { topicId: 'overview', notFound: false };
 }
 
 export const App: React.FC = () => {
+  const [initialRoute] = useState(resolveInitialRoute);
   const [currentLang, setCurrentLang] = useState<SupportedLanguage>(resolveInitialLanguage);
   const [theme, setTheme] = useState<'dark' | 'light'>(resolveInitialTheme);
-  const [activeTopicId, setActiveTopicId] = useState<string>(resolveInitialTopic);
+  const [activeTopicId, setActiveTopicId] = useState<string>(initialRoute.topicId);
+  const [isNotFound, setIsNotFound] = useState<boolean>(initialRoute.notFound);
+  const [missingHash, setMissingHash] = useState<string>(initialRoute.rawHash ?? '');
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [selectedAnnotationName, setSelectedAnnotationName] = useState<string | undefined>(undefined);
   const [selectedEndpointId, setSelectedEndpointId] = useState<string | undefined>(undefined);
-  const programmaticNavRef = useRef<boolean>(false);
 
   useEffect(() => {
     document.documentElement.lang = currentLang;
     document.documentElement.dir = isRtlLanguage(currentLang) ? 'rtl' : 'ltr';
     window.localStorage.setItem(STORAGE_LANG_KEY, currentLang);
+    const currentHash = window.location.hash || `#${activeTopicId}`;
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', currentLang);
+    url.hash = currentHash;
+    window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
   }, [currentLang]);
 
   useEffect(() => {
+    if (isNotFound) {
+      document.title = `${pickText(UI_CONTROLS.notFoundTitle, currentLang)} — ${UI_LABELS.brandName} ${UI_LABELS.versionText}`;
+      return;
+    }
     const activeItem = ALL_NAV_ITEMS.find((item) => item.id === activeTopicId);
     const topicTitle = activeItem ? pickText(activeItem.label, currentLang) : UI_LABELS.brandName;
     document.title = `${topicTitle} — ${UI_LABELS.brandName} ${UI_LABELS.versionText}`;
-  }, [activeTopicId, currentLang]);
+  }, [activeTopicId, currentLang, isNotFound]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -130,27 +159,40 @@ export const App: React.FC = () => {
       window.setTimeout(() => {
         const el = document.getElementById(sectionId);
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          openAncestorDetails(el);
+          window.setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 20);
         }
       }, 60);
     };
 
     const initial = parseHashTarget(window.location.hash);
-    if (initial.sectionId) {
+    if (!initial.notFound && initial.sectionId) {
       scrollToSection(initial.sectionId);
     }
 
-    const handleHashChange = () => {
-      if (programmaticNavRef.current) {
-        programmaticNavRef.current = false;
-        return;
+    const handleRouteSync = () => {
+      const queryLang = new URLSearchParams(window.location.search).get('lang');
+      if (queryLang && SUPPORTED_LANGUAGES.some((item) => item.code === queryLang)) {
+        setCurrentLang(queryLang as SupportedLanguage);
       }
       const next = parseHashTarget(window.location.hash);
+      setIsNotFound(next.notFound);
+      setMissingHash(next.rawHash ?? '');
       setActiveTopicId(next.topicId);
-      scrollToSection(next.sectionId);
+      if (!next.notFound) {
+        scrollToSection(next.sectionId);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
     };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', handleRouteSync);
+    window.addEventListener('popstate', handleRouteSync);
+    return () => {
+      window.removeEventListener('hashchange', handleRouteSync);
+      window.removeEventListener('popstate', handleRouteSync);
+    };
   }, []);
 
   useEffect(() => {
@@ -180,11 +222,13 @@ export const App: React.FC = () => {
   }, []);
 
   const navigateToTopic = (topicId: string, skipScrollTop = false) => {
+    setIsNotFound(false);
+    setMissingHash('');
     setActiveTopicId(topicId);
     setSidebarOpen(false);
-    if (window.location.hash !== `#${topicId}`) {
-      programmaticNavRef.current = true;
-      window.location.hash = topicId;
+    const nextHref = buildTopicHref(topicId, currentLang);
+    if (window.location.hash !== `#${topicId}` || !window.location.search.includes(`lang=${currentLang}`)) {
+      window.history.pushState(null, '', nextHref);
     }
     if (!skipScrollTop) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -205,6 +249,7 @@ export const App: React.FC = () => {
       window.setTimeout(() => {
         const detailEl = document.getElementById('annotation-detail-card');
         if (detailEl) {
+          openAncestorDetails(detailEl);
           detailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 60);
@@ -216,6 +261,7 @@ export const App: React.FC = () => {
       window.setTimeout(() => {
         const sampleEl = document.getElementById('endpoint-live-sample');
         if (sampleEl) {
+          openAncestorDetails(sampleEl);
           sampleEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 60);
@@ -398,6 +444,10 @@ export const App: React.FC = () => {
 
   return (
     <div className="portal-root">
+      <a href="#doc-reading-canvas" className="skip-to-main">
+        {pickText(UI_CONTROLS.skipToMain, currentLang)}
+      </a>
+
       <div className="cyber-ambient-layer" aria-hidden="true" />
 
       <Navbar
@@ -413,7 +463,7 @@ export const App: React.FC = () => {
         onSelectTopic={(topicId) => navigateToTopic(topicId)}
       />
 
-      <div className={`portal-shell ${isWideWorkbench ? 'portal-shell-wide' : ''}`}>
+      <div className={`portal-shell ${isWideWorkbench && !isNotFound ? 'portal-shell-wide' : ''}`}>
         <Sidebar
           activeTopicId={activeTopicId}
           onSelectTopic={(topicId) => navigateToTopic(topicId)}
@@ -423,18 +473,43 @@ export const App: React.FC = () => {
         />
 
         <main className="doc-main">
-          <div id="doc-reading-canvas" className={`doc-canvas ${isWideWorkbench ? 'doc-canvas-wide' : ''}`}>
-            {renderActivePage()}
+          {!isNotFound && !isWideWorkbench && (
+            <MobileTableOfContents activeTopicId={activeTopicId} currentLang={currentLang} />
+          )}
+
+          <div id="doc-reading-canvas" className={`doc-canvas ${isWideWorkbench && !isNotFound ? 'doc-canvas-wide' : ''}`}>
+            {isNotFound ? (
+              <NotFoundPage
+                rawHash={missingHash}
+                currentLang={currentLang}
+                onSelectTopic={(topicId) => navigateToTopic(topicId)}
+                onOpenSearch={() => setSearchOpen(true)}
+              />
+            ) : (
+              renderActivePage()
+            )}
           </div>
 
-          <TopicPaginationFooter
-            activeTopicId={activeTopicId}
-            currentLang={currentLang}
-            onSelectTopic={(topicId) => navigateToTopic(topicId)}
-          />
+          {!isNotFound && (
+            <StoryBanner
+              topicId={activeTopicId}
+              currentLang={currentLang}
+              onSelectTopic={(topicId) => navigateToTopic(topicId)}
+            />
+          )}
+
+          {!isNotFound && (
+            <TopicPaginationFooter
+              activeTopicId={activeTopicId}
+              currentLang={currentLang}
+              onSelectTopic={(topicId) => navigateToTopic(topicId)}
+            />
+          )}
+
+          <DocFooter currentLang={currentLang} />
         </main>
 
-        {!isWideWorkbench && (
+        {!isNotFound && !isWideWorkbench && (
           <TableOfContents activeTopicId={activeTopicId} currentLang={currentLang} />
         )}
       </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
+import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE2_CONTENT } from '../data/pages/stage2Content';
@@ -16,21 +17,17 @@ export const EscapeHatchPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="escape-hatch"
         currentLang={currentLang}
-        guardrailTip={{
-          type: 'security',
-          content: <RichDocText text={STAGE2_CONTENT.ehCalloutSecurity} currentLang={currentLang} />,
-        }}
       />
 
       <h2 id="escape-goal" className="section-heading">
-        {pickText(UI_LABELS.stepGoal, currentLang)}
+        {pickText(STAGE2_CONTENT.ehH2Goal, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE2_CONTENT.ehGoalBody} currentLang={currentLang} />
       </p>
 
       <h2 id="escape-attributes" className="section-heading">
-        {pickText(UI_LABELS.stepConfig, currentLang)}
+        {pickText(STAGE2_CONTENT.ehH2Attrs, currentLang)}
       </h2>
 
       <div className="table-scroll">
@@ -68,7 +65,7 @@ export const EscapeHatchPage: React.FC<PageProps> = ({ currentLang }) => {
       </div>
 
       <h2 id="escape-impl" className="section-heading">
-        {pickText(UI_LABELS.stepImplementation, currentLang)}
+        {pickText(STAGE2_CONTENT.ehH2Impl, currentLang)}
       </h2>
 
       <CodeBlock
@@ -185,12 +182,23 @@ curl -s "http://localhost:8080/system/studio/eject?target=ProductCatalog" \\
         ]}
       />
 
+      <Callout type="note" currentLang={currentLang}>
+        <RichDocText text={STAGE2_CONTENT.ehEjectProofNote} currentLang={currentLang} />
+      </Callout>
+
       <h2 id="escape-verify" className="section-heading">
-        {pickText(UI_LABELS.stepVerification, currentLang)}
+        {pickText(STAGE2_CONTENT.ehH2Verify, currentLang)}
       </h2>
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE2_CONTENT.ehVerifyBody} currentLang={currentLang} />
       </p>
+
+      <h2 id="escape-guardrails" className="section-heading">
+        {pickText(UI_LABELS.stepNotes, currentLang)}
+      </h2>
+      <Callout type="security" currentLang={currentLang}>
+        <RichDocText text={STAGE2_CONTENT.ehCalloutSecurity} currentLang={currentLang} />
+      </Callout>
     </article>
   );
 };

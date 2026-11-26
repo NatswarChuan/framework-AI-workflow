@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, ChevronDown, Globe, Layers, Menu, Moon, Search, Sun, X } from 'lucide-react';
+import { Check, ChevronDown, Globe, Menu, Moon, Search, Sun, X } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { SUPPORTED_LANGUAGES, UI_CONTROLS, UI_LABELS, pickText } from '../data/locales';
 
@@ -12,7 +12,41 @@ interface NavbarProps {
   onToggleSidebar: () => void;
   onOpenSearch: () => void;
   onNavigateHome: () => void;
+  activeTopicId: string;
+  onSelectTopic: (topicId: string) => void;
 }
+
+const TOP_QUICK_LINKS: Array<{
+  id: string;
+  labelKey: 'navShortDocs' | 'navShortAnnotations' | 'navShortApis' | 'navShortAgentKit';
+  match: (topicId: string) => boolean;
+}> = [
+  {
+    id: 'overview',
+    labelKey: 'navShortDocs',
+    match: (id) =>
+      id === 'overview' ||
+      id === 'quickstart' ||
+      id === 'two-directory' ||
+      id === 'dynamic-proxy' ||
+      id === 'escape-hatch',
+  },
+  {
+    id: 'annotations',
+    labelKey: 'navShortAnnotations',
+    match: (id) => id === 'annotations' || id.startsWith('annotations-'),
+  },
+  {
+    id: 'endpoints',
+    labelKey: 'navShortApis',
+    match: (id) => id === 'endpoints' || id.startsWith('endpoints-') || id === 'custom-endpoints',
+  },
+  {
+    id: 'ai-agent-kit',
+    labelKey: 'navShortAgentKit',
+    match: (id) => id === 'ai-agent-kit',
+  },
+];
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentLang,
@@ -23,6 +57,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleSidebar,
   onOpenSearch,
   onNavigateHome,
+  activeTopicId,
+  onSelectTopic,
 }) => {
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -61,8 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         optionButtons[nextIdx].focus();
       } else if (event.key === 'ArrowUp') {
         event.preventDefault();
-        const prevIdx =
-          currentIdx <= 0 ? optionButtons.length - 1 : currentIdx - 1;
+        const prevIdx = currentIdx <= 0 ? optionButtons.length - 1 : currentIdx - 1;
         optionButtons[prevIdx].focus();
       } else if (event.key === 'Home') {
         event.preventDefault();
@@ -101,17 +136,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="navbar-logo-btn"
           onClick={onNavigateHome}
         >
-          <span className="navbar-logo-mark">
-            <Layers size={17} />
+          <span className="navbar-logo-frame">
+            <img
+              src="./logo.jpeg"
+              alt="Spring-NWVMC"
+              className="navbar-logo-img"
+              width={30}
+              height={30}
+            />
           </span>
           <span className="navbar-brand-title" dir="ltr">
-            <span>{UI_LABELS.brandName}</span>
-            <span className="navbar-brand-version">{UI_LABELS.versionText}</span>
+            <span>Spring-</span>
+            <span className="navbar-brand-accent">NWVMC</span>
+          </span>
+          <span className="navbar-brand-version" dir="ltr">
+            {UI_LABELS.versionText}
           </span>
         </button>
       </div>
 
-      <div className="navbar-controls">
+      <div className="navbar-search-slot">
         <button
           type="button"
           id="navbar-search-trigger"
@@ -119,12 +163,36 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={onOpenSearch}
           aria-label={pickText(UI_LABELS.searchButton, currentLang)}
         >
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
-            <Search size={15} />
+          <span className="search-trigger-leading">
+            <Search size={15} className="search-trigger-icon" />
             <span className="search-trigger-label">{pickText(UI_LABELS.searchButton, currentLang)}</span>
           </span>
-          <kbd className="search-kbd-hint" dir="ltr">Ctrl K</kbd>
+          <span className="search-kbd-group" dir="ltr">
+            <kbd className="search-kbd-hint">Ctrl</kbd>
+            <kbd className="search-kbd-hint">K</kbd>
+          </span>
         </button>
+      </div>
+
+      <div className="navbar-controls">
+        <nav className="navbar-quick-links" aria-label={pickText(UI_CONTROLS.sidebarNavLabel, currentLang)}>
+          {TOP_QUICK_LINKS.map((link) => {
+            const isActive = link.match(activeTopicId);
+            return (
+              <button
+                key={link.id}
+                type="button"
+                className={`navbar-quick-link ${isActive ? 'active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+                onClick={() => onSelectTopic(link.id)}
+              >
+                {pickText(UI_CONTROLS[link.labelKey], currentLang)}
+              </button>
+            );
+          })}
+        </nav>
+
+        <span className="navbar-divider" aria-hidden="true" />
 
         <button
           type="button"
@@ -148,7 +216,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             aria-haspopup="listbox"
             aria-label={pickText(UI_CONTROLS.selectLangLabel, currentLang)}
           >
-            <Globe size={15} />
+            <Globe size={15} className="lang-globe-icon" />
             <span className="lang-trigger-code">{activeMeta.code.toUpperCase()}</span>
             <ChevronDown size={13} className="lang-trigger-caret" />
           </button>

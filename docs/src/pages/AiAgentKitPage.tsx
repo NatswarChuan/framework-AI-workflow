@@ -197,7 +197,7 @@ export const AiAgentKitPage: React.FC<AiAgentKitPageProps> = ({ currentLang }) =
 
       <div className="feature-grid grid-2col">
         <div className="feature-card">
-          <h4>{pickText(STAGE8_CONTENT.kitCardSddTitle, currentLang)}</h4>
+          <h4><RichDocText text={STAGE8_CONTENT.kitCardSddTitle} currentLang={currentLang} /></h4>
           <p>
             <RichDocText text={STAGE8_CONTENT.kitCardSddBody} currentLang={currentLang} />
           </p>

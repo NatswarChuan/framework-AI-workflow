@@ -320,7 +320,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       pl: 'Eksportuje przefiltrowane encje do formatu CSV zgodnego z RFC-4180.',
     },
     sampleRequest: `GET /api/v1/product-catalogs/export/csv`,
-    sampleResponse: `id,skuCode,productName,retailPrice\\n0194e1a0-...,SKU-DOC-MAC-M3,MacBook Pro M3 16 Docs,2499.00`,
+    sampleResponse: `id,skuCode,productName,retailPrice
+0194e1a0-...,SKU-DOC-MAC-M3,MacBook Pro M3 16 Docs,2499.00`,
   },
   {
     id: 'exportJsonl',
@@ -351,7 +352,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       pl: 'Strumieniuje pasujące wiersze jako rozdzielany nową linią JSON (application/x-ndjson).',
     },
     sampleRequest: `GET /api/v1/product-catalogs/export/jsonl`,
-    sampleResponse: `{"id":"0194e1a0-...","skuCode":"SKU-DOC-MAC-M3","retailPrice":2499.00}\\n`,
+    sampleResponse: `{"id":"0194e1a0-...","skuCode":"SKU-DOC-MAC-M3","retailPrice":2499.00}
+`,
   },
   {
     id: 'metadata',
@@ -413,7 +415,13 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       pl: 'Generuje gotowe do użycia interfejsy TypeScript bezpośrednio na podstawie pól JPA.',
     },
     sampleRequest: `GET /api/v1/product-catalogs/schema/typescript`,
-    sampleResponse: `export interface ProductCatalog {\\n  id: string;\\n  skuCode: string;\\n  productName: string;\\n  category: string;\\n  retailPrice: number;\\n}`,
+    sampleResponse: `export interface ProductCatalog {
+  id: string;
+  skuCode: string;
+  productName: string;
+  category: string;
+  retailPrice: number;
+}`,
   },
   {
     id: 'schemaJson',
@@ -475,7 +483,12 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       pl: 'Syntetyzuje schemat walidacji Zod poprzez ZodAndClientGeneratorUtil (text/plain).',
     },
     sampleRequest: `GET /api/v1/product-catalogs/schema/zod`,
-    sampleResponse: `import { z } from 'zod';\\nexport const ProductCatalogSchema = z.object({\\n  id: z.string().uuid(),\\n  name: z.string().min(1),\\n});\\nexport type ProductCatalogInput = z.infer<typeof ProductCatalogSchema>;`,
+    sampleResponse: `import { z } from 'zod';
+export const ProductCatalogSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+});
+export type ProductCatalogInput = z.infer<typeof ProductCatalogSchema>;`,
   },
   {
     id: 'schemaClient',
@@ -506,7 +519,16 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       pl: 'Generuje typowany moduł klienta TypeScript Fetch z walidacją Zod i funkcjami CRUD.',
     },
     sampleRequest: `GET /api/v1/product-catalogs/schema/client`,
-    sampleResponse: `import type { ProductCatalog } from './typescript';\\nexport const ProductCatalogClient = {\\n  basePath: '/api/v1/product-catalogs',\\n  list(query?, options?) { ... },\\n  getById(id, options?) { ... },\\n  create(payload: Partial<ProductCatalog>, options?) { ... },\\n  update(id, payload, options?) { ... },\\n  patch(id, payload, options?) { ... },\\n  remove(id, options?) { ... }\\n};`,
+    sampleResponse: `import type { ProductCatalog } from './typescript';
+export const ProductCatalogClient = {
+  basePath: '/api/v1/product-catalogs',
+  list(query?, options?) { ... },
+  getById(id, options?) { ... },
+  create(payload: Partial<ProductCatalog>, options?) { ... },
+  update(id, payload, options?) { ... },
+  patch(id, payload, options?) { ... },
+  remove(id, options?) { ... }
+};`,
   },
   {
     id: 'getById',
@@ -567,7 +589,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'موجودیت جدیدی را همراه با اعتبارسنجی، @AutoCode، @AutoSlug، @UniqueField و @ComputedField ایجاد می‌کند.',
       pl: 'Tworzy encję z walidacją Bean, generatorami @AutoCode, @AutoSlug, sprawdzaniem @UniqueField i @ComputedField.',
     },
-    sampleRequest: `POST /api/v1/product-catalogs\\n{ "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 16 Docs", "category": "ELECTRONICS", "vendorStoreCode": "VND-HANOI-01", "retailPrice": 2499.00, "b2bWholesalePrice": 2150.00, "active": true }`,
+    sampleRequest: `POST /api/v1/product-catalogs
+{ "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 16 Docs", "category": "ELECTRONICS", "vendorStoreCode": "VND-HANOI-01", "retailPrice": 2499.00, "b2bWholesalePrice": 2150.00, "active": true }`,
     sampleResponse: `{ "code": "SUCCESS", "data": { "id": "0194e1a0-...", "code": "PRD-8831", "slug": "enterprise-switch" } }`,
   },
   {
@@ -598,7 +621,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'مجموعه‌ای اعتبارسنجی‌شده را در قالب یک تراکنش اتمیک واحد درج می‌کند.',
       pl: 'Wstawia zweryfikowaną kolekcję rekordów w ramach jednej atomowej transakcji.',
     },
-    sampleRequest: `POST /api/v1/product-catalogs/batch\\n[{ "name": "A" }, { "name": "B" }]`,
+    sampleRequest: `POST /api/v1/product-catalogs/batch
+[{ "name": "A" }, { "name": "B" }]`,
     sampleResponse: `{ "code": "SUCCESS", "data": [{ "name": "A" }, { "name": "B" }] }`,
   },
   {
@@ -629,7 +653,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'بر اساس کلیدهای @UniqueField یا شناسه UUIDv7 به‌صورت اتمیک درج یا به‌روزرسانی می‌کند.',
       pl: 'Atomowo wstawia lub aktualizuje rekord po kluczach @UniqueField albo jawnym UUIDv7 ID.',
     },
-    sampleRequest: `POST /api/v1/product-catalogs/upsert\\n{ "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 Updated", "category": "ELECTRONICS", "vendorStoreCode": "VND-HANOI-01", "retailPrice": 2399.00, "b2bWholesalePrice": 2050.00, "active": true }`,
+    sampleRequest: `POST /api/v1/product-catalogs/upsert
+{ "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 Updated", "category": "ELECTRONICS", "vendorStoreCode": "VND-HANOI-01", "retailPrice": 2399.00, "b2bWholesalePrice": 2050.00, "active": true }`,
     sampleResponse: `{ "code": "SUCCESS", "data": { "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 Updated" } }`,
   },
   {
@@ -660,7 +685,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'درج و به‌روزرسانی گروهی تراکنشی را روی آرایه‌ای از رکوردها اجرا می‌کند.',
       pl: 'Wykonuje transakcyjny wsadowy upsert dla tablicy rekordów.',
     },
-    sampleRequest: `POST /api/v1/product-catalogs/upsert-batch\\n[{ "code": "PRD-1", "name": "Item" }]`,
+    sampleRequest: `POST /api/v1/product-catalogs/upsert-batch
+[{ "code": "PRD-1", "name": "Item" }]`,
     sampleResponse: `{ "code": "SUCCESS", "data": [] }`,
   },
   {
@@ -753,7 +779,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'تمام رکوردهای منطبق با فیلترهای آدرس را با فیلدهای غیرتهی بدنه درخواست به‌صورت جزئی به‌روزرسانی می‌کند.',
       pl: 'Częściowo aktualizuje wszystkie rekordy spełniające filtry URL przy użyciu niepustych pól z treści żądania.',
     },
-    sampleRequest: `PATCH /api/v1/product-catalogs/batch-update?status.eq=DRAFT\\n{ "status": "ACTIVE" }`,
+    sampleRequest: `PATCH /api/v1/product-catalogs/batch-update?status.eq=DRAFT
+{ "status": "ACTIVE" }`,
     sampleResponse: `{ "code": "SUCCESS", "data": [] }`,
   },
   {
@@ -784,7 +811,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'به‌روزرسانی کامل موجودیت ضمن حفظ ستون‌های ممیزی سمت سرور.',
       pl: 'Pełna aktualizacja encji z zachowaniem serwerowych kolumn audytowych.',
     },
-    sampleRequest: `PUT /api/v1/product-catalogs/{id}\\n{ "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 Max", "category": "ELECTRONICS", "vendorStoreCode": "VND-HANOI-01", "retailPrice": 2799.00, "b2bWholesalePrice": 2400.00, "active": true }`,
+    sampleRequest: `PUT /api/v1/product-catalogs/{id}
+{ "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 Max", "category": "ELECTRONICS", "vendorStoreCode": "VND-HANOI-01", "retailPrice": 2799.00, "b2bWholesalePrice": 2400.00, "active": true }`,
     sampleResponse: `{ "code": "SUCCESS", "data": { "name": "New Name" } }`,
   },
   {
@@ -815,7 +843,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'ادغام جزئی که تنها فیلدهای غیرتهی ورودی را روی موجودیت فعلی اعمال می‌کند.',
       pl: 'Częściowe scalenie kopiujące do istniejącej encji wyłącznie niepuste atrybuty wejściowe.',
     },
-    sampleRequest: `PATCH /api/v1/product-catalogs/{id}\\n{ "retailPrice": 2399.00 }`,
+    sampleRequest: `PATCH /api/v1/product-catalogs/{id}
+{ "retailPrice": 2399.00 }`,
     sampleResponse: `{ "code": "SUCCESS", "data": { "retailPrice": 2399.00 } }`,
   },
   {
@@ -972,7 +1001,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       pl: 'Strumień zdarzeń Server-Sent Events (SSE) (@Hidden w Swagger UI z powodu MIME text/event-stream).',
     },
     sampleRequest: `GET /api/v1/product-catalogs/events`,
-    sampleResponse: `event: CREATED\\ndata: {"entity":"ProductCatalog","id":"0194e1a0-..."}`,
+    sampleResponse: `event: CREATED
+data: {"entity":"ProductCatalog","id":"0194e1a0-..."}`,
   },
   {
     id: 'getAiContext',
@@ -1033,7 +1063,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'دستورات زبان طبیعی را به پرس‌وجوهای امن، محدود و پارامتری JPA Criteria ترجمه می‌کند.',
       pl: 'Tłumaczy zapytania w języku naturalnym na bezpieczne, parametryzowane zapytania JPA Criteria.',
     },
-    sampleRequest: `POST /api/v1/product-catalogs/ai/query\\n{ "prompt": "products priced below 500" }`,
+    sampleRequest: `POST /api/v1/product-catalogs/ai/query
+{ "prompt": "products priced below 500" }`,
     sampleResponse: `{ "code": "SUCCESS", "data": { "interpretedQuery": "Natural language query translated for ProductCatalog with filter count: 2", "appliedFilters": [{ "fieldPath": "category", "operator": "eq", "rawValue": "ELECTRONICS" }, { "fieldPath": "retailPrice", "operator": "lt", "rawValue": "3000" }], "pageData": { "content": [], "pageNumber": 0, "pageSize": 5, "totalElements": 1 } } }`,
   },
   {
@@ -1188,7 +1219,8 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       fa: 'عملیات ساختاریافته RFC 6902 JSON Patch (شامل replace، add و remove) را اعمال می‌کند.',
       pl: 'Stosuje ustrukturyzowane operacje RFC 6902 JSON Patch (replace, add, remove).',
     },
-    sampleRequest: `PATCH /api/v1/product-catalogs/{id}/patch-rfc6902\\n[{ "op": "replace", "path": "/productName", "value": "Updated Pro" }]`,
+    sampleRequest: `PATCH /api/v1/product-catalogs/{id}/patch-rfc6902
+[{ "op": "replace", "path": "/productName", "value": "Updated Pro" }]`,
     sampleResponse: `{ "code": "SUCCESS", "data": { "productName": "Updated Pro" } }`,
   },
   {

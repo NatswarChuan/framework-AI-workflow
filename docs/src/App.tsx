@@ -227,7 +227,13 @@ export const App: React.FC = () => {
   const renderActivePage = () => {
     switch (activeTopicId) {
       case 'overview':
-        return <OverviewPage currentLang={currentLang} theme={theme} />;
+        return (
+          <OverviewPage
+            currentLang={currentLang}
+            theme={theme}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
       case 'quickstart':
         return <QuickstartPage currentLang={currentLang} />;
       case 'two-directory':
@@ -377,12 +383,20 @@ export const App: React.FC = () => {
       case 'ai-agent-kit':
         return <AiAgentKitPage currentLang={currentLang} />;
       default:
-        return <OverviewPage currentLang={currentLang} theme={theme} />;
+        return (
+          <OverviewPage
+            currentLang={currentLang}
+            theme={theme}
+            onNavigateTopic={(id) => navigateToTopic(id)}
+          />
+        );
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+    <div className="portal-root">
+      <div className="cyber-ambient-layer" aria-hidden="true" />
+
       <Navbar
         currentLang={currentLang}
         onChangeLang={(lang) => setCurrentLang(lang)}
@@ -392,6 +406,8 @@ export const App: React.FC = () => {
         onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
         onOpenSearch={() => setSearchOpen(true)}
         onNavigateHome={() => navigateToTopic('overview')}
+        activeTopicId={activeTopicId}
+        onSelectTopic={(topicId) => navigateToTopic(topicId)}
       />
 
       <div className="portal-shell">

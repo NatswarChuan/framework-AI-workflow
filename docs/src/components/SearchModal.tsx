@@ -260,12 +260,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           )}
           <button
             type="button"
-            className="nav-icon-btn"
-            style={{ height: '30px', paddingInline: '0.45rem' }}
+            className="search-esc-btn"
             onClick={onClose}
             aria-label={pickText(UI_CONTROLS.closeSearchLabel, currentLang)}
           >
-            <X size={15} />
+            <kbd>ESC</kbd>
           </button>
         </div>
 

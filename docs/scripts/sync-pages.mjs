@@ -11,6 +11,10 @@ if (mode === 'prepare') {
 } else if (mode === 'publish') {
   fs.copyFileSync(path.join(docsDir, 'dist', 'index.html'), path.join(docsDir, 'index.html'));
   fs.cpSync(path.join(docsDir, 'dist', 'assets'), path.join(docsDir, 'assets'), { recursive: true });
+  const builtLogo = path.join(docsDir, 'dist', 'logo.jpeg');
+  if (fs.existsSync(builtLogo)) {
+    fs.copyFileSync(builtLogo, path.join(docsDir, 'logo.jpeg'));
+  }
 } else {
   throw new Error(`Unknown sync-pages mode: ${mode}`);
 }

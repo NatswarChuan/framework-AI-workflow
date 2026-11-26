@@ -4,6 +4,7 @@ import { ENDPOINTS_DATA } from '../data/endpointsData';
 import { SupportedLanguage } from '../types/docs';
 import { UI_CONTROLS, pickText } from '../data/locales';
 import { CodeBlock } from './CodeBlock';
+import { RichDocText } from './RichDocText';
 
 interface InteractiveEndpointExplorerProps {
   currentLang: SupportedLanguage;
@@ -13,10 +14,10 @@ interface InteractiveEndpointExplorerProps {
 const PAGE_SIZE = 10;
 
 const METHOD_BADGE_CLASS: Record<string, string> = {
-  GET: 'badge badge-emerald',
-  POST: 'badge badge-blue',
-  PUT: 'badge badge-amber',
-  PATCH: 'badge badge-purple',
+  GET: 'badge badge-blue',
+  POST: 'badge badge-emerald',
+  PUT: 'badge badge-purple',
+  PATCH: 'badge badge-amber',
   DELETE: 'badge badge-rose',
 };
 
@@ -172,10 +173,10 @@ export const InteractiveEndpointExplorer: React.FC<InteractiveEndpointExplorerPr
                         )}
                       </span>
                     </td>
-                    <td>
+                    <td className="endpoint-contract-cell">
                       <code>{ep.methodName}</code>
                     </td>
-                    <td>{pickText(ep.summary, currentLang)}</td>
+                    <td><RichDocText text={ep.summary} currentLang={currentLang} /></td>
                   </tr>
                 );
               })

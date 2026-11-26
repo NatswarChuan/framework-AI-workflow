@@ -1,16 +1,19 @@
 import React from 'react';
+import { ArrowRight, Terminal } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
-import { DocPageHeader } from '../components/DocPageHeader';
 import { Callout } from '../components/Callout';
 import { CodeBlock } from '../components/CodeBlock';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { StoryBanner } from '../components/StoryBanner';
+import { ALL_NAV_ITEMS } from '../data/navigation';
+import { UI_CONTROLS, UI_LABELS, pickText } from '../data/locales';
 import { STAGE1_CONTENT } from '../data/pages/stage1Content';
 
 interface OverviewPageProps {
   currentLang: SupportedLanguage;
   theme: 'dark' | 'light';
+  onNavigateTopic?: (topicId: string) => void;
 }
 
 const ARCHITECTURE_CHART = `flowchart TD
@@ -23,18 +26,94 @@ const ARCHITECTURE_CHART = `flowchart TD
   EscapeBean --> JPA[("JPA / Multi-Datasource / Cache")]
   Service --> JPA`;
 
-export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }) => {
+export const OverviewPage: React.FC<OverviewPageProps> = ({
+  currentLang,
+  theme,
+  onNavigateTopic,
+}) => {
+  const overviewItem = ALL_NAV_ITEMS.find((item) => item.id === 'overview');
+
   return (
     <article className="doc-page">
-      <DocPageHeader
-        topicId="overview"
-        currentLang={currentLang}
-        badges={[
-          { label: 'io.github.natswarchuan:spring-nwvmc:0.1.0', tone: 'emerald' },
-          { label: 'Java 21 LTS', tone: 'blue' },
-          { label: pickText(STAGE1_CONTENT.ovBadgeCounts, currentLang), tone: 'purple' },
-        ]}
-      />
+      <section className="cyber-hero-panel">
+        <div className="cyber-hero-grid">
+          <div className="cyber-hero-copy">
+            <div className="cyber-hero-tags" dir="ltr">
+              <span className="hero-tag-primary">
+                <span className="hero-live-dot" aria-hidden="true" />
+                <span>SYS.0.1.0 // JAVA 21 LTS</span>
+              </span>
+              <span className="hero-tag-muted">APACHE 2.0</span>
+              <span className="hero-tag-cyan">SPRING BOOT 3.x</span>
+            </div>
+
+            <h1 className="page-title hero-title">
+              {overviewItem ? pickText(overviewItem.label, currentLang) : UI_LABELS.brandName}
+            </h1>
+
+            <p className="hero-subtitle">
+              {overviewItem ? pickText(overviewItem.summary, currentLang) : ''}
+            </p>
+
+            <div className="hero-actions">
+              <button
+                type="button"
+                className="hero-btn-primary"
+                onClick={() => onNavigateTopic?.('quickstart')}
+              >
+                <span>{pickText(UI_CONTROLS.heroStartCta, currentLang)}</span>
+                <ArrowRight size={16} className="rtl-flip-icon" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="hero-btn-secondary"
+                onClick={() => onNavigateTopic?.('ai-agent-kit')}
+              >
+                <Terminal size={15} aria-hidden="true" />
+                <span>{pickText(UI_CONTROLS.heroKitCta, currentLang)}</span>
+              </button>
+            </div>
+
+            <div className="hero-telemetry-strip">
+              <span>{pickText(STAGE1_CONTENT.ovBadgeCounts, currentLang)}</span>
+            </div>
+          </div>
+
+          <div className="cyber-hero-visual">
+            <div className="hero-hud-frame" dir="ltr">
+              <span className="hud-corner hud-tl" aria-hidden="true" />
+              <span className="hud-corner hud-tr" aria-hidden="true" />
+              <span className="hud-corner hud-bl" aria-hidden="true" />
+              <span className="hud-corner hud-br" aria-hidden="true" />
+
+              <div className="hero-hud-topbar">
+                <span className="hero-hud-id">
+                  <span className="hero-hud-sq" aria-hidden="true" />
+                  <span>NWVMC // CORE</span>
+                </span>
+                <span className="hero-hud-status">ONLINE</span>
+              </div>
+
+              <div className="hero-logo-stage">
+                <img
+                  src="./logo.jpeg"
+                  alt="Spring-NWVMC Official Logo"
+                  className="hero-logo-art"
+                  width={220}
+                  height={220}
+                />
+              </div>
+
+              <div className="hero-hud-footbar">
+                <span>MAVEN CENTRAL</span>
+                <span>0.1.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <StoryBanner topicId="overview" currentLang={currentLang} />
 
       <h2 id="goal-architecture" className="section-heading">
         {pickText(UI_LABELS.stepGoal, currentLang)}
@@ -42,24 +121,28 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
 
       <div className="feature-grid grid-2col">
         <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">01</span>
           <h4>{pickText(STAGE1_CONTENT.ovCard1Title, currentLang)}</h4>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard1Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">02</span>
           <h4>{pickText(STAGE1_CONTENT.ovCard2Title, currentLang)}</h4>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard2Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">03</span>
           <h4>{pickText(STAGE1_CONTENT.ovCard3Title, currentLang)}</h4>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard3Body} currentLang={currentLang} />
           </p>
         </div>
         <div className="feature-card">
+          <span className="feature-card-index" dir="ltr">04</span>
           <h4>{pickText(STAGE1_CONTENT.ovCard4Title, currentLang)}</h4>
           <p>
             <RichDocText text={STAGE1_CONTENT.ovCard4Body} currentLang={currentLang} />
@@ -231,7 +314,7 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
         {pickText(UI_LABELS.stepVerification, currentLang)}
       </h2>
 
-      <p style={{ color: 'var(--text-secondary)' }}>
+      <p className="section-intro">
         <RichDocText text={STAGE1_CONTENT.ovBenchIntro} currentLang={currentLang} />
       </p>
 

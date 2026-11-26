@@ -164,33 +164,40 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   return (
     <div className="code-block-shell">
       <div className="code-block-header">
-        {tabs && tabs.length > 0 ? (
-          <div className="code-tabs" role="tablist">
-            {tabs.map((tab, idx) => (
-              <button
-                key={tab.id}
-                ref={(el) => {
-                  tabRefs.current[idx] = el;
-                }}
-                type="button"
-                role="tab"
-                dir="auto"
-                aria-selected={tab.id === activeTab?.id}
-                tabIndex={tab.id === activeTab?.id ? 0 : -1}
-                className={`code-tab-btn ${tab.id === activeTab?.id ? 'active' : ''}`}
-                onClick={() => setActiveTabId(tab.id)}
-                onKeyDown={(event) => handleTabKeyDown(event, idx)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className="code-file-meta">
-            <FileCode size={14} style={{ color: '#34d399', flexShrink: 0 }} />
-            <span className="code-file-name">{displayFile ?? displayLang}</span>
-          </div>
-        )}
+        <div className="code-header-leading">
+          <span className="code-window-dots" aria-hidden="true">
+            <span className="code-dot dot-pink" />
+            <span className="code-dot dot-cyan" />
+            <span className="code-dot dot-purple" />
+          </span>
+          {tabs && tabs.length > 0 ? (
+            <div className="code-tabs" role="tablist">
+              {tabs.map((tab, idx) => (
+                <button
+                  key={tab.id}
+                  ref={(el) => {
+                    tabRefs.current[idx] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  dir="auto"
+                  aria-selected={tab.id === activeTab?.id}
+                  tabIndex={tab.id === activeTab?.id ? 0 : -1}
+                  className={`code-tab-btn ${tab.id === activeTab?.id ? 'active' : ''}`}
+                  onClick={() => setActiveTabId(tab.id)}
+                  onKeyDown={(event) => handleTabKeyDown(event, idx)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="code-file-meta">
+              <FileCode size={14} style={{ color: 'var(--accent-secondary)', flexShrink: 0 }} />
+              <span className="code-file-name">{displayFile ?? displayLang}</span>
+            </div>
+          )}
+        </div>
 
         <div className="code-header-actions">
           {tabs && tabs.length > 0 && displayFile && (

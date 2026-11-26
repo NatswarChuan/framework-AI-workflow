@@ -17,10 +17,10 @@ interface EndpointGroupPageProps {
 }
 
 const METHOD_BADGE_CLASS: Record<string, string> = {
-  GET: 'badge badge-emerald',
-  POST: 'badge badge-blue',
-  PUT: 'badge badge-amber',
-  PATCH: 'badge badge-purple',
+  GET: 'badge badge-blue',
+  POST: 'badge badge-emerald',
+  PUT: 'badge badge-purple',
+  PATCH: 'badge badge-amber',
   DELETE: 'badge badge-rose',
 };
 
@@ -197,7 +197,7 @@ export const EndpointGroupPage: React.FC<EndpointGroupPageProps> = ({
                       </span>
                     </td>
                     <td className="endpoint-contract-cell"><code>{ep.methodName}</code></td>
-                    <td>{pickText(ep.summary, currentLang)}</td>
+                    <td><RichDocText text={ep.summary} currentLang={currentLang} /></td>
                   </tr>
                 );
               })
@@ -211,8 +211,8 @@ export const EndpointGroupPage: React.FC<EndpointGroupPageProps> = ({
           <h2 id="endpoint-sample-heading" className="section-heading">
             <code>{activeEndpoint.method} {activeEndpoint.path || '/'}</code> — <code>{activeEndpoint.methodName}</code>
           </h2>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            {pickText(activeEndpoint.summary, currentLang)}
+          <p className="section-intro">
+            <RichDocText text={activeEndpoint.summary} currentLang={currentLang} />
           </p>
           <CodeBlock
             currentLang={currentLang}

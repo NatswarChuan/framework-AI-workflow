@@ -1,6 +1,6 @@
 # 02. فهرست ۴۰ قرارداد REST خودکار و کنترلرهای داخلی پلتفرم (`0.1.0`)
 
-> **زبان‌ها**: **فارسی** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#endpoints)
+> **زبان‌ها**: **فارسی** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل (EN)](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#endpoints)
 
 ---
 
@@ -81,7 +81,7 @@
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`، `POST ""`، `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | بازسازی وضعیت موجودیت در یک برچسب زمانی ISO-8601 UTC (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | بازرسی بین‌های SPI فعال در `7` گروه تله‌متری اصلی `*Customizer` (`StorageCustomizer` از طریق `StorageCustomizerRegistryHelper` مدیریت می‌شود، مجموعاً `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | معیارهای زنده سلامت مدارشکن‌های Resilience4j |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | معیارهای زنده سلامت مدارشکن‌های Resilience4j |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | بررسی سلامت چند پایگاه داده |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | زمینه فعال MDC برای W3C `traceparent` و شناسه UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | تبدیل خطاهای کانتینر Tomcat (`400/404/405/413/431/500`) به پاسخ یکپارچه `ApiResponse<Void>` |

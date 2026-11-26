@@ -1,6 +1,6 @@
 # 05. ৮টি SPI Customizer ইন্টারফেস, `@CustomEndpoint` এবং `@ServiceOverride` (`0.1.0`)
 
-> **ভাষাসমূহ**: **বাংলা** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#spi-customizers)
+> **ভাষাসমূহ**: **বাংলা** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল (EN)](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 `io.github.natswarchuan.customization.customizer`-এর অধীনে সব এক্সটেনশন হুক ইন্টারফেস `default` মেথড সরবরাহ করে, যাতে ফ্রেমওয়ার্কের ভেতরের কোড না বদলেই নির্দিষ্ট Spring Bean ওভাররাইড করা যায়:
 
-| # | SPI ইন্টারফেস | Context DTO | এক্সটেনশন পরিসর |
+| # | SPI ইন্টারফেস | কনটেক্সট DTO | এক্সটেনশন পরিসর |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | মূল বিন কনটেইনার, `TaskExecutor`, টাস্ক শিডিউলিং |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` প্রম্পট, ভেক্টর হুক, RAG পাইপলাইন |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` বাকেট নীতি, প্রি-সাইনড URL ও আপলোড সীমা |
 
 `7`টি মূল টেলিমেট্রি গ্রুপের (`CustomizerGroupConstant`) সক্রিয় বিনগুলো `GET /api/v1/system/customizers`-এ দেখা যায় (`StorageCustomizer` আলাদাভাবে `StorageCustomizerRegistryHelper` পরিচালনা করে)।
+
+
+> **সক্রিয় রানটাইম ইন্টারসেপ্টর বনাম মেটাডেটা/টেলিমেট্রি হুক (`0.1.0`):** `SecurityIdentityCustomizer` প্রতিটি অনুরোধে সক্রিয়ভাবে চলে; বাকি `7`টি `*Customizer` `GET /api/v1/system/customizers`-এ মেটাডেটা ও টেলিমেট্রি নিবন্ধন করে।
 
 ---
 

@@ -13,7 +13,7 @@ Extending `AutoApiController<E>` (or selectively composing `AutoReadApi`, `AutoK
 | # | HTTP | Sub-Path | Method | Behavior |
 | :-: | :--- | :--- | :--- | :--- |
 | 1 | `GET` | `""` | `getPage` | Offset pagination with 13-operator filtering, multi-field sorting, `?expand=`, and `fields=...` |
-| 2 | `GET` | `/keyset` | `getKeysetPage` | Bidirectional `ASC`/`DESC` $O(1)$ UUIDv7 cursor keyset pagination (`afterId`, `dir`, `size`, `size+1` probe) |
+| 2 | `GET` | `/keyset` | `getKeysetPage` | Bidirectional `ASC`/`DESC` `O(1)` UUIDv7 cursor keyset pagination (`afterId`, `dir`, `size`, `size+1` probe) |
 | 3 | `GET` | `/all` | `getAll` | Filtered collection response bounded by `max-unpaged-fetch-limit` |
 | 4 | `GET` | `/count` | `count` | Total record count matching dynamic predicates |
 | 5 | `GET` | `/exists` | `exists` | Fast existence probe against dynamic predicates |
@@ -77,11 +77,11 @@ Extending `AutoApiController<E>` (or selectively composing `AutoReadApi`, `AutoK
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | 20-language Developer Studio (RTL `ar`, `fa`, `ur`); returns `401` when `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | Exports standard Spring MVC Controller/Service/Repository code; guarded by `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | Mints demo HMAC-SHA512 JWT; returns `404` when `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Point-in-time entity reconstruction at ISO-8601 UTC timestamp |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Active SPI beans across the `7` core telemetry `*Customizer` groups (`StorageCustomizer` uses `StorageCustomizerRegistryHelper`, `8` SPIs total) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Live Resilience4j Circuit Breaker health metrics |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Live Resilience4j Circuit Breaker health metrics |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Multi-datasource health inspection |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Active W3C `traceparent` and UUIDv7 `X-Request-ID` MDC context |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Converts Tomcat `400/404/405/413/431/500` container errors to `ApiResponse<Void>` |

@@ -1,6 +1,6 @@
 # 01. দ্রুত শুরু, দুই-ডিরেক্টরি চুক্তি এবং Fail-Fast স্টার্টআপ ডায়াগনস্টিকস (`0.1.0`)
 
-> **ভাষাসমূহ**: **বাংলা** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#quickstart)
+> **ভাষাসমূহ**: **বাংলা** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল (EN)](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#quickstart)
 
 ---
 
@@ -29,6 +29,28 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 [JitPack](https://jitpack.io) এর মাধ্যমে সরাসরি GitHub বিল্ড ব্যবহার করতে:
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **লোকাল ডেভ টিপস:** `JWT_SECRET` এক্সপোর্ট না থাকলে কেবল `application-dev.yml`-এ `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` দিন (`application.yml`/`application-prod.yml` সর্বদা fail-closed রাখুন)।
+
 ---
 
 ## 4. সূক্ষ্ম এন্ডপয়েন্ট ফিল্টারিং (`enabledEndpoints` ও `disabledEndpoints`)
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | এক্সেপশন | ট্রিগার শর্ত | সমাধান |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` JVM `< 21` শনাক্ত করে | Java 21 LTS বা তার পরবর্তী সংস্করণে চালান |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` এবং কাস্টম `jwt-secret` `< 32` UTF-8 বাইট | `${JWT_SECRET}` ন্যূনতম 32 বাইট নির্ধারণ করুন |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` বা `maxPageSize < 1` | `app.framework.query-guardrails.*`-এ ধনাত্মক পূর্ণসংখ্যা দিন |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` এবং কাস্টম `jwt-secret` `< 32` UTF-8 বাইট | `${JWT_SECRET}` ন্যূনতম 32 বাইট নির্ধারণ করুন |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` বা `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | `app.framework.query-guardrails.*`-এ ধনাত্মক পূর্ণসংখ্যা দিন |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` বা `ComputedFieldFailFastUtil` `@Id` অনুপস্থিত, নো-আর্গ কনস্ট্রাক্টর অনুপস্থিত বা অবৈধ `@ComputedField` ফিল্ড পায় | `BaseAuditEntity` এক্সটেন্ড করুন, `@NoArgsConstructor` রাখুন এবং সঠিক ফিল্ড নাম মেলান |

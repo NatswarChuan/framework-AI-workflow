@@ -1,6 +1,6 @@
 # 01. Primeros Pasos, Contrato de Dos Directorios y Diagnóstico Fail-Fast (`0.1.0`)
 
-> **Idiomas**: **Español** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [Los 20 Idiomas](../README.md) | [Manual Completo](../../GUIDE_EN.md) | [Portal Interactivo (20 Idiomas)](../../index.html#quickstart)
+> **Idiomas**: **Español** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [Los 20 Idiomas](../README.md) | [Manual Completo (EN)](../../GUIDE_EN.md) | [Portal Interactivo (20 Idiomas)](../../index.html#quickstart)
 
 ---
 
@@ -29,6 +29,28 @@ Los flujos de dominio más allá del CRUD genérico residen en interfaces `Servi
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 Para compilaciones directas desde GitHub vía [JitPack](https://jitpack.io):
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **Consejo Local:** Si aún no exportó `JWT_SECRET`, use `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` solo en `application-dev.yml` (mantenga `application.yml`/`application-prod.yml` fail-closed).
+
 ---
 
 ## 4. Filtrado Granular de Endpoints (`enabledEndpoints` y `disabledEndpoints`)
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | Excepción | Condición de Disparo | Solución |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` detecta JVM `< 21` | Ejecutar con Java 21 LTS o superior |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` y `jwt-secret` personalizado `< 32` bytes UTF-8 | Definir `${JWT_SECRET}` con al menos 32 bytes |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` o `maxPageSize < 1` | Configurar enteros positivos en `app.framework.query-guardrails.*` |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` y `jwt-secret` personalizado `< 32` bytes UTF-8 | Definir `${JWT_SECRET}` con al menos 32 bytes |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` o `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | Configurar enteros positivos en `app.framework.query-guardrails.*` |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` o `ComputedFieldFailFastUtil` detecta falta de `@Id`, constructor sin argumentos ausente o campos origen inválidos en `@ComputedField` | Extender `BaseAuditEntity`, mantener `@NoArgsConstructor` y coincidir exactamente con los nombres de campo |

@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. マルチクラウドストレージ（`FileStorageController` — `LOCAL` / `S3` / `GCS`）
+
+内蔵 `FileStorageController`（`/api/v1/storage/*`）は `POST /upload`・`GET /download/{fileId}`・`GET /metadata/{fileId}`・`GET /exists/{fileId}`・`DELETE /{fileId}`・`POST /presigned-url` を `app.framework.storage.provider`（`LOCAL`/`S3`/`GCS`）および `StorageCustomizer` で提供します。
+
+> **本番セキュリティ対策:** 公開前に `app.framework.security.require-authenticated-api-paths: true` を有効化し、Spring Security `SecurityFilterChain` で `/api/v1/storage/**` を保護してください。

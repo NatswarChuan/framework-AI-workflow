@@ -9,11 +9,11 @@
 
 ## 1. Kiến Trúc & Nguyên Lý Cốt Lõi
 
-`controller-to-api-framework` gồm `591` tệp Java chính (`251` tệp kiểm thử, `569` unit test), `60` annotation `@interface` Pure Java (`54` trong `core/annotation/` + `6` trong `module/*/annotation/`, gồm `18` annotation RBAC từ Database), `9` capability interface có thể ghép nối (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), `16` lớp `@AutoConfigurationBean` / `@ConfigurationProperties` (`18` nhóm cấu hình trong `META-INF/spring-configuration-metadata.json` trải trên `20` lớp `*Properties`), `21` gói ngôn ngữ (`classpath:i18n/messages*.properties`) và chỉ dẫn AOT trong `NwvmcRuntimeHintsRegistrar` (`META-INF/spring/aot.factories`).
+`controller-to-api-framework` gồm `593` tệp Java chính (`257` tệp kiểm thử, `586` unit test đạt 100%), `60` annotation `@interface` Pure Java (`54` trong `core/annotation/` + `6` trong `module/*/annotation/`, gồm `18` annotation RBAC từ Database), `9` capability interface có thể ghép nối (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), `16` lớp `@AutoConfigurationBean` / `@ConfigurationProperties` (`18` nhóm cấu hình trong `META-INF/spring-configuration-metadata.json` trải trên `20` lớp `*Properties`), `21` gói ngôn ngữ (`classpath:i18n/messages*.properties`) và chỉ dẫn AOT trong `NwvmcRuntimeHintsRegistrar` (`META-INF/spring/aot.factories`).
 
 - **Tách Biệt Domain (`entity/` & `controller/`)**: Ứng dụng tiêu thụ khai báo JPA Entity kế thừa `BaseAuditEntity` (tích hợp `@Version` Optimistic Locking trả `409 Conflict` khi xung đột và `JpaAssociationReferenceUtil` phân giải khóa ngoại từ JSON stub) và interface Controller kế thừa `AutoApiController<E>` hoặc các giao diện thành phần như `AutoReadApi<E>` không cần `import org.springframework.web.*` (hỗ trợ song song `@RequestBody`/`@RequestParam`/`@PathVariable` chuẩn Spring MVC và `@AutoRestController(readDto, createDto, updateDto)`). Trong toàn bộ framework, chỉ tầng AOT (`autoconfigure/`, `common/constant/AotConstant`, `common/util/AotRuntimeHintsUtil`) và metadata cấu hình (`config/properties/`) dùng `import org.springframework.*` (`10` dòng import tĩnh).
 - **Điều Phối Hot-Path Bằng `MethodHandle`**: `MethodHandleCacheUtil` và `LambdaAccessorUtil` thay thế lời gọi reflection `Method.invoke` tại hot-path proxy và truy xuất thuộc tính thực thể.
-- **Khóa Chính UUIDv7 (`UuidUtil.generateUuidV7`)**: Tuân thủ RFC 9562 tăng dần theo thời gian 48-bit, giữ cục bộ chỉ mục B-Tree khi ghi và phục vụ phân trang `/keyset` độ phức tạp $O(1)$.
+- **Khóa Chính UUIDv7 (`UuidUtil.generateUuidV7`)**: Tuân thủ RFC 9562 tăng dần theo thời gian 48-bit, giữ cục bộ chỉ mục B-Tree khi ghi và phục vụ phân trang `/keyset` độ phức tạp `O(1)`.
 - **Chuẩn Hóa Lỗi Toàn Diện**: `GlobalExceptionHandlerHelper`, `CustomContainerErrorController` (`/error`) và `ExceptionCauseUnwrapperUtil` ghi trọn stack trace ở log server, trả về `ApiResponse<Void>` an toàn kèm `X-Request-ID` (UUIDv7) và W3C `traceparent`.
 
 ---
@@ -34,11 +34,26 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 ```
 
 ```kotlin
 dependencies {
   implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+  options.compilerArgs.add("-parameters")
 }
 ```
 
@@ -234,10 +249,12 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 Bộ **AI-Agent Adoption Kit chuẩn SDD + TDD** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 6 tài liệu tham chiếu sâu `references/01..06` gồm **Playbook SDD & TDD**, bộ mẫu `templates/{spec,plan,tasks}.template.md` và 8 tệp `adapters/`) giúp **mọi AI-Agent và mô hình LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) triển khai Spring-NWVMC `0.1.0` theo đúng kỷ luật Đặc tả trước + Kiểm thử trước ngay lần đầu:
 
-```bash
-# Windows (PowerShell — chạy trực tiếp trong thư mục gốc dự án Spring Boot của bạn, không cần clone repo)
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+```powershell
+# Windows (PowerShell — KHÔNG chạy trên cmd.exe; dán thẳng trong thư mục gốc dự án Spring Boot, không cần clone)
+$ErrorActionPreference='Stop'; $s=Join-Path $env:TEMP ("nwvmc-install-" + [guid]::NewGuid().ToString("N") + ".ps1"); try { [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
+```
 
-# macOS / Linux / Git Bash (chạy trực tiếp trong thư mục gốc dự án Spring Boot của bạn, không cần clone repo)
-curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
+```bash
+# macOS / Linux / Git Bash (chạy trực tiếp trong thư mục gốc dự án Spring Boot, không cần clone repo)
+curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

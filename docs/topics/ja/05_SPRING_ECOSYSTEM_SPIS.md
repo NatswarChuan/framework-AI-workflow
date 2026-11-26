@@ -1,6 +1,6 @@
 # 05. 8 つの SPI Customizer インターフェース、`@CustomEndpoint` および `@ServiceOverride`（`0.1.0`）
 
-> **言語**: [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | **日本語** | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [全 20 言語一覧](../README.md) | [完全リファレンスマニュアル](../../GUIDE_JA.md) | [20言語インタラクティブポータル](../../index.html#spi-customizers)
+> **言語**: [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | **日本語** | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [全 20 言語一覧](../README.md) | [完全リファレンスマニュアル](../../GUIDE_JA.md) | [20言語インタラクティブポータル](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 `io.github.natswarchuan.customization.customizer` 配下の全拡張ポイントは `interface` の `default` メソッドとして提供され、フレームワーク内部を改変せずに任意の Spring Bean で選択的に上書きできます：
 
-| # | SPI インターフェース | Context DTO | 拡張スコープ |
+| # | SPI インターフェース | コンテキスト DTO | 拡張スコープ |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | コア Bean コンテナ、`TaskExecutor`、タスクスケジューリング |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` プロンプト、Vector Store フック、RAG パイプライン |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` バケットポリシー、署名付き URL およびアップロード上限 |
 
 `7` コアテレメトリグループ（`CustomizerGroupConstant`）の有効 Bean は `GET /api/v1/system/customizers` で確認できます（`StorageCustomizer` は `StorageCustomizerRegistryHelper` で独立管理）。
+
+
+> **実行時インターセプターとメタデータ／テレメトリフックの違い（`0.1.0`）：** `SecurityIdentityCustomizer` は毎リクエスト時に `SecurityFilterChainBridge` と `SecurityAuthorityDecisionHelper` から実行されます。残り `7` 種は `GET /api/v1/system/customizers` および `StorageCustomizerRegistryHelper` 向けのメタデータ・テレメトリ登録フックです。
 
 ---
 

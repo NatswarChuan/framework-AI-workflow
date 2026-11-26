@@ -1,6 +1,6 @@
 # 04. सुरक्षा, मल्टी-क्लाउड स्टोरेज, `@ServiceOverride`, मेट्रिक्स और 20-भाषा i18n (`0.1.0`)
 
-> **भाषाएँ**: **हिन्दी** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#security-rbac)
+> **भाषाएँ**: **हिन्दी** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल (EN)](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. मल्टी-क्लाउड फ़ाइल स्टोरेज (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+अंतर्निहित `FileStorageController` (`/api/v1/storage/*`) `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` और `POST /presigned-url` प्रदान करता है (`app.framework.storage.provider`: `LOCAL`/`S3`/`GCS`)।
+
+> **प्रोडक्शन सुरक्षा:** `app.framework.security.require-authenticated-api-paths: true` सक्षम करें और Spring Security `SecurityFilterChain` में `/api/v1/storage/**` को सुरक्षित करें।

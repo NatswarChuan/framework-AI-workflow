@@ -1,20 +1,20 @@
 # 07. Универсальный комплект внедрения для ИИ-агентов (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` и `llms.txt`, `0.1.0`)
 
-> **Языки**: **Русский** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Все 20 языков](../README.md) | [Полное руководство](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#ai-agent-kit)
+> **Языки**: **Русский** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Все 20 языков](../README.md) | [Полное руководство (EN)](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. Назначение и архитектура комплекта (`ai-agent-kit/`)
 
-**Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) обеспечивает **любых ИИ-агентов разработки и LLM на рынке** машинно-проверенными 1:1 спецификациями из исходного кода (`60` аннотаций в `6` точных пакетах Java, `133` атрибута, `40` автоэндпоинтов, точные ключи `app.framework.*` и проверенные правила `0.1.0`), исключая галлюцинации и ошибки при первом же внедрении.
+**Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) обеспечивает **любых ИИ-агентов разработки и LLM на рынке** машинно-проверенными 1:1 спецификациями из исходного кода (`60` аннотаций в `6` точных пакетах Java, `133` атрибута, `40` автоэндпоинтов, точные ключи `app.framework.*` и проверенные правила `0.1.0`), исключая галлюцинации и ошибки при первом же внедрении.
 
 | Файл / Каталог | Назначение |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Обзор архитектуры: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` и JitPack `v0.1.0`, контракт 2 каталогов (`entity/` + `controller/`), 9 составных интерфейсов, 6 пакетов аннотаций и 11 встроенных подсистем |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Строгие защитные правила от галлюцинаций (`17.2 KB`, строго в пределах `24 KB`) с каждой подтверждённой ловушкой runtime |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Поэтапный навык `spring-nwvmc-adoption` с 6 рабочими сценариями и матрицей диагностики 10 типовых сбоев |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6-этапный чек-лист приёмки перед релизом (Pre-Flight -> Проектирование -> Ловушки Runtime -> Блокировка продакшена -> Производительность -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 глубоких справочников с машинной проверкой (60 аннотаций / 133 атрибута, 40 эндпоинтов + 13 точечных операторов, YAML + мульти-БД, рецепты с `@MultiTenant` + DB-RBAC из 4 сущностей + `JwtTokenService`, и точные импорты классов/SPI) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Обзор архитектуры: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` и JitPack `v0.1.0`, контракт 2 каталогов (`entity/` + `controller/`), 9 составных интерфейсов, 6 пакетов аннотаций и 6 встроенных подсистем |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Строгие защитные правила от галлюцинаций (`19.0 KB`, строго в пределах `24 KB`) с каждой подтверждённой ловушкой runtime |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Поэтапный навык `spring-nwvmc-adoption` с 7 рабочими сценариями и матрицей диагностики 15 типовых сбоев |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7-этапный чек-лист приёмки перед релизом (Pre-Flight -> Проектирование -> Ловушки Runtime -> Блокировка продакшена -> Производительность -> `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) глубоких справочников с машинной проверкой (60 аннотаций / 133 атрибута, 40 эндпоинтов + 13 точечных операторов, YAML + мульти-БД, рецепты с `@MultiTenant` + DB-RBAC из 4 сущностей + `JwtTokenService`, и точные импорты классов/SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Индексы стандарта `llmstxt.org` для автоматических краулеров и ИИ-агентов |
 
 ---
@@ -27,10 +27,10 @@
 
 ```powershell
 # Установить для ВСЕХ ИИ-агентов и моделей в текущий каталог (".")
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Или выбрать одного агента (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Добавьте -Force для перезаписи существующих корневых адаптеров (по умолчанию существующие файлы сохраняются)
 ```
@@ -86,4 +86,4 @@ rm -rf /tmp/nwvmc-docs
 
 - **SDD — Разработка по спецификациям (`specs/<feature>/`):** 6 этапов (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): оформите `spec.md` с критериями `REQ-ID` (`Given/When/Then`), остановитесь на `[NEEDS CLARIFICATION]` до подтверждения, постройте матрицу трассировки 1:1 в `plan.md` и сверьте с `/v3/api-docs`, `/metadata` и `/schema/zod`.
 - **TDD — Red → Green → Refactor (4-уровневая пирамида тестов):** Сначала напишите падающий тест JUnit 5 / `MockMvc` с `@DisplayName("REQ-XXX: ...")` (для багов — регрессионный тест), затем минимальный декларативный код до GREEN и рефакторинг. Покрывает 4 уровня: Unit, Безопасность/Workflow, Дрейф контрактов и Конкурентность `@DistributedLock` + JMeter `0.0%`, без `@Disabled`.
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **Руководство и шаблоны:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

@@ -1,20 +1,20 @@
 # 07. Evrensel AI-Agent Benimseme Kiti (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` ve `llms.txt`, `0.1.0`)
 
-> **Diller**: **Türkçe** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#ai-agent-kit)
+> **Diller**: **Türkçe** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz (EN)](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. Amaç ve Kit Mimarisi (`ai-agent-kit/`)
 
-**Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`), **piyasadaki her yapay zeka kodlama ajanına ve LLM’e** kaynak koddan 1:1 makine doğrulamalı bilgileri (`6` kesin Java paketindeki `60` anotasyon, `133` öznitelik, `40` otomatik uç nokta, kesin `app.framework.*` anahtarları ve doğrulanmış `0.1.0` çalışma zamanı kuralları) sunarak halüsinasyon ve çalışma zamanı sürprizi olmadan ilk denemede kusursuz entegrasyon sağlar.
+**Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)), **piyasadaki her yapay zeka kodlama ajanına ve LLM’e** kaynak koddan 1:1 makine doğrulamalı bilgileri (`6` kesin Java paketindeki `60` anotasyon, `133` öznitelik, `40` otomatik uç nokta, kesin `app.framework.*` anahtarları ve doğrulanmış `0.1.0` çalışma zamanı kuralları) sunarak halüsinasyon ve çalışma zamanı sürprizi olmadan ilk denemede kusursuz entegrasyon sağlar.
 
 | Dosya / Dizin | Görev |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Mimari kılavuz: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` ve JitPack `v0.1.0`, 2 dizin sözleşmesi (`entity/` + `controller/`), 9 birleştirilebilir arayüz, 6 anotasyon paketi ve 11 yerleşik alt sistem |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Sıkı halüsinasyon önleyici koruma kuralları (`17.2 KB`, `24 KB` bütçesinin altında) ve doğrulanmış çalışma zamanı tuzakları |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Aşamalı `spring-nwvmc-adoption` becerisi: 6 adım adım iş akışı ve 10 satırlık kök neden sorun giderme matrisi |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Teslim öncesi 6 aşamalı onay kapısı (Ön Kontrol -> Tasarım -> Çalışma Zamanı Tuzakları -> Üretim Kilitleme -> Performans -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | Makine doğrulamalı 5 derin referans (60 anotasyon / 133 öznitelik, 40 uç nokta + 13 noktalı operatör, YAML + Çoklu Veri Kaynağı, `@MultiTenant` + 4 varlıklı DB-RBAC + `JwtTokenService` tarifleri, ve kesin anotasyon dışı sınıf/SPI import tablosu) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Mimari kılavuz: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` ve JitPack `v0.1.0`, 2 dizin sözleşmesi (`entity/` + `controller/`), 9 birleştirilebilir arayüz, 6 anotasyon paketi ve 6 yerleşik alt sistem |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Sıkı halüsinasyon önleyici koruma kuralları (`19.0 KB`, `24 KB` bütçesinin altında) ve doğrulanmış çalışma zamanı tuzakları |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Aşamalı `spring-nwvmc-adoption` becerisi: 7 adım adım iş akışı ve 15 satırlık kök neden sorun giderme matrisi |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Teslim öncesi 7 aşamalı onay kapısı (Ön Kontrol -> Tasarım -> Çalışma Zamanı Tuzakları -> Üretim Kilitleme -> Performans -> `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | Makine doğrulamalı 6 (+ `templates/`) derin referans (60 anotasyon / 133 öznitelik, 40 uç nokta + 13 noktalı operatör, YAML + Çoklu Veri Kaynağı, `@MultiTenant` + 4 varlıklı DB-RBAC + `JwtTokenService` tarifleri, ve kesin anotasyon dışı sınıf/SPI import tablosu) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Otomatik yapay zeka tarayıcıları ve ajanları için `llmstxt.org` uyumlu dizinler |
 
 ---
@@ -27,10 +27,10 @@ Doğrudan **Spring Boot projenizin kök dizininde** bir terminal açıp aşağı
 
 ```powershell
 # TÜM yapay zeka kodlama ajanları ve modelleri için geçerli dizine (".") kur
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Veya tek bir ajan seç (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Mevcut kök adaptör dosyalarının üzerine yazmak için -Force ekleyin (varsayılan mevcut dosyaları güvenle korur)
 ```
@@ -86,4 +86,4 @@ Her adaptör ve beceri akışı, `references/06-sdd-and-tdd-playbook.md` ve `tem
 
 - **SDD — Şartname Odaklı Geliştirme (`specs/<feature>/`):** 6 kapılı süreç (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): `REQ-ID` (`Given/When/Then`) ölçütleriyle `spec.md` yazın, `[NEEDS CLARIFICATION]` maddelerinde durup onay alın, `plan.md` içinde 1:1 izlenebilirlik kurun ve `/v3/api-docs`, `/metadata`, `/schema/zod` ile sıfır sapma doğrulayın.
 - **TDD — Kırmızı → Yeşil → İyileştir (4 Katmanlı Test Piramidi):** Önce `@DisplayName("REQ-XXX: ...")` etiketli başarısız JUnit 5 / `MockMvc` testini (hata düzeltmelerinde önce regresyon testi) yazın, en az bildirimsel kodla YEŞİL yapın, sonra iyileştirin. 4 katmanı kapsar: Birim, Güvenlik/İş Akışı, Sözleşme Sapması ve `@DistributedLock` Eşzamanlılık + JMeter `0.0%` (`@Disabled` yasaktır).
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **Uygulama Rehberi ve Şablonlar:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

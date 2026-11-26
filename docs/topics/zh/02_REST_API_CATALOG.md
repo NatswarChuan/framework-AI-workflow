@@ -81,7 +81,7 @@
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`、`POST ""`、`GET /explorer`（`@Hidden`） |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | 按指定 ISO-8601 UTC 时间戳还原实体历史快照 |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | 查询 `7` 个核心遥测 `*Customizer` 分组已注册的 SPI Bean（`StorageCustomizer` 由 `StorageCustomizerRegistryHelper` 独立管理，共 `8` 个 SPI） |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j 熔断器实时健康指标 |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j 熔断器实时健康指标 |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | 多数据源健康状态巡检 |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | 当前 MDC 上下文中的 W3C `traceparent` 与 UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | 将 Tomcat 容器层 `400/404/405/413/431/500` 错误统一封装为 `ApiResponse<Void>` |

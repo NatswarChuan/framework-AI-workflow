@@ -1,6 +1,6 @@
 # 03. 13 dynamicznych operatorów filtrowania, Query Guardrails, Keyset O(1) i GraphQL SDL (`0.1.0`)
 
-> **Języki**: **Polski** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Wszystkie 20 języków](../README.md) | [Pełny podręcznik](../../GUIDE_EN.md) | [Interaktywny portal (20 języków)](../../index.html#query-dsl)
+> **Języki**: **Polski** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Wszystkie 20 języków](../README.md) | [Pełny podręcznik (EN)](../../GUIDE_EN.md) | [Interaktywny portal (20 języków)](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@ Wszystkie parametry filtrujące są kompilowane do parametryzowanych zapytań JP
 
 ## 2. Paginacja kursorowa Keyset O(1) (`GET /keyset`)
 
-Dzięki monotonicznym kluczom głównym **UUIDv7**, `/keyset` przeskakuje bezpośrednio do granicy kursora w obu kierunkach (`dir=asc`, `dir=desc`) z próbkowaniem `size + 1` w czasie $O(1)$:
+Dzięki monotonicznym kluczom głównym **UUIDv7**, `/keyset` przeskakuje bezpośrednio do granicy kursora w obu kierunkach (`dir=asc`, `dir=desc`) z próbkowaniem `size + 1` w czasie `O(1)`:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

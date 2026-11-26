@@ -1,6 +1,6 @@
 # 01. 빠른 시작, 2-디렉터리 계약 및 Fail-Fast 기동 진단 (`0.1.0`)
 
-> **언어**: **한국어** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#quickstart)
+> **언어**: **한국어** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼 (EN)](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#quickstart)
 
 ---
 
@@ -29,6 +29,28 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 [JitPack](https://jitpack.io)을 통해 GitHub 릴리스를 직접 사용하려면:
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **로컬 개발 팁:** `JWT_SECRET`가 아직 없다면 `application-dev.yml`에만 `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}`를 설정하세요(`application.yml`/`application-prod.yml`은 항상 fail-closed 유지).
+
 ---
 
 ## 4. 세밀한 엔드포인트 필터링 (`enabledEndpoints` & `disabledEndpoints`)
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | 예외 | 발생 조건 | 해결 방법 |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()`가 JVM `< 21` 감지 | Java 21 LTS 이상에서 실행 |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true`이고 사용자 지정 `jwt-secret`이 `32` UTF-8 바이트 미만 | `${JWT_SECRET}`에 32바이트 이상의 비밀 키 설정 |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` 또는 `maxPageSize < 1` | `app.framework.query-guardrails.*`에 양의 정수 지정 |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true`이고 사용자 지정 `jwt-secret`이 `32` UTF-8 바이트 미만 | `${JWT_SECRET}`에 32바이트 이상의 비밀 키 설정 |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` 또는 `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | `app.framework.query-guardrails.*`에 양의 정수 지정 |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` 또는 `ComputedFieldFailFastUtil`이 `@Id` 누락, 기본 생성자 누락 또는 잘못된 `@ComputedField` 원본 필드 감지 | `BaseAuditEntity` 상속, `@NoArgsConstructor` 유지 및 정확한 엔티티 필드명 일치 |

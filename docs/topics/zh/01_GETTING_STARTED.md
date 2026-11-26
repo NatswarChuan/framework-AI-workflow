@@ -29,6 +29,28 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 若需通过 [JitPack](https://jitpack.io) 直接从 GitHub 构建引入：
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **本地开发提示：** 若尚未导出 `JWT_SECRET`，可在 `application-dev.yml` 中配置 `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` 并开启 `studio.enabled: true`（`application.yml` / `application-prod.yml` 请始终保持无回退的 fail-closed 安全基线）。
+
 ---
 
 ## 4. 细粒度端点启停（`enabledEndpoints` 与 `disabledEndpoints`）
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | 异常类 | 触发条件 | 修复方式 |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` 检测到 JVM `< 21` | 升级至 Java 21 LTS 或更高版本 |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` 且自定义 `jwt-secret` 少于 `32` UTF-8 字节 | 将 `${JWT_SECRET}` 配置为不少于 32 字节的高强度密钥 |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`、`maxFilterCriteria < 1` 或 `maxPageSize < 1` | 在 `app.framework.query-guardrails.*` 下配置正整数 |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` 且自定义 `jwt-secret` 少于 `32` UTF-8 字节 | 将 `${JWT_SECRET}` 配置为不少于 32 字节的高强度密钥 |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`、`maxFilterCriteria < 1` 或 `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | 在 `app.framework.query-guardrails.*` 下配置正整数 |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` 或 `ComputedFieldFailFastUtil` 检测到缺少 `@Id`、缺少无参构造器或 `@ComputedField` 源字段名无效 | 继承 `BaseAuditEntity`、保留 `@NoArgsConstructor` 并确保字段名完全匹配 |

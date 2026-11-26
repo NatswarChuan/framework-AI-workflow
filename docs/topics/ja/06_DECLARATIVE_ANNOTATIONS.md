@@ -32,29 +32,29 @@
 | [`@HumanPolicy`](#humanpolicy) | `entity` | `Class (TYPE)` | `lifecycle (""), security (""), masking (""), stateField ("")` | 自然文形式のポリシークローズを実行可能な RBAC・状態遷移・マスキング規則へコンパイルします。 |
 | [`@AuditTrail`](#audittrail) | `entity` | `Class (TYPE)` | `category (""), recordFieldDiffs (true)` | 更新ごとのフィールド差分を記録し、タイムトラベル復元と /diff 監査を実現します。 |
 | [`@MultiTenant`](#multitenant) | `entity` | `Class (TYPE)` | `tenantField ("tenantId"), bypassTenantRoles ({"ROLE_SUPER_ADMIN"})` | バイパス権限がない限り、アクティブなテナントコンテキスト単位で行の参照・更新を自動分離します。 |
-| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `(Marker annotation — no attributes)` | 新規作成・更新・Upsert の永続化直前に一意性制約を事前検証します。 |
-| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (REQUIRED)` | 未指定時に作成またはクローン時に一意のプレフィックス付き業務コードを自動採番します。 |
-| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (REQUIRED)` | sourceField から URL 向けの正規化 ASCII スラッグを自動生成します。 |
+| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `（マーカーアノテーション — 属性なし）` | 新規作成・更新・Upsert の永続化直前に一意性制約を事前検証します。 |
+| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (必須)` | 未指定時に作成またはクローン時に一意のプレフィックス付き業務コードを自動採番します。 |
+| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (必須)` | sourceField から URL 向けの正規化 ASCII スラッグを自動生成します。 |
 | [`@ComputedField`](#computedfield) | `entity` | `Field (FIELD)` | `operation ("MULTIPLY"), sourceFields ({}), collectionField (""), itemField (""), subtractField (""), addField ("")` | エンティティ保存前に派生数値合計を自動的に算出します。 |
 | [`@CustomQuery`](#customquery) | `entity` | `Method (METHOD)` | `value (""), nativeQuery (true), resultClass (Void.class), sqlProvider (Void.class), providerMethod (""), modifying (false)` | コントローラーエンドポイントへカスタム SQL/JPQL やプロバイダ Helper メソッドを関連付けます。 |
 | [`@SecurityRoleEntity`](#securityroleentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | JPA エンティティを動的データベース RBAC ロールカタログ表として指定します。 |
-| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityRoleEntity 内で一意のロールコード列をマッピングします。 |
-| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityRoleEntity 上のロール表示名フィールドを識別します。 |
-| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | ロールに付与された権限コード配列または CSV 文字列フィールドをマークします。 |
+| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityRoleEntity 内で一意のロールコード列をマッピングします。 |
+| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityRoleEntity 上のロール表示名フィールドを識別します。 |
+| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | ロールに付与された権限コード配列または CSV 文字列フィールドをマークします。 |
 | [`@SecurityPermissionEntity`](#securitypermissionentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | リソース操作権限および動的フィールドマスク規則を保持する JPA エンティティを指定します。 |
-| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPermissionEntity 内の一意な権限コード識別子フィールドを指定します。 |
-| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPermissionEntity 内で対象エンティティまたはリソース名（ワイルドカード * 可）を指定します。 |
-| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPermissionEntity で保護される CRUD またはカスタムアクション種別をマッピングします。 |
-| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | この DB 権限ルール適用時に動的マスク対象となるカンマ区切りフィールド一覧を指定します。 |
+| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityPermissionEntity 内の一意な権限コード識別子フィールドを指定します。 |
+| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityPermissionEntity 内で対象エンティティまたはリソース名（ワイルドカード * 可）を指定します。 |
+| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityPermissionEntity で保護される CRUD またはカスタムアクション種別をマッピングします。 |
+| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | この DB 権限ルール適用時に動的マスク対象となるカンマ区切りフィールド一覧を指定します。 |
 | [`@SecurityUserRoleEntity`](#securityuserroleentity) | `rbac` | `Entity (TYPE)` | `enabled (true)` | 認証済みユーザー主体と DB ロールおよび任意テナント境界を紐付ける JPA エンティティです。 |
-| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityUserRoleEntity 上のプリンシパル主体（ユーザー名/JWT sub）フィールドを示します。 |
-| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityUserRoleEntity 内で割り当てられたロールコード列をバインドします。 |
-| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityUserRoleEntity のロール割り当てを特定テナント（または全体 *）へスコープ制限します。 |
+| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityUserRoleEntity 上のプリンシパル主体（ユーザー名/JWT sub）フィールドを示します。 |
+| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityUserRoleEntity 内で割り当てられたロールコード列をバインドします。 |
+| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityUserRoleEntity のロール割り当てを特定テナント（または全体 *）へスコープ制限します。 |
 | [`@SecurityPolicyEntity`](#securitypolicyentity) | `rbac` | `Entity (TYPE)` | `priority (100)` | priority 順に評価される明示的 ALLOW / DENY 動的認可ポリシーを格納する JPA エンティティです。 |
-| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity 内で対象リソース名パターンをマッピングします。 |
-| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity 内で保護対象アクション（READ/WRITE/DELETE/methodName/*）を指定します。 |
-| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity ルールが対象とするロール配列または CSV 文字列をマッピングします。 |
-| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity ルールの判定結果（ALLOW または DENY）を指定します。 |
+| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityPolicyEntity 内で対象リソース名パターンをマッピングします。 |
+| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityPolicyEntity 内で保護対象アクション（READ/WRITE/DELETE/methodName/*）を指定します。 |
+| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityPolicyEntity ルールが対象とするロール配列または CSV 文字列をマッピングします。 |
+| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `（マーカーアノテーション — 属性なし）` | @SecurityPolicyEntity ルールの判定結果（ALLOW または DENY）を指定します。 |
 | [`@DistributedLock`](#distributedlock) | `resilience` | `Method (METHOD)` | `key (""), waitTimeMs (3000L), leaseTimeMs (5000L)` | AST キャッシュ（最大1024件）付き SpEL キーで排他制御を行います（既定 waitTimeMs=3000L, leaseTimeMs=5000L）。 |
 | [`@Idempotent`](#idempotent) | `resilience` | `Type / Method (TYPE, METHOD)` | `headerName ("X-Idempotency-Key"), ttlSeconds (300L)` | 設定可能な TTL ウィンドウ内で同時またはリプレイされた重複書き込みを防止します。 |
 | [`@RateLimit`](#ratelimit) | `resilience` | `Type / Method (TYPE, METHOD)` | `requests (60), windowSeconds (60), partitionKey ("IP")` | IP・ユーザー・テナント単位でスライディングウィンドウ型のレート制限を適用します。 |
@@ -88,8 +88,8 @@
 | `basePath` | `String` | `""` | いいえ（任意） | `/` で始まる有効な HTTP パス（例: `/api/v1/product-catalogs`）、または自動導出する空文字 `""`。<br/>`@AutoRestController(basePath = "/api/v1/product-catalogs")` | 明示的なルート URI（例: "/api/v1/product-catalogs"）。未指定時はコントローラー名からケバブケース複数形を生成します。<br/>*注意点:* 起動時に登録機は `path` より先に `basePath` を評価します。両方に矛盾する値を指定しないでください。 |
 | `path` | `String` | `""` | いいえ（任意） | `/` で始まる有効な HTTP パス（例: `/api/v1/orders`）、または自動導出する空文字 `""`。<br/>`@AutoRestController(path = "/api/v1/orders")` | ルートパスの互換エイリアス属性。プロキシ登録機は basePath を優先するため通常は basePath を推奨します。<br/>*注意点:* 起動時に登録機は `path` より先に `basePath` を評価します。両方に矛盾する値を指定しないでください。 |
 | `entityName` | `String` | `""` | いいえ（任意） | 空でない識別子文字列（例: `"ProductCatalog"`）。`""` の場合はフレームワーク既定規約を使用します。<br/>`@AutoRestController(entityName = "ProductCatalog")` | OpenAPI や Studio メタデータに表示されるエンティティ名を明示指定で上書きします。<br/>*注意点:* 生成される Swagger / OpenAPI 3.0 と NWVMC Studio に直接反映されます。ハードコード防止のため `OpenApiConstant` に定義してください。 |
-| `enabledEndpoints` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"search"`, `"keysetPage"`, `"exportCsv"`, `"importCsv"`。<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | 公開する契約メソッド名のホワイトリスト（例: "getPage", "create"）。空配列時は全メソッド有効。<br/>*注意点:* 厳格なホワイトリストとして機能します。空でない場合、列挙されていない契約メソッドは Spring MVC と Swagger UI から除外されます。 |
-| `disabledEndpoints` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `"deleteById"`, `"batchDelete"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`。<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "batchDelete", "importCsv"})` | MVC 登録前に除外したいメソッド名のブラックリスト（例: "deleteById", "batchChunked"）。<br/>*注意点:* `enabledEndpoints` の後に評価されます。40 契約の大部分を残しつつ削除系や一括取込だけを遮断する用途に最適です。 |
+| `enabledEndpoints` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"getKeysetPage"`, `"count"`, `"exportCsv"`, `"importCsv"`。<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | 公開する契約メソッド名のホワイトリスト（例: "getPage", "create"）。空配列時は全メソッド有効。<br/>*注意点:* 厳格なホワイトリストとして機能します。空でない場合、列挙されていない契約メソッドは Spring MVC と Swagger UI から除外されます。 |
+| `disabledEndpoints` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `"deleteById"`, `"updateBatchByFilter"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`。<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "updateBatchByFilter", "importCsv"})` | MVC 登録前に除外したいメソッド名のブラックリスト（例: "deleteById", "batchChunked"）。<br/>*注意点:* `enabledEndpoints` の後に評価されます。40 契約の大部分を残しつつ削除系や一括取込だけを遮断する用途に最適です。 |
 | `enableNestedSubResources` | `boolean` | `false` | いいえ（任意） | `true`（有効）または `false`（無効）。<br/>`@AutoRestController(basePath = "/api/v1/orders", enableNestedSubResources = true)` | 再帰的なサブリソース参照 GET /{id}/** を有効化します。大規模スキーマのルート肥大化を防ぐため既定は false です。<br/>*注意点:* `GET /{id}/items/...` が不要な場合は `false` のままにしてください。有効化時は `@EnableNestedSubResource` で許可リレーションを限定してください。 |
 | `readDto` | `Class<?>` | `Void.class` | いいえ（任意） | 任意の具象 Java DTO クラス（例: `ProductReadDto.class`）、または無効化する `Void.class`。<br/>`@AutoRestController(readDto = ProductReadDto.class)` | 読み取りレスポンスから内部エンティティ項目を除外する DTO 型。Void.class 時はエンティティを返却。<br/>*注意点:* 読み取り (GET) パイプラインのみに適用されます。DTO クラスにはデフォルトコンストラクタ／ゲッターが必要で、`@Valid` と `@FieldSecurity` に連動します。 |
 | `createDto` | `Class<?>` | `Void.class` | いいえ（任意） | 任意の具象 Java DTO クラス（例: `ProductCreateDto.class`）、または無効化する `Void.class`。<br/>`@AutoRestController(createDto = ProductCreateDto.class)` | POST 時に Jakarta Validation を実行した上でエンティティ E へ変換する入力 DTO 型。<br/>*注意点:* 作成 (POST) パイプラインのみに適用されます。DTO クラスにはデフォルトコンストラクタ／ゲッターが必要で、`@Valid` と `@FieldSecurity` に連動します。 |
@@ -116,10 +116,10 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 
 | 属性 | Java 型 | 既定値 | 必須 | 有効値と使用例 | 説明と実行時の注意点 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `targetBean` | `Class<?>` | `Void.class` | いいえ（任意） | 任意の具象 Java DTO クラス（例: `OrderCustomService.class`）、または無効化する `Void.class`。<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | 委譲先の Spring Bean クラス（beanName より優先されます）。<br/>*注意点:* 起動時に登録機は `beanName` より先に `targetBean` を評価します。両方に矛盾する値を指定しないでください。 |
+| `targetBean` | `Class<?>` | `Void.class` | いいえ（任意） | 具象 Spring `@Service`/`@Component` Bean クラス（例: `OrderCustomService.class`）、または `beanName` で解決する `Void.class`。<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | 委譲先の Spring Bean クラス（beanName より優先されます）。<br/>*注意点:* 起動時に登録機は `beanName` より先に `targetBean` を評価します。両方に矛盾する値を指定しないでください。 |
 | `beanName` | `String` | `""` | いいえ（任意） | ApplicationContext に登録済みの正確な Bean 名（例: `"orderCustomService"`）、または自動解決の `""`。<br/>`@ServiceOverride(beanName = "orderCustomService", methodName = "createOrder")` | targetBean が Void.class の場合に名前ベースで Bean を解決します。<br/>*注意点:* 起動時に登録機は `beanName` より先に `targetBean` を評価します。両方に矛盾する値を指定しないでください。 |
 | `methodName` | `String` | `""` | いいえ（任意） | 空でない識別子文字列（例: `"createOrder"`）。`""` の場合はフレームワーク既定規約を使用します。<br/>`@ServiceOverride(targetBean = OrderService.class, methodName = "createOrder")` | 委譲先 Bean のメソッド名。空の場合はコントローラー側のメソッド名と一致させます。<br/>*注意点:* Java のメソッド名・フィールド名と大文字小文字まで完全一致する必要があります（例: `"createOrder"`）。不一致は実行時エラーとなります。 |
-| `bypassAutoDispatch` | `boolean` | `true` | いいえ（任意） | `true`（既定プロキシをバイパスして対象 Bean を直接実行）または `false`（既定ディスパッチと併用実行）。<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | true の場合、既定 CRUD ディスパッチをスキップして MethodHandleCacheUtil 経由で委譲実行します。<br/>*注意点:* `true`（既定）では組み込み CRUD を完全にバイパスし、対象 Bean がトランザクションを担います。補助フック用途のみ `false` にしてください。 |
+| `bypassAutoDispatch` | `boolean` | `true` | いいえ（任意） | `true`（既定：上書きを有効化し対象 Bean を実行）または `false`（上書きを無効化し既定 CRUD ディスパッチへフォールバック）。<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | true の場合、既定 CRUD ディスパッチをスキップして MethodHandleCacheUtil 経由で委譲実行します。<br/>*注意点:* `true`（既定）で `EscapeHatchDispatchHelper` が対象 Bean を呼び出します。`false` にすると `@ServiceOverride` が無効になり既定 CRUD のみ実行されます（前後フックではありません）。 |
 
 ```java
 @ServiceOverride(targetBean = TagEscapeHatchHelper.class, methodName = "buildTaxonomyStats")
@@ -528,8 +528,8 @@ private String nationalId;
 | 属性 | Java 型 | 既定値 | 必須 | 有効値と使用例 | 説明と実行時の注意点 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `initial` | `String` | `"ACTIVE"` | いいえ（任意） | 空でない識別子文字列（例: `"CREATED"`）。`""` の場合はフレームワーク既定規約を使用します。<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 新規作成時に未指定の場合に自動セットされる初期状態（既定 "ACTIVE"）。<br/>*注意点:* `POST` 作成時に状態が空なら自動設定されます。`transitions` の `:` 左側の開始状態と一致させてください。 |
-| `transitions` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`)。<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 許可する遷移ルールをコロン区切り `"FROM:TO_1,TO_2"` で指定します。<br/>*注意点:* 厳密なコロン記法 `"FROM:TO1,TO2"`（カンマ区切り遷移先、大文字小文字区別）を要求します。未定義の遷移は HTTP `400`/`409` で拒否されます。 |
-| `deletableStates` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `{"CREATED", "CANCELLED"}` (state names where DELETE is allowed)。<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | 削除（DELETE）を許可する状態ホワイトリスト（範囲外は HTTP 422）。<br/>*注意点:* 空でない場合、指定外の状態（例: `"PAID"`）にあるエンティティへの `DELETE` は HTTP `409 Conflict` で保護されます。 |
+| `transitions` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`)。<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 許可する遷移ルールをコロン区切り `"FROM:TO_1,TO_2"` で指定します。<br/>*注意点:* 厳密なコロン記法 `"FROM:TO1,TO2"`（カンマ区切り遷移先、大文字小文字区別）を要求します。未定義の遷移は HTTP `422` で拒否されます。 |
+| `deletableStates` | `String[]` | `{}` | いいえ（任意） | 0 個以上の有効な値を含む配列: `{"CREATED", "CANCELLED"}` (state names where DELETE is allowed)。<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | 削除（DELETE）を許可する状態ホワイトリスト（範囲外は HTTP 422）。<br/>*注意点:* 空でない場合、指定外の状態（例: `"PAID"`）にあるエンティティへの `DELETE` は HTTP `422 Unprocessable Entity` で保護されます。 |
 
 ```java
 @StateMachine(
@@ -571,13 +571,13 @@ private String nationalId;
 - **目的**: 更新ごとのフィールド差分を記録し、タイムトラベル復元と /diff 監査を実現します。
 - **実行時動作**: 作成・更新・パッチ・遷移・復元時の oldValue/newValue 差分を自動保存します。
 - **使い方**: `BaseAuditEntity` 継承クラスに付与すると、`AuditTrailService` が全変更履歴を自動記録します。
-- **使用すべき場面**: 決済・注文・診療記録・口座など、改ざん証跡や Time-Travel（`/{id}/revisions`）が求められるエンティティに使います。
+- **使用すべき場面**: 決済・注文・診療記録・口座など、改ざん証跡や Time-Travel（`GET /api/v1/system/time-travel/{entityName}/{id}`）が求められるエンティティに使います。
 - **使用を避けるべき場面と注意点**: 高頻度書き込みのログ・テレメトリテーブルでは書き込み増幅を避けるため無効化を推奨します。
 
 | 属性 | Java 型 | 既定値 | 必須 | 有効値と使用例 | 説明と実行時の注意点 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `category` | `String` | `""` | いいえ（任意） | 空でない識別子文字列（例: `"FINANCE_LEDGER"`）。`""` の場合はフレームワーク既定規約を使用します。<br/>`@AuditTrail(category = "FINANCE_LEDGER", recordFieldDiffs = true)` | 監査レコードに記録されるカテゴリ名（空時はエンティティクラス名）。<br/>*注意点:* 監査ログのドメイン分類・検索用タグです。`""` の場合は JPA エンティティクラス名になります。 |
-| `recordFieldDiffs` | `boolean` | `true` | いいえ（任意） | `true`（有効）または `false`（無効）。<br/>`@AuditTrail(category = "PAYMENTS", recordFieldDiffs = true)` | true 時、Time-Travel（`/{id}/revisions`）向けに項目単位の変更前後差分を記録します。<br/>*注意点:* `PUT`/`PATCH` 毎の変更前後差分を記録します。巨大テキストや高頻度更新エンティティでは容量節約のため `false` を推奨します。 |
+| `recordFieldDiffs` | `boolean` | `true` | いいえ（任意） | `true`（有効）または `false`（無効）。<br/>`@AuditTrail(category = "PAYMENTS", recordFieldDiffs = true)` | true 時、Time-Travel（`GET /api/v1/system/time-travel/{entityName}/{id}`）向けに項目単位の変更前後差分を記録します。<br/>*注意点:* `PUT`/`PATCH` 毎の変更前後差分を記録します。巨大テキストや高頻度更新エンティティでは容量節約のため `false` を推奨します。 |
 
 ```java
 @AuditTrail(category = "FINANCIAL", recordFieldDiffs = true)
@@ -631,7 +631,7 @@ private String code;
 
 | 属性 | Java 型 | 既定値 | 必須 | 有効値と使用例 | 説明と実行時の注意点 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `prefix` | `String` | `Required (no default)` | **はい（必須）** | 空でない識別子文字列（例: `"ORD"`）。`""` の場合はフレームワーク既定規約を使用します。<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | 8文字大文字 UUIDv7 ハッシュの先頭に付与する必須プレフィックス（例: "PRD-"）。<br/>*注意点:* 必須属性です。作成時にフィールドが空の場合のみ `INV-2026-0001` 形式のコードを自動採番します。 |
+| `prefix` | `String` | `必須（既定値なし）` | **はい（必須）** | 必須の非空プレフィックス文字列（例: `"PRD-"`、`"INV-"`）。省略するとコンパイルエラーになります。<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | 8文字大文字 UUIDv7 ハッシュの先頭に付与する必須プレフィックス（例: "PRD-"）。<br/>*注意点:* 必須属性です。作成・複製時に空の場合のみ 8 文字大文字 UUIDv7 ハッシュ（例: `INV-0194E1A0`）を付与し、指定済みの値は保持します。 |
 
 ```java
 @AutoCode(prefix = "PRD-")
@@ -650,7 +650,7 @@ private String code;
 
 | 属性 | Java 型 | 既定値 | 必須 | 有効値と使用例 | 説明と実行時の注意点 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `sourceField` | `String` | `Required (no default)` | **はい（必須）** | エンティティ上の 文字列 フィールドに完全一致する Java プロパティ名（例: `"title"`）。<br/>`@AutoSlug(sourceField = "productName") private String slug;` | ハイフン区切りの小文字 ASCII スラグへ正規化する必須ソース項目名。<br/>*注意点:* 必須属性です。アクセント文字や Unicode を URL 安全な kebab-case へ正規化します。一意性には `@UniqueField` を併用してください。 |
+| `sourceField` | `String` | `必須（既定値なし）` | **はい（必須）** | エンティティ上の 文字列 フィールドに完全一致する Java プロパティ名（例: `"title"`）。<br/>`@AutoSlug(sourceField = "productName") private String slug;` | ハイフン区切りの小文字 ASCII スラグへ正規化する必須ソース項目名。<br/>*注意点:* 必須属性です。アクセント文字や Unicode を URL 安全な kebab-case へ正規化します。一意性には `@UniqueField` を併用してください。 |
 
 ```java
 @AutoSlug(sourceField = "name")
@@ -696,7 +696,7 @@ private BigDecimal lineTotal;
 | `value` | `String` | `""` | いいえ（任意） | 次のサポート値のいずれか: Parameterized SQL or JPQL statement using positional `?1`/`?2` or named `:param` placeholders。<br/>`@CustomQuery(value = "SELECT * FROM orders WHERE tenant_id = :tenantId AND total >= :minTotal", nativeQuery = true)` | 名前付き `:param` プレースホルダー対応の SQL/JPQL 文。<br/>*注意点:* SQL インジェクション防止のため必ず `:param` または `?1` を使用してください。`sqlProvider` 利用時は `""` にします。 |
 | `nativeQuery` | `boolean` | `true` | いいえ（任意） | `true`（データベースネイティブ SQL を実行）または `false`（ポータブルな JPA JPQL を実行）。<br/>`@CustomQuery(value = "SELECT o FROM OrderEntity o WHERE o.status = :status", nativeQuery = false)` | true はネイティブ SQL、false は JPQL として実行します。<br/>*注意点:* ネイティブ SQL（`true`）は CTE やウィンドウ関数を活用できます。H2/PostgreSQL/MySQL 間の移植性重視なら `false`（JPQL）にします。 |
 | `resultClass` | `Class<?>` | `Void.class` | いいえ（任意） | 任意の具象 Java DTO クラス（例: `MonthlyRevenueDto.class`）、または無効化する `Void.class`。<br/>`@CustomQuery(value = "SELECT currency, SUM(total) FROM invoices GROUP BY currency", resultClass = MonthlyRevenueDto.class)` | 結果行をマッピングする任意のクラス型。<br/>*注意点:* 集計・レポートクエリでは `SELECT *` と型安全なマッピングのため必ず DTO プロジェクションクラスを指定してください。 |
-| `sqlProvider` | `Class<?>` | `Void.class` | いいえ（任意） | 任意の具象 Java DTO クラス（例: `OrderAnalyticsSqlProvider.class`）、または無効化する `Void.class`。<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | 動的 SQL を返す任意のプロバイダークラス（起動時に検証されます）。<br/>*注意点:* アプリ起動時に即時検証されます。スペルミスや不正な `sqlProvider` はトラフィック受付前に Fail-Fast で停止します。 |
+| `sqlProvider` | `Class<?>` | `Void.class` | いいえ（任意） | 具象 Pure Java SQL プロバイダークラス（例: `OrderAnalyticsSqlProvider.class`）、インライン `value` 使用時は `Void.class`。<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | 動的 SQL を返す任意のプロバイダークラス（起動時に検証されます）。<br/>*注意点:* アプリ起動時に即時検証されます。スペルミスや不正な `sqlProvider` はトラフィック受付前に Fail-Fast で停止します。 |
 | `providerMethod` | `String` | `""` | いいえ（任意） | 空でない識別子文字列（例: `"buildRevenueSql"`）。`""` の場合はフレームワーク既定規約を使用します。<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | SQL 文字列を返す `sqlProvider` 内のメソッド名。<br/>*注意点:* Java のメソッド名・フィールド名と大文字小文字まで完全一致する必要があります（例: `"buildRevenueSql"`）。不一致は実行時エラーとなります。 |
 | `modifying` | `boolean` | `false` | いいえ（任意） | `true`（書込みトランザクション内で UPDATE/DELETE を実行）または `false`（読み取り専用の SELECT クエリ）。<br/>`@CustomQuery(value = "UPDATE orders SET status = :status WHERE id = :id", modifying = true)` | INSERT/UPDATE/DELETE を実行する場合は必ず `true` にします。<br/>*注意点:* `UPDATE`/`DELETE` 文では必須（`true`）です。自動で書込みトランザクションを開始します。 |
 
@@ -1284,7 +1284,7 @@ private String effect; // ALLOW or DENY
 | `source` | `String` | `""` | いいえ（任意） | `/` で始まる有効な HTTP パス（例: `/services/order-api`）、または自動導出する空文字 `""`。<br/>`@PublishCloudEvent(source = "/services/order-api")` | 発生元のコンテキストを表す CloudEvents `source` URI。<br/>*注意点:* マイクロサービス間のイベント追跡用 CNCF CloudEvents `source` URI を設定します。 |
 | `publishOnCreate` | `boolean` | `true` | いいえ（任意） | `true`（有効）または `false`（無効）。<br/>`@PublishCloudEvent(publishOnCreate = true, publishOnUpdate = false, publishOnDelete = false)` | 作成コミット後に CloudEvent を発行するか（既定 true）。<br/>*注意点:* コミット後（`AFTER_COMMIT`）にのみ Spring Events / Kafka / RabbitMQ 経由で発行されます。 |
 | `publishOnUpdate` | `boolean` | `true` | いいえ（任意） | `true`（有効）または `false`（無効）。<br/>`@PublishCloudEvent(publishOnUpdate = true)` | 更新コミット後に CloudEvent を発行するか（既定 true）。<br/>*注意点:* 閲覧数など高頻度更新エンティティではメッセージブローカー過負荷を防ぐため `false` にしてください。 |
-| `publishOnDelete` | `boolean` | `true` | いいえ（任意） | `true`（有効）または `false`（無効）。<br/>`@PublishCloudEvent(publishOnDelete = true)` | 削除コミット後に CloudEvent を発行するか（既定 true）。<br/>*注意点:* 物理削除および `@SoftDelete` の双方で発火し、下流の検索インデックスやリードモデルを同期します。 |
+| `publishOnDelete` | `boolean` | `true` | いいえ（任意） | `true`（有効）または `false`（無効）。<br/>`@PublishCloudEvent(publishOnDelete = true)` | 削除コミット後に CloudEvent を発行するか（既定 true）。<br/>*注意点:* 物理削除および `BaseAuditEntity.deleted` の双方で発火し、下流の検索インデックスやリードモデルを同期します。 |
 
 ```java
 @PublishCloudEvent(eventType = "com.example.order.created", source = "/orders")

@@ -10,11 +10,11 @@
 
 | 文件 / 目录 | 作用说明 |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | 架构总览：Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` 与 JitPack `v0.1.0`、双目录契约（`entity/` + `controller/`）、9 个可组合能力接口、6 个注解包、11 个内置子系统 |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 严格防幻觉护栏（`17.2 KB`，严控在 `24 KB` 规则预算内），收录所有实测验证的运行时陷阱 |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | 渐进披露式 `spring-nwvmc-adoption` 技能手册（6 套落地工作流 + 10 行根因排障矩阵） |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6 阶段交付前核验闸门（前置检查 -> 领域设计 -> 运行时陷阱 -> 生产安全锁定 -> 性能 -> `mvn clean verify`） |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 份机器校验深度参考（60 注解 / 133 属性、40 端点 + 13 点分运算符、YAML + 多数据源、含 `@MultiTenant` + 4 实体 DB-RBAC + `JwtTokenService` 的实战配方、非注解类/常量/SPI 精确导入表） |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | 架构总览：Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` 与 JitPack `v0.1.0`、双目录契约（`entity/` + `controller/`）、9 个可组合能力接口、6 个注解包、6 个内置子系统 |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 严格防幻觉护栏（`19.0 KB`，严控在 `24 KB` 规则预算内），收录所有实测验证的运行时陷阱 |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | 渐进披露式 `spring-nwvmc-adoption` 技能手册（7 套落地工作流 + 15 行根因排障矩阵） |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7 阶段交付前核验闸门（前置检查 -> 领域设计 -> 运行时陷阱 -> 生产安全锁定 -> 性能 -> `mvn clean verify`） |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) 份机器校验深度参考（60 注解 / 133 属性、40 端点 + 13 点分运算符、YAML + 多数据源、含 `@MultiTenant` + 4 实体 DB-RBAC + `JwtTokenService` 的实战配方、非注解类/常量/SPI 精确导入表） |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | 符合 `llmstxt.org` 规范的 AI 爬虫与代理入口索引 |
 
 ---
@@ -27,10 +27,10 @@
 
 ```powershell
 # 为所有 AI 编程代理与大模型安装到当前目录（"."）
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # 或仅针对单一代理安装（all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic）：
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # 添加 -Force 可覆盖已有根目录适配器文件（默认安全保留已有文件）
 ```
@@ -86,4 +86,4 @@ rm -rf /tmp/nwvmc-docs
 
 - **SDD — 规范驱动开发（`specs/<feature>/`）:** 6 阶段门禁（`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`）：先编写带 `REQ-ID`（`Given/When/Then`）的 `spec.md`，遇 `[NEEDS CLARIFICATION]` 强制停下确认，在 `plan.md` 建立 1:1 追溯矩阵，并与实时 `/v3/api-docs`、`/metadata`、`/schema/zod` 零漂移对齐。
 - **TDD — 红 → 绿 → 重构（4 层测试金字塔）:** 先编写带 `@DisplayName("REQ-XXX: ...")` 的失败 JUnit 5 / `MockMvc` 测试（修 Bug 先写回归测试），再以极简声明式代码转绿并重构；覆盖第 1 层单元测试、第 2 层安全与流程集成、第 3 层契约漂移校验及第 4 层 `@DistributedLock` 并发与 JMeter `0.0%` 错误率，严禁 `@Disabled`。
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **实操手册与模板：** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

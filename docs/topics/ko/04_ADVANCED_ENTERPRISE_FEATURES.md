@@ -1,6 +1,6 @@
 # 04. 보안, 멀티클라우드 스토리지, `@ServiceOverride`, 메트릭 및 20개 언어 i18n (`0.1.0`)
 
-> **언어**: **한국어** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#security-rbac)
+> **언어**: **한국어** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼 (EN)](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. 멀티 클라우드 파일 스토리지 (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+내장 `FileStorageController`(`/api/v1/storage/*`)는 `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url`을 `app.framework.storage.provider`(`LOCAL`/`S3`/`GCS`) 및 `StorageCustomizer`로 제공합니다.
+
+> **운영 보안 강화:** 외부 공개 전 `app.framework.security.require-authenticated-api-paths: true`를 활성화하고 `SecurityFilterChain`에서 `/api/v1/storage/**`를 보호하세요.

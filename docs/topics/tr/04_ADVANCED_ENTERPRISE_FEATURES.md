@@ -1,6 +1,6 @@
 # 04. Güvenlik, Çoklu Bulut Depolama, `@ServiceOverride`, Metrikler ve 20 Dilli i18n (`0.1.0`)
 
-> **Diller**: **Türkçe** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#security-rbac)
+> **Diller**: **Türkçe** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz (EN)](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@ Tekil uç noktalar dinamik CRUD kapsamını aştığında:
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. Çoklu Bulut Dosya Depolama (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+Yerleşik `FileStorageController` (`/api/v1/storage/*`) `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` ve `POST /presigned-url` uç noktalarını `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`) ile sunar.
+
+> **Üretim Güvenliği:** `app.framework.security.require-authenticated-api-paths: true` ayarını açın ve `SecurityFilterChain` içinde `/api/v1/storage/**` yolunu koruyun.

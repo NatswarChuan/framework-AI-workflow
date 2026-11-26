@@ -1,6 +1,6 @@
 # 01. เริ่มต้นใช้งานอย่างรวดเร็ว, สัญญาโครงสร้าง 2 โฟลเดอร์ และการตรวจ Fail-Fast ตอนบูต (`0.1.0`)
 
-> **ภาษา**: **ไทย** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#quickstart)
+> **ภาษา**: **ไทย** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์ (EN)](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#quickstart)
 
 ---
 
@@ -29,6 +29,28 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 หากต้องการบิลด์ตรงจาก GitHub ผ่าน [JitPack](https://jitpack.io):
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **เคล็ดลับ Dev ภายในเครื่อง:** หากยังไม่ได้ตั้ง `JWT_SECRET` ให้ใส่ `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` เฉพาะใน `application-dev.yml` (คง `application.yml`/`application-prod.yml` แบบ fail-closed เสมอ)
+
 ---
 
 ## 4. การคัดกรอง Endpoint รายเมธอด (`enabledEndpoints` และ `disabledEndpoints`)
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | ข้อยกเว้น (Exception) | เงื่อนไขที่ทำให้เกิด | วิธีแก้ไข |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` ตรวจพบ JVM `< 21` | รันบน Java 21 LTS หรือใหม่กว่า |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` และค่า `jwt-secret` สั้นกว่า `32` ไบต์ UTF-8 | กำหนด `${JWT_SECRET}` อย่างน้อย 32 ไบต์ |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` หรือ `maxPageSize < 1` | กำหนดจำนวนเต็มบวกใต้ `app.framework.query-guardrails.*` |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` และค่า `jwt-secret` สั้นกว่า `32` ไบต์ UTF-8 | กำหนด `${JWT_SECRET}` อย่างน้อย 32 ไบต์ |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` หรือ `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | กำหนดจำนวนเต็มบวกใต้ `app.framework.query-guardrails.*` |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` หรือ `ComputedFieldFailFastUtil` พบว่าขาด `@Id`, ขาด constructor ไร้พารามิเตอร์ หรือชื่อฟิลด์ `@ComputedField` ไม่ถูกต้อง | สืบทอด `BaseAuditEntity`, คง `@NoArgsConstructor` และใช้ชื่อฟิลด์ให้ตรงทุกตัวอักษร |

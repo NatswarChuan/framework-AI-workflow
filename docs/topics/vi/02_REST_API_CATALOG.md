@@ -13,7 +13,7 @@ Khi interface mở rộng `AutoApiController<E>` (hoặc chọn từng nhóm cap
 | # | HTTP | Đường Dẫn | Phương Thức | Mô Tả Kỹ Thuật |
 | :-: | :--- | :--- | :--- | :--- |
 | 1 | `GET` | `""` | `getPage` | Phân trang chuẩn kèm lọc động 13 toán tử, sắp xếp đa trường, `?expand=` và `fields=...` |
-| 2 | `GET` | `/keyset` | `getKeysetPage` | Phân trang con trỏ UUIDv7 2 chiều `ASC`/`DESC` độ phức tạp seek $O(1)$ (`afterId`, `dir`, `size`, probe `size+1`) |
+| 2 | `GET` | `/keyset` | `getKeysetPage` | Phân trang con trỏ UUIDv7 2 chiều `ASC`/`DESC` độ phức tạp seek `O(1)` (`afterId`, `dir`, `size`, probe `size+1`) |
 | 3 | `GET` | `/all` | `getAll` | Trả về danh sách khớp bộ lọc không phân trang, giới hạn bởi `max-unpaged-fetch-limit` |
 | 4 | `GET` | `/count` | `count` | Đếm số lượng bản ghi khớp bộ lọc động |
 | 5 | `GET` | `/exists` | `exists` | Kiểm tra nhanh sự tồn tại bản ghi theo bộ lọc |
@@ -77,11 +77,11 @@ Khi interface mở rộng `AutoApiController<E>` (hoặc chọn từng nhóm cap
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | Live Studio đa 20 ngôn ngữ (RTL `ar`, `fa`, `ur`); khóa `401` khi `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | Xuất mã nguồn Spring MVC Controller/Service/Repository; bảo vệ bởi `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | Cấp phát demo JWT HMAC-SHA512; trả `404` khi `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Tái tạo trạng thái lịch sử tại mốc ISO-8601 UTC bằng `@AuditTrail` |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Thống kê các SPI bean thuộc 7 nhóm `*Customizer` chuẩn (`StorageCustomizer` quản lý riêng qua `StorageCustomizerRegistryHelper`, tổng `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Trạng thái Resilience4j Circuit Breaker |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Trạng thái Resilience4j Circuit Breaker |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Trạng thái từng cụm nguồn dữ liệu (`Primary` / `Replica` / `Tenant`) |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Trích xuất W3C `traceparent` và UUIDv7 `X-Request-ID` từ SLF4J MDC |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Chuẩn hóa lỗi Tomcat `400/404/405/413/431/500` thành `ApiResponse<Void>` |

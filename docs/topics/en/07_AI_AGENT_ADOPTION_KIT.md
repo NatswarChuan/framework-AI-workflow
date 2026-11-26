@@ -6,15 +6,15 @@
 
 ## 1. Purpose & Kit Architecture (`ai-agent-kit/`)
 
-The **Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) equips **every AI coding agent and LLM on the market** with machine-verified framework facts (`60` annotations across `6` exact Java packages, `133` attributes, `40` auto-generated endpoints, exact `app.framework.*` YAML keys, and empirically proven `0.1.0` runtime guardrails) so teams integrate Spring-NWVMC accurately on the first attempt without hallucinated annotations or runtime surprises.
+The **Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) equips **every AI coding agent and LLM on the market** with machine-verified framework facts (`60` annotations across `6` exact Java packages, `133` attributes, `40` auto-generated endpoints, exact `app.framework.*` YAML keys, and empirically proven `0.1.0` runtime guardrails) so teams integrate Spring-NWVMC accurately on the first attempt without hallucinated annotations or runtime surprises.
 
 | File / Directory | Role |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Architecture orientation: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `0.1.0`, 2-Directory Contract (`entity/` + `controller/`), 9 composable capability interfaces (`AutoReadApi`..`AutoAiApi`), 6 annotation packages, 11 built-in subsystems |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strict anti-hallucination guardrails (`17.2 KB`, strictly under the `24 KB` agent rule budget) encoding every verified runtime pitfall |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Progressive-disclosure `spring-nwvmc-adoption` skill with 6 step-by-step adoption workflows + 10-row root-cause troubleshooting matrix |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 6-phase pre-handover sign-off gate (Pre-Flight -> Design -> Runtime Gotchas -> Production Security Lockdown -> Performance -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 machine-verified deep references (60 annotations / 133 attributes, 40 endpoints + 13 dot operators, YAML + Multi-Datasource, verified cookbook including `@MultiTenant` + 4-entity DB-RBAC + `JwtTokenService`, and exact non-annotation class/constant/SPI imports) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Architecture orientation: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, 2-Directory Contract (`entity/` + `controller/`), 9 composable capability interfaces (`AutoReadApi`..`AutoAiApi`), 6 annotation packages, 6 built-in subsystems |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strict anti-hallucination guardrails (`19.0 KB`, strictly under the `24 KB` agent rule budget) encoding every verified runtime pitfall |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Progressive-disclosure `spring-nwvmc-adoption` skill with 7 step-by-step adoption workflows + 15-row root-cause troubleshooting matrix |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7-phase pre-handover sign-off gate (Pre-Flight -> Design -> Runtime Gotchas -> Production Security Lockdown -> Performance -> `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) machine-verified deep references (60 annotations / 133 attributes, 40 endpoints + 13 dot operators, YAML + Multi-Datasource, verified cookbook including `@MultiTenant` + 4-entity DB-RBAC + `JwtTokenService`, and exact non-annotation class/constant/SPI imports) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | `llmstxt.org`-compliant entry points for automated AI crawlers and agent fetchers |
 
 ---
@@ -27,10 +27,10 @@ Open a terminal **directly inside your Spring Boot project root** and paste eith
 
 ```powershell
 # Install for ALL AI coding agents & models into the current directory (".")
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Or target a single agent (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Pass -Force to overwrite existing root adapter files (default preserves existing files safely)
 ```
@@ -72,7 +72,7 @@ rm -rf /tmp/nwvmc-docs
 1. **`@StateMachine.transitions` uses colon syntax** (`"CREATED:PENDING_PAYMENT,CANCELLED"`), never `"FROM -> TO"`, and triggers transitions via query param `POST /api/v1/{entity}/{id}/transition?targetState=PENDING_PAYMENT` (not JSON body).
 2. **Query operators use dot syntax** (`retailPrice.gte=1000&productName.like=MacBook`), never `__gte`.
 3. **Inject framework `@AutoComponent` helpers via `ObjectProvider<T>`** (`DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`) and call `.getObject()` at runtime.
-4. **AOP-intercepted consumer `@Service` classes** (`@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, `@TargetDataSource`) must be **non-final** and **`@Lazy`** (with class-level `@TargetDataSource` when targeting `REPLICA` on `0.1.0`), AND any `@Component` injecting them must also use **`ObjectProvider<MyService>`** or **`@Lazy`**. Never place `@Transactional` on `public final class` Helpers.
+4. **AOP-intercepted consumer `@Service` classes** (`@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, `@TargetDataSource`) must be **non-final** and **`@Lazy`**, AND any `@Component` injecting them must also use **`ObjectProvider<MyService>`** or **`@Lazy`**. Never place `@Transactional` on `public final class` Helpers.
 5. **Dev JWT & Testing**: The dev token endpoint is **`POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN`** (NOT `GET /system/studio/demo-token`); tests call `jwtTokenService.generateToken(username, userId, roles)` (**`username` FIRST**).
 6. **JPA entities extend `BaseAuditEntity`** (UUIDv7 `id`, soft-delete, audit columns, `@Version` built-in); never use `@Data` on `@Entity` and never invent `@SoftDelete`.
 7. **CamelCase auto base paths & `readDto` scoping**: `ECommerceOrder` resolves to `/api/v1/e-commerce-orders`; controllers declaring `readDto = X.class` project all responses through `X`.

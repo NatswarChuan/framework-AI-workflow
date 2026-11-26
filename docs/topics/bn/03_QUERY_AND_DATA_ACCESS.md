@@ -1,6 +1,6 @@
 # 03. ১৩টি ডায়নামিক ফিল্টার অপারেটর, Query Guardrails, Keyset O(1) ও GraphQL SDL (`0.1.0`)
 
-> **ভাষাসমূহ**: **বাংলা** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#query-dsl)
+> **ভাষাসমূহ**: **বাংলা** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল (EN)](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. O(1) কার্সার Keyset পেজিনেশন (`GET /keyset`)
 
-প্রাইমারি কী সময়ক্রমিক **UUIDv7** ব্যবহার করায় `/keyset` উভয় দিকে (`dir=asc`, `dir=desc`) `size + 1` প্রোব দিয়ে $O(1)$ সময়ে সরাসরি কার্সার সীমানায় পৌঁছায়:
+প্রাইমারি কী সময়ক্রমিক **UUIDv7** ব্যবহার করায় `/keyset` উভয় দিকে (`dir=asc`, `dir=desc`) `size + 1` প্রোব দিয়ে `O(1)` সময়ে সরাসরি কার্সার সীমানায় পৌঁছায়:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

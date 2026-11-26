@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Installs the Spring-NWVMC (0.1.0) AI-Agent Adoption Kit into any Spring Boot project.
-# Works BOTH locally (inside a cloned repo) AND remotely via curl pipe (zero local files required).
+# Works BOTH locally (inside a cloned repo) AND remotely (downloads each file once into a
+# temporary staging directory with TLS 1.2 + retries + symlink protection).
 #
 # Zero-clone one-liner (run inside your Spring Boot project root):
-#   curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
+#   curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent cursor
 #
-# Local usage:
-#   ./ai-agent-kit/install.sh --target /path/to/my-spring-app --agent cursor
+# Enterprise pinned-SHA install (pin BOTH the script URL and --ref to the same commit SHA):
+#   REF="<commit-sha>"; curl --proto '=https' --tlsv1.2 -fsSL "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/${REF}/ai-agent-kit/install.sh" | bash -s -- --target . --agent all --ref "${REF}"
 
 set -euo pipefail
 
@@ -15,7 +16,7 @@ KIT_ROOT=""
 IS_LOCAL_KIT="false"
 if [[ -n "$SCRIPT_SOURCE" && -f "$SCRIPT_SOURCE" ]]; then
   KIT_ROOT="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
-  if [[ -f "$KIT_ROOT/SKILL.md" ]]; then
+  if [[ -f "$KIT_ROOT/SKILL.md" && -f "$KIT_ROOT/INTRO.md" && -f "$KIT_ROOT/references/01-annotations-exact-matrix.md" ]]; then
     IS_LOCAL_KIT="true"
   fi
 fi
@@ -28,34 +29,47 @@ FORCE="false"
 
 usage() {
   cat <<'EOF'
-Usage: install.sh [--target <project-dir>] [--agent <name>] [--ref <branch-or-tag>] [--force]
+Usage: install.sh [--target <project-dir>] [--agent <name>] [--ref <branch-or-sha>] [--repo <owner/repo>] [--force]
 
 Options:
-  --target <dir>   Target Spring Boot project directory (default: .)
-  --agent  <name>  all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic (default: all)
-  --ref    <ref>   Git branch/tag to download from in remote mode (default: main)
-  --repo   <slug>  GitHub repo slug (default: NatswarChuan/Spring-NWVMC-document)
-  --force          Overwrite existing root adapter files (default: skip existing root files)
-  -h, --help       Show this help message
+  --target <dir>         Target Spring Boot project directory (default: .)
+  --agent  <name>        all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic (default: all)
+  --ref    <ref>         Git branch, tag, or immutable commit SHA to download from in remote mode (default: main)
+  --repo   <owner/repo>  GitHub repo slug (default: NatswarChuan/Spring-NWVMC-document)
+  --force                Overwrite existing root adapter files (default: preserve existing root files; skill trees always refresh)
+  -h, --help             Show this help message
 EOF
+}
+
+require_value() {
+  local flag="$1"
+  if [[ $# -lt 2 || -z "${2:-}" || "${2:-}" == --* ]]; then
+    echo "Error: '$flag' requires a non-empty value." >&2
+    usage >&2
+    exit 1
+  fi
 }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --target)
-      TARGET="${2:-.}"
+      require_value "$1" "${2:-}"
+      TARGET="$2"
       shift 2
       ;;
     --agent)
-      AGENT="${2:-all}"
+      require_value "$1" "${2:-}"
+      AGENT="$2"
       shift 2
       ;;
     --ref)
-      REF="${2:-main}"
+      require_value "$1" "${2:-}"
+      REF="$2"
       shift 2
       ;;
     --repo)
-      REPO="${2:-NatswarChuan/Spring-NWVMC-document}"
+      require_value "$1" "${2:-}"
+      REPO="$2"
       shift 2
       ;;
     --force)
@@ -83,10 +97,32 @@ case "$AGENT" in
     ;;
 esac
 
+if [[ ! "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
+  echo "Error: invalid --repo '$REPO'. Expected 'owner/repository'." >&2
+  exit 1
+fi
+if [[ ! "$REF" =~ ^[A-Za-z0-9._/-]+$ || "$REF" == *".."* ]]; then
+  echo "Error: invalid --ref '$REF'. Path traversal and shell metacharacters are not allowed." >&2
+  exit 1
+fi
+
+if [[ "$IS_LOCAL_KIT" != "true" ]]; then
+  if ! command -v curl >/dev/null 2>&1; then
+    echo "Error: 'curl' is required for remote installation." >&2
+    exit 1
+  fi
+fi
+
 RAW_BASE_URL="https://raw.githubusercontent.com/$REPO/$REF/ai-agent-kit"
+STAGE_DIR="$(mktemp -d 2>/dev/null || mktemp -d -t nwvmc-kit-stage)"
+cleanup() {
+  rm -rf "$STAGE_DIR"
+}
+trap cleanup EXIT
 
 mkdir -p "$TARGET"
 RESOLVED_TARGET="$(cd "$TARGET" && pwd)"
+RESOLVED_TARGET_TRIMMED="${RESOLVED_TARGET%/}"
 
 INSTALLED=()
 SKIPPED=()
@@ -106,21 +142,55 @@ TEMPLATE_FILES=(
   tasks.template.md
 )
 
+rel_display_path() {
+  local full="$1"
+  if [[ -n "$RESOLVED_TARGET_TRIMMED" && "$full" == "$RESOLVED_TARGET_TRIMMED/"* ]]; then
+    printf '%s' "${full#"$RESOLVED_TARGET_TRIMMED"/}"
+  else
+    printf '%s' "${full#/}"
+  fi
+}
+
+resolve_kit_source() {
+  local rel_kit_path="$1"
+  if [[ "$IS_LOCAL_KIT" == "true" ]]; then
+    printf '%s' "$KIT_ROOT/$rel_kit_path"
+    return
+  fi
+  local staged="$STAGE_DIR/$rel_kit_path"
+  if [[ -s "$staged" ]]; then
+    printf '%s' "$staged"
+    return
+  fi
+  mkdir -p "$(dirname "$staged")"
+  curl --proto '=https' --tlsv1.2 --retry 3 --retry-delay 2 --connect-timeout 10 --max-time 30 \
+    -fsSL "$RAW_BASE_URL/$rel_kit_path" -o "$staged"
+  if [[ ! -s "$staged" ]]; then
+    echo "Error: downloaded empty file from $RAW_BASE_URL/$rel_kit_path" >&2
+    exit 1
+  fi
+  printf '%s' "$staged"
+}
+
 install_kit_file() {
   local rel_kit_path="$1"
   local dst="$2"
   local overwrite="$3"
   mkdir -p "$(dirname "$dst")"
-  if [[ -f "$dst" && "$overwrite" != "true" ]]; then
-    SKIPPED+=("${dst#"$RESOLVED_TARGET"/}")
+  if [[ -L "$dst" ]]; then
+    echo "Error: refusing to overwrite symlink at '$dst'." >&2
+    exit 1
+  fi
+  if [[ -e "$dst" && "$overwrite" != "true" ]]; then
+    SKIPPED+=("$(rel_display_path "$dst")")
     return
   fi
-  if [[ "$IS_LOCAL_KIT" == "true" ]]; then
-    cp "$KIT_ROOT/$rel_kit_path" "$dst"
-  else
-    curl -fsSL "$RAW_BASE_URL/$rel_kit_path" -o "$dst"
-  fi
-  INSTALLED+=("${dst#"$RESOLVED_TARGET"/}")
+  local src
+  src="$(resolve_kit_source "$rel_kit_path")"
+  local tmp_dst="${dst}.tmp.$$"
+  cp "$src" "$tmp_dst"
+  mv -f "$tmp_dst" "$dst"
+  INSTALLED+=("$(rel_display_path "$dst")")
 }
 
 install_skill_tree() {
@@ -142,6 +212,7 @@ if [[ "$IS_LOCAL_KIT" == "true" ]]; then
 else
   echo "Installing Spring-NWVMC (0.1.0) AI-Agent Adoption Kit -> $RESOLVED_TARGET (source=$RAW_BASE_URL, agent=$AGENT)"
 fi
+echo "  Note: Skill tree files (.agents/skills/... and .claude/skills/...) refresh on each run; existing root adapters are preserved unless --force is passed."
 
 AGENTS_SKILL_DIR="$RESOLVED_TARGET/.agents/skills/spring-nwvmc-adoption"
 install_skill_tree "$AGENTS_SKILL_DIR"
@@ -190,4 +261,4 @@ if [[ ${#SKIPPED[@]} -gt 0 ]]; then
 fi
 
 echo ""
-echo "Done! Open your project with any AI coding agent and ask it to adopt Spring-NWVMC 0.1.0."
+echo "Done! Open your project with your AI coding agent and start with Prompt 1 (Bootstrap) in ai-agent-kit/README.md."

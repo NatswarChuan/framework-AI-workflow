@@ -7,7 +7,7 @@
 ## 1. Base Path Derivation Convention
 
 For an `@AutoRestController` without explicit `basePath`:
-- Prefix defaults to `app.framework.base-path-prefix` (`/api/v1`).
+- Auto-derived paths always use `/api/v1` (`ApiEndpointConstant.API_V1_BASE` in `NamingConventionUtil`). Override anytime via `@AutoRestController(basePath = "...")`.
 - Entity simple name is split on uppercase boundaries (kebab-case) and pluralized:
   - `ProductCatalog` → `/api/v1/product-catalogs`
   - `ECommerceOrder` → **`/api/v1/e-commerce-orders`**
@@ -34,27 +34,27 @@ For an `@AutoRestController` without explicit `basePath`:
 | `AutoAnalyticsApi` | `GET` | `/aggregate` | Numeric `count`, `sum`, `average`, `min`, `max` (`?field=retailPrice`) |
 | `AutoAnalyticsApi` | `GET` | `/distinct` | Distinct column values (`?field=category`) bounded by `max-unpaged-fetch-limit` |
 | `AutoAnalyticsApi` | `GET` | `/top` | Top-N records by numeric field (`?field=retailPrice&limit=5`) |
-| `AutoAnalyticsApi` | `GET` | `/group-by` | Grouped aggregates (`?groupBy=category&metricField=retailPrice`) |
+| `AutoAnalyticsApi` | `GET` | `/group-by` | Grouped aggregates (`?groupField=category&valueField=retailPrice`; fallback aliases: `groupBy` & `field`) |
 | `AutoSchemaApi` | `GET` | `/metadata` | Entity metadata (fields, relations, operators, security summary) |
 | `AutoSchemaApi` | `GET` | `/schema/json` | JSON Schema projection |
 | `AutoSchemaApi` | `GET` | `/schema/typescript` | TypeScript `export interface <Entity>` definition |
 | `AutoSchemaApi` | `GET` | `/schema/zod` | Runtime Zod schema (`export const <Entity>Schema = z.object(...)`) |
 | `AutoSchemaApi` | `GET` | `/schema/client` | Zero-dependency typed Fetch API client (`export const <Entity>Client`) |
 
-### Group B — Write & Batch (`AutoWriteApi<E>` + `AutoBatchApi<E>` — 10 Endpoints)
+### Group B — Write & Batch (`AutoWriteApi<E>` 6 + `AutoBatchApi<E>` 4 — 10 Endpoints)
 
 | Interface | Method | Sub-Path | Purpose & Verified Usage |
 | :--- | :---: | :--- | :--- |
 | `AutoWriteApi` | `POST` | `/` | Create entity (`201 Created`); auto-populates UUIDv7, `@AutoCode`, `@AutoSlug`, `@ComputedField`, `@StateMachine.initial` |
-| `AutoWriteApi` | `POST` | `/upsert` | Create or update entity cleanly |
+| `AutoWriteApi` | `POST` | `/upsert` | Create or update entity cleanly by unique key or primary key |
 | `AutoWriteApi` | `PUT` | `/{id}` | Full update; enforces `@Version` optimistic lock (`409 Conflict` on stale version) |
 | `AutoWriteApi` | `PATCH` | `/{id}` | Partial field update |
 | `AutoWriteApi` | `DELETE` | `/{id}` | Soft-delete (`deleted = true`), guarded by `@StateMachine.deletableStates` |
-| `AutoWriteApi` | `DELETE` | `/{id}/hard` | Permanent physical SQL deletion |
 | `AutoWriteApi` | `POST` | `/{id}/restore` | Restores soft-deleted entity (`deleted = false`) |
-| `AutoBatchApi` | `POST` | `/batch` | Transactional batch insert |
-| `AutoBatchApi` | `POST` | `/batch/chunked` | High-volume chunked batch insert with per-record validation report |
-| `AutoBatchApi` | `DELETE` | `/batch` | Bulk delete by UUIDv7 list |
+| `AutoBatchApi` | `POST` | `/batch` | Transactional batch insert (`List<E>`) |
+| `AutoBatchApi` | `POST` | `/upsert-batch` | Batch upsert multiple entity records (`List<E>`) |
+| `AutoBatchApi` | `POST` | `/batch-chunked` | High-volume O(1)-memory chunked batch insert (`?chunkSize=100`) with diagnostic report |
+| `AutoBatchApi` | `PATCH` | `/batch-update` | Bulk update records matching dynamic filter criteria |
 
 ### Group C — Workflow, Realtime & Spring AI (`AutoApiEnterpriseController<E>` — 11 Endpoints)
 
@@ -63,9 +63,9 @@ For an `@AutoRestController` without explicit `basePath`:
 | `AutoWorkflowApi` | `POST` | `/{id}/transition` | **Query param `?targetState=PENDING_PAYMENT`** (NOT JSON body!) — validates `@StateMachine` `"FROM:TO1,TO2"` |
 | `AutoWorkflowApi` | `POST` | `/{id}/clone` | Clones entity with fresh UUIDv7 and fresh `@AutoCode`/`@AutoSlug` |
 | `AutoWorkflowApi` | `PATCH` | `/{id}/increment` | Atomic numeric delta (`?field=availableQuantity&delta=-2`) |
-| `AutoWorkflowApi` | `PATCH` | `/{id}/patch` | RFC 6902 JSON Patch (`application/json-patch+json` or `application/json`) |
+| `AutoWorkflowApi` | `PATCH` | `/{id}/patch-rfc6902` | RFC 6902 JSON Patch (`application/json-patch+json` or `application/json`) |
 | `AutoWorkflowApi` | `GET` | `/{id}/diff` | Field-by-field diff against another entity (`?targetId=<uuid>`) |
-| `AutoWorkflowApi` | `GET` | `/policy-summary` | Compiled `@HumanPolicy` + YAML policy summary (alias `/human-policy`) |
+| `AutoWorkflowApi` | `GET` | `/human-policy` | Compiled `@HumanPolicy` + YAML policy summary (alias `/policy-summary`) |
 | `AutoWorkflowApi` | `GET` | `/health` | Entity operational health telemetry |
 | `AutoWorkflowApi` | `GET` | `/events` | `@Hidden` real-time Server-Sent Events stream (alias `/stream`) |
 | `AutoWorkflowApi` | `GET` | `/{id}/**` | Nested sub-resource traversal (opt-in via `@EnableNestedSubResource`) |
@@ -83,23 +83,23 @@ For an `@AutoRestController` without explicit `basePath`:
 
 ---
 
-## 3. All 13 Dot-Syntax Query Operators (NEVER Use `__`)
+## 3. All 13 Dot-Syntax Query Operators (`FilterOperatorConstant` — NEVER Use `__`)
 
 | Operator | Query String Example | SQL Equivalent |
 | :--- | :--- | :--- |
 | `.eq` (or omitted) | `category=ELECTRONICS` or `category.eq=ELECTRONICS` | `category = 'ELECTRONICS'` |
-| `.neq` | `category.neq=ARCHIVED` | `category <> 'ARCHIVED'` |
+| `.ne` | `category.ne=ARCHIVED` | `category <> 'ARCHIVED'` |
+| `.like` | `productName.like=MacBook` | `LOWER(product_name) LIKE '%macbook%'` (case-insensitive substring) |
+| `.startsWith` | `skuCode.startsWith=SKU-DOC` | `sku_code LIKE 'SKU-DOC%'` |
+| `.endsWith` | `skuCode.endsWith=-M3` | `sku_code LIKE '%-M3'` |
 | `.gt` | `retailPrice.gt=500` | `retail_price > 500` |
 | `.gte` | `retailPrice.gte=1000` | `retail_price >= 1000` |
 | `.lt` | `retailPrice.lt=3000` | `retail_price < 3000` |
 | `.lte` | `retailPrice.lte=2500` | `retail_price <= 2500` |
-| `.like` | `productName.like=MacBook` | `product_name LIKE '%MacBook%'` |
-| `.ilike` | `productName.ilike=macbook` | `LOWER(product_name) LIKE '%macbook%'` |
-| `.startsWith` | `skuCode.startsWith=SKU-DOC` | `sku_code LIKE 'SKU-DOC%'` |
-| `.endsWith` | `skuCode.endsWith=-M3` | `sku_code LIKE '%-M3'` |
 | `.in` | `category.in=ELECTRONICS,AUDIO` | `category IN ('ELECTRONICS','AUDIO')` |
 | `.notIn` | `orderStatus.notIn=CANCELLED,REFUNDED` | `order_status NOT IN (...)` |
-| `.isNull` | `brand.isNull=false` | `brand IS NOT NULL` |
+| `.between` | `retailPrice.between=500,2500` | `retail_price BETWEEN 500 AND 2500` |
+| `.null` | `brand.null=false` (or `brand.null=true`) | `brand IS NOT NULL` / `brand IS NULL` |
 
 **Relational traversal:** Dot-join across JPA associations up to `max-join-depth` (default `3`):
 `GET /api/v1/customer-orders?customer.department.company.countryCode=VN&expand=customer&sort=customer.department.code&dir=asc`
@@ -123,7 +123,7 @@ For an `@AutoRestController` without explicit `basePath`:
 | **Multi-DB Health** | `GET /api/v1/system/databases/health` | Status across registered clusters |
 | **W3C Trace Context** | `GET /api/v1/system/trace-context` | Active `traceId` (UUIDv7), `spanId`, `traceparent` |
 | **Customizers** | `GET /api/v1/system/customizers` | Registered `*Customizer` beans telemetry |
-| **Circuit Breakers** | `GET /api/v1/system/circuit-breakers` | Live Resilience4j breaker states & metrics |
+| **Circuit Breakers** | `GET /api/v1/system/resilience/circuit-breakers` | Live Resilience4j breaker states & metrics |
 | **Dev Studio** | `GET /system/studio` | Locked off by default (`app.framework.studio.enabled: true` in `dev` only) |
 | **Dev Demo JWT** | `POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN` | Locked off by default (`demo-token-endpoint-enabled: true` in `dev` only); returns `200 OK` with `data.{token,role,username,userId}` (`GET` returns `405`, `/system/studio/demo-token` returns `404`) |
 | **Code Ejection** | `GET /system/studio/eject?target=ProductCatalog` | Exports 5 standalone Spring MVC Java files (`dev`/admin only) |

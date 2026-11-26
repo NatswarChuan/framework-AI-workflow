@@ -1,6 +1,6 @@
 # 05. 8 SPI Customizer انٹرفیسز، `@CustomEndpoint` اور `@ServiceOverride` (`0.1.0`)
 
-> **زبانیں**: **اردو** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#spi-customizers)
+> **زبانیں**: **اردو** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ (EN)](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 `io.github.natswarchuan.customization.customizer` کے تحت تمام ایکسٹینشن ہکس `interface` `default` میتھڈز فراہم کرتے ہیں تاکہ فریم ورک کے اندرونی کوڈ کو چھیڑے بغیر Spring Bean اوور رائیڈ کیے جا سکیں:
 
-| # | SPI انٹرفیس | Context DTO | توسیعی دائرہ کار |
+| # | SPI انٹرفیس | سیاق DTO | توسیعی دائرہ کار |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | بنیادی بین کنٹینر، `TaskExecutor`، ٹاسک شیڈولنگ |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` پرامپٹس، ویکٹر ہکس، RAG پائپ لائنز |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` بکٹ پالیسیاں، پری سائنڈ URLs اور اپ لوڈ حدود |
 
 `7` بنیادی ٹیلی میٹری گروپس (`CustomizerGroupConstant`) کے فعال بینز `GET /api/v1/system/customizers` پر دیکھے جا سکتے ہیں (`StorageCustomizer` الگ سے `StorageCustomizerRegistryHelper` سنبھالتا ہے)۔
+
+
+> **فعال رن ٹائم انٹرسیپٹر بمقابلہ میٹادیٹا/ٹیلی میٹری ہُکس (`0.1.0`):** `SecurityIdentityCustomizer` ہر درخواست پر فعال طور پر چلتا ہے؛ باقی `7` کسٹمائزرز `GET /api/v1/system/customizers` میں میٹادیٹا اور ٹیلی میٹری رجسٹر کرتے ہیں۔
 
 ---
 

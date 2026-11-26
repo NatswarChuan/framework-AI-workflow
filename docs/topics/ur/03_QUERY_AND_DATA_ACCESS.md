@@ -1,6 +1,6 @@
 # 03. 13 ڈائنامک فلٹر آپریٹرز، Query Guardrails، Keyset O(1) اور GraphQL SDL (`0.1.0`)
 
-> **زبانیں**: **اردو** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#query-dsl)
+> **زبانیں**: **اردو** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ (EN)](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. O(1) کرسر Keyset پیجینیشن (`GET /keyset`)
 
-چونکہ پرائمری کیز وقت کے مطابق مرتب **UUIDv7** استعمال کرتی ہیں، `/keyset` دونوں سمتوں (`dir=asc` اور `dir=desc`) میں `size + 1` پروب کے ساتھ $O(1)$ وقت میں سیدھا کرسر حد تک پہنچتا ہے:
+چونکہ پرائمری کیز وقت کے مطابق مرتب **UUIDv7** استعمال کرتی ہیں، `/keyset` دونوں سمتوں (`dir=asc` اور `dir=desc`) میں `size + 1` پروب کے ساتھ `O(1)` وقت میں سیدھا کرسر حد تک پہنچتا ہے:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

@@ -1,6 +1,6 @@
 # 02. Katalog 40 automatycznych kontraktów REST i kontrolerów platformy (`0.1.0`)
 
-> **Języki**: **Polski** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Wszystkie 20 języków](../README.md) | [Pełny podręcznik](../../GUIDE_EN.md) | [Interaktywny portal (20 języków)](../../index.html#endpoints)
+> **Języki**: **Polski** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Wszystkie 20 języków](../README.md) | [Pełny podręcznik (EN)](../../GUIDE_EN.md) | [Interaktywny portal (20 języków)](../../index.html#endpoints)
 
 ---
 
@@ -12,7 +12,7 @@ Rozszerzenie `AutoApiController<E>` (lub selektywne połączenie `AutoReadApi`, 
 
 | # | HTTP | Podścieżka | Metoda | Zachowanie |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `""` | `getPage` | Paginacja offsetowa z obsługą 13 operatorów filtrowania, wielokolumnowego sortowania, ładowania include i wyboru pól. |
+| 1 | `GET` | `""` | `getPage` | Paginacja offsetowa z obsługą 13 operatorów filtrowania, wielokolumnowego sortowania, ładowania `?expand=` i wyboru pól. |
 | 2 | `GET` | `/keyset` | `getKeysetPage` | Paginacja kursorowa UUIDv7 w czasie O(1) bez degradacji skanowania SQL OFFSET na dużych tabelach. |
 | 3 | `GET` | `/all` | `getAll` | Zwraca wszystkie rekordy pasujące do filtrów dynamicznych na potrzeby list wyboru i słowników. |
 | 4 | `GET` | `/count` | `count` | Wykonuje zapytanie SQL COUNT(*) zgodne z dynamicznymi predykatami filtrowania. |
@@ -77,11 +77,11 @@ Rozszerzenie `AutoApiController<E>` (lub selektywne połączenie `AutoReadApi`, 
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | 20-językowe Developer Studio (RTL `ar`, `fa`, `ur`); zwraca `401`, gdy `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | Eksportuje standardowy kod Spring MVC (Controller/Service/Repository); chroniony przez `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | Wystawia demonstracyjny JWT HMAC-SHA512; zwraca `404`, gdy `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Odtworzenie stanu encji w wybranym punkcie czasu ISO-8601 UTC |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Podgląd aktywnych beanów SPI z `7` grup telemetrycznych `*Customizer` (`StorageCustomizer` w `StorageCustomizerRegistryHelper`, łącznie `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Bieżące metryki wyłączników obwodów Resilience4j |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Bieżące metryki wyłączników obwodów Resilience4j |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Kontrola stanu wielu źródeł danych |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Aktywny kontekst MDC W3C `traceparent` oraz UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Konwertuje błędy kontenera Tomcat `400/404/405/413/431/500` na `ApiResponse<Void>` |

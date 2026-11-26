@@ -3,17 +3,17 @@
 > **アーティファクト座標**: `io.github.natswarchuan:spring-nwvmc:0.1.0` | JitPack: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`  
 > **実行環境**: Java 21 LTS (Virtual Threads) · Spring Boot `3.2.5` / `3.3.5` / `3.4.0` · GraalVM AOT `RuntimeHints`  
 > **トピック別仕様（全20言語）**: [入門ガイド](topics/ja/01_GETTING_STARTED.md) · [40 エンドポイント](topics/ja/02_REST_API_CATALOG.md) · [クエリ・GraphQL](topics/ja/03_QUERY_AND_DATA_ACCESS.md) · [セキュリティ・Metrics・i18n](topics/ja/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 SPI Customizers](topics/ja/05_SPRING_ECOSYSTEM_SPIS.md) · [60 アノテーション完全仕様](topics/ja/06_DECLARATIVE_ANNOTATIONS.md) · [AI-Agent キット](topics/ja/07_AI_AGENT_ADOPTION_KIT.md) · [全20言語一覧](topics/README.md)  
-> **言語**: [English](GUIDE_EN.md) | [Tiếng Việt](GUIDE_VI.md) | 日本語 | [中文](GUIDE_ZH.md) | [20言語ポータル](index.html#annotations)
+> **言語**: [English](GUIDE_EN.md) | [Tiếng Việt](GUIDE_VI.md) | 日本語 | [中文](GUIDE_ZH.md) | [20言語ポータル](index.html)
 
 ---
 
 ## 1. アーキテクチャと中核設計
 
-`controller-to-api-framework` は `591` 個のメイン Java ファイル（テスト `251` 件、`569` テスト）、`60` 種類の宣言的アノテーション（DB 駆動 RBAC アノテーション `18` 種を含む）、`9` 個の組み合わせ可能な機能インターフェース（`AutoReadApi`..`AutoAiApi`）、`20` 個の `*Properties` クラスと `16` 個の `@AutoConfigurationBean` / `@ConfigurationProperties` クラス（`META-INF/spring-configuration-metadata.json` に `18` グループ定義）、`21` 個の国際化リソースバンドル（`classpath:i18n/messages*.properties`）、および `NwvmcRuntimeHintsRegistrar`（`META-INF/spring/aot.factories`）で構成されます。
+`controller-to-api-framework` は `593` 個のメイン Java ファイル（テスト `257` 件、`586` テスト）、`60` 種類の宣言的アノテーション（DB 駆動 RBAC アノテーション `18` 種を含む）、`9` 個の組み合わせ可能な機能インターフェース（`AutoReadApi`..`AutoAiApi`）、`20` 個の `*Properties` クラスと `16` 個の `@AutoConfigurationBean` / `@ConfigurationProperties` クラス（`META-INF/spring-configuration-metadata.json` に `18` グループ定義）、`21` 個の国際化リソースバンドル（`classpath:i18n/messages*.properties`）、および `NwvmcRuntimeHintsRegistrar`（`META-INF/spring/aot.factories`）で構成されます。
 
 - **2ディレクトリ契約（`entity/` と `controller/`）**: アプリケーションは `BaseAuditEntity`（`@Version` 楽観的ロックによる `409 Conflict` 応答および `JpaAssociationReferenceUtil` FK 参照解決付き）を継承する JPA エンティティと、`AutoApiController<E>` または `AutoReadApi<E>` 等の合成インターフェースを継承するインターフェースを定義します（`@AutoRestController(readDto, createDto, updateDto)` および標準 Spring MVC の `@RequestBody`/`@RequestParam`/`@PathVariable` も併用可能）。フレームワーク側でも静的 Spring import は AOT とプロパティ定義（計10行）に限定されています。
 - **`MethodHandle` 高速ディスパッチ**: `MethodHandleCacheUtil` と `LambdaAccessorUtil` が実行時リフレクション呼び出しを置換します。
-- **UUIDv7 主キー（`UuidUtil.generateUuidV7`）**: 時系列単調増加型の RFC 9562 ID により B-Tree 局所性と定数時間 $O(1)$ の `/keyset` ページングを実現します。
+- **UUIDv7 主キー（`UuidUtil.generateUuidV7`）**: 時系列単調増加型の RFC 9562 ID により B-Tree 局所性と定数時間 `O(1)` の `/keyset` ページングを実現します。
 - **統一エラー応答**: `GlobalExceptionHandlerHelper`、`CustomContainerErrorController`（`/error`）、`ExceptionCauseUnwrapperUtil` によりサーバー側で詳細ログを記録しつつ、クライアントへ安全な `ApiResponse<Void>` と `X-Request-ID` / W3C `traceparent` を返却します。
 
 ---
@@ -32,11 +32,26 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 ```
 
 ```kotlin
 dependencies {
   implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+  options.compilerArgs.add("-parameters")
 }
 ```
 
@@ -184,7 +199,7 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 | `@AutoRestController` | `basePath=""`, `path=""`, `entityName=""`, `enabledEndpoints={}`, `disabledEndpoints={}`, `enableNestedSubResources=false`, `readDto/createDto/updateDto=Void.class` | `AutoApiController<E>` または `AutoReadApi<E>` 継承 interface に付与し CRUD/分析 API を自動公開。 | 具象 `@RestController` クラスや JPA Entity 非連動の処理には付与しない。公開参照専用には `AutoReadApi<E>` を選択。 |
 | `@ServiceOverride` | `targetBean=Void.class`, `beanName=""`, `methodName=""`, `bypassAutoDispatch=true` | 特定の自動生成メソッドのみ独自 Spring Bean に差し替えたいとき。 | 新規 URL 追加には `@CustomEndpoint` を使用。`targetBean` は `Class<?>`（文字列指定は `beanName`）を指定。 |
 | `@CustomEndpoint` | `path=""`, `httpMethod="GET"`, `delegateBean=""`, `delegateMethod=""`, `summary=""`, `description=""` | 決済確定や承認など固有サブルートを Spring `@Component`/`@Service` へ委譲するとき。 | 必須の `delegateBean` を空にせず、認可・AOP は委譲先 Bean 側に実装（`ControllerProxySpecialRouteUtil` で直接委譲）。 |
-| `@EntitySecurity` | `core.annotation` (`readRoles`, `writeRoles`, `deleteRoles`, `permitAll=false`, `ownerField=""`, `bypassOwnerRoles={"ROLE_ADMIN","ROLE_SUPER_ADMIN"}`, `permissions={}`) | RBAC と `ownerField` による行単位の所有者アクセス制御を適用するとき。 | `permitAll=true` は READ/WRITE/DELETE 全般のロール検証をスキップするため、公開 API は `AutoReadApi<E>` や `disabledEndpoints` と必ず併用。 |
+| `@EntitySecurity` | `readRoles={}`, `writeRoles={}`, `deleteRoles={}`, `permitAll=false`, `ownerField=""`, `bypassOwnerRoles={"ROLE_ADMIN","ROLE_SUPER_ADMIN"}`, `permissions={}` | RBAC と `ownerField` による行単位の所有者アクセス制御を適用するとき。 | `permitAll=true` は READ/WRITE/DELETE 全般のロール検証をスキップするため、公開 API は `AutoReadApi<E>` や `disabledEndpoints` と必ず併用。 |
 | `@FieldSecurity` | `viewRoles={}`, `maskPattern="******"`, `nullifyInsteadOfMask=false` | 権限不足時に特定列をマスクまたは `null` 化するとき。 | 非 `String` 型（`BigDecimal` 等）は自動で `null` 化済み。`nullifyInsteadOfMask=true` は **`String` 列**を `"******"` でなく `null` にしたい場合に指定。 |
 | `@MultiTenant` | `tenantField="tenantId"`, `bypassTenantRoles={"ROLE_SUPER_ADMIN"}` | マルチテナント SaaS での厳格分離（テナント欠如時 `403`、IDOR 遮断）。 | 全テナント共有マスタ（通貨・国コード等）には付与しない。 |
 | `@StateMachine` | `initial="ACTIVE"`, `transitions={}`, `deletableStates={}` | 注文・承認等の厳格な状態遷移と削除可能状態の制御。 | 静的マスタには不要。削除許可状態は `deletableStates` へ明示。 |
@@ -196,16 +211,18 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ---
 
-## 10. AI エージェント導入キット（`ai-agent-kit/`・`llms.txt`）
+## 9. AI エージェント導入キット（`ai-agent-kit/`・`llms.txt`）
 
 > 詳細ページ：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 日本語トピック：[07. AI エージェント導入キット](topics/ja/07_AI_AGENT_ADOPTION_KIT.md) · LLM インデックス：[`llms.txt`](../llms.txt)
 
 **Spring-NWVMC SDD + TDD AI-Agent Adoption Kit**（`INTRO.md`・`RULES.md`・`SKILL.md`・`CHECKLIST.md`・自動検証済み `references/01..06`（SDD/TDD プレイブック含む）・`templates/{spec,plan,tasks}.template.md`・8 種の `adapters/`）を導入することで、Antigravity / Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline、ChatGPT / DeepSeek / Qwen などのあらゆる AI エージェントが仕様駆動＋テスト駆動で `0.1.0` を正確に実装できます：
 
-```bash
+```powershell
 # Windows（PowerShell — Spring Boot プロジェクト直下でそのまま実行、クローン不要）
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+$ErrorActionPreference='Stop'; $s=Join-Path $env:TEMP ("nwvmc-install-" + [guid]::NewGuid().ToString("N") + ".ps1"); try { [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
+```
 
+```bash
 # macOS / Linux / Git Bash（プロジェクト直下でそのまま実行、クローン不要）
-curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
+curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

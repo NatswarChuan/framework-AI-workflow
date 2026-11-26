@@ -1,6 +1,6 @@
 # 05. 8 SPI-Customizer-Interfaces, `@CustomEndpoint` & `@ServiceOverride` (`0.1.0`)
 
-> **Sprachen**: **Deutsch** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Alle 20 Sprachen](../README.md) | [Vollständiges Handbuch](../../GUIDE_EN.md) | [Interaktives Portal (20 Sprachen)](../../index.html#spi-customizers)
+> **Sprachen**: **Deutsch** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Alle 20 Sprachen](../README.md) | [Vollständiges Handbuch (EN)](../../GUIDE_EN.md) | [Interaktives Portal (20 Sprachen)](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Alle Erweiterungspunkte unter `io.github.natswarchuan.customization.customizer` bieten `interface`-`default`-Methoden für gezielte Spring-Bean-Überschreibungen ohne Eingriffe in den Framework-Kern:
 
-| # | SPI-Interface | Context DTO | Erweiterungsbereich |
+| # | SPI-Interface | Kontext-DTO | Erweiterungsbereich |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Kern-Bean-Container, `TaskExecutor`, Aufgabenplanung |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring-AI-`ChatClient`-Prompts, Vektor-Hooks, RAG-Pipelines |
@@ -20,6 +20,9 @@ Alle Erweiterungspunkte unter `io.github.natswarchuan.customization.customizer` 
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS`-Bucket-Richtlinien, Pre-Signed URLs & Upload-Limits |
 
 Aktive Beans der `7` Kern-Telemetriegruppen (`CustomizerGroupConstant`) lassen sich über `GET /api/v1/system/customizers` einsehen (`StorageCustomizer` wird separat über `StorageCustomizerRegistryHelper` verwaltet).
+
+
+> **Aktiver Runtime-Interceptor vs. Metadaten-/Telemetrie-Hooks (`0.1.0`):** `SecurityIdentityCustomizer` wird bei jedem Request aktiv ausgeführt (`SecurityFilterChainBridge` & `SecurityAuthorityDecisionHelper`); die übrigen `7` registrieren Metadaten-/Telemetrie-Deskriptoren für `GET /api/v1/system/customizers`.
 
 ---
 

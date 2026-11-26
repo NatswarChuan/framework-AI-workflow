@@ -1,6 +1,6 @@
 # 03. ۱۳ عملگر فیلتر پویا، محافظ‌های پرس‌وجو، Keyset O(1) و GraphQL SDL (`0.1.0`)
 
-> **زبان‌ها**: **فارسی** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#query-dsl)
+> **زبان‌ها**: **فارسی** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل (EN)](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. صفحه‌بندی مکان‌نما Keyset O(1) (`GET /keyset`)
 
-از آنجا که کلیدهای اصلی **UUIDv7** مرتب‌شده بر اساس زمان هستند، `/keyset` در هر دو جهت `dir=asc` و `dir=desc` با روش `size + 1` در زمان $O(1)$ مستقیماً به مرز مکان‌نما می‌پرد:
+از آنجا که کلیدهای اصلی **UUIDv7** مرتب‌شده بر اساس زمان هستند، `/keyset` در هر دو جهت `dir=asc` و `dir=desc` با روش `size + 1` در زمان `O(1)` مستقیماً به مرز مکان‌نما می‌پرد:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

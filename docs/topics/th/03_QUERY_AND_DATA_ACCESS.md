@@ -1,6 +1,6 @@
 # 03. 13 ตัวดำเนินการกรองไดนามิก, Query Guardrails, Keyset O(1) และ GraphQL SDL (`0.1.0`)
 
-> **ภาษา**: **ไทย** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#query-dsl)
+> **ภาษา**: **ไทย** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์ (EN)](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. การแบ่งหน้าแบบเคอร์เซอร์ Keyset O(1) (`GET /keyset`)
 
-เนื่องจากคีย์หลักเป็น **UUIDv7** ที่เรียงลำดับตามเวลา `/keyset` จึงกระโดดไปยังขอบเขตเคอร์เซอร์ได้ทันทีทั้งทิศทาง `dir=asc` และ `dir=desc` ด้วยเทคนิค `size + 1` ในเวลา $O(1)$:
+เนื่องจากคีย์หลักเป็น **UUIDv7** ที่เรียงลำดับตามเวลา `/keyset` จึงกระโดดไปยังขอบเขตเคอร์เซอร์ได้ทันทีทั้งทิศทาง `dir=asc` และ `dir=desc` ด้วยเทคนิค `size + 1` ในเวลา `O(1)`:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

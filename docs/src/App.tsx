@@ -58,12 +58,27 @@ function resolveInitialTheme(): 'dark' | 'light' {
   return 'dark';
 }
 
+const HASH_TOPIC_ALIASES: Record<string, string> = {
+  'query-dsl': 'query-operators',
+  'spi-customizers': 'customizers',
+};
+
+function parseHashTarget(raw: string): { topicId: string; sectionId?: string } {
+  const cleaned = raw.replace(/^#/, '').trim();
+  if (!cleaned) {
+    return { topicId: 'overview' };
+  }
+  const [rawTopic, rawSection] = cleaned.split('/');
+  const mappedTopic = HASH_TOPIC_ALIASES[rawTopic] ?? rawTopic;
+  if (ALL_NAV_ITEMS.some((item) => item.id === mappedTopic)) {
+    return { topicId: mappedTopic, sectionId: rawSection || undefined };
+  }
+  return { topicId: 'overview' };
+}
+
 function resolveInitialTopic(): string {
   if (typeof window !== 'undefined') {
-    const rawHash = window.location.hash.replace('#', '').trim();
-    if (rawHash && ALL_NAV_ITEMS.some((item) => item.id === rawHash)) {
-      return rawHash;
-    }
+    return parseHashTarget(window.location.hash).topicId;
   }
   return 'overview';
 }
@@ -107,21 +122,32 @@ export const App: React.FC = () => {
   }, [searchOpen, sidebarOpen]);
 
   useEffect(() => {
+    const scrollToSection = (sectionId?: string) => {
+      if (!sectionId) {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        return;
+      }
+      window.setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 60);
+    };
+
+    const initial = parseHashTarget(window.location.hash);
+    if (initial.sectionId) {
+      scrollToSection(initial.sectionId);
+    }
+
     const handleHashChange = () => {
       if (programmaticNavRef.current) {
         programmaticNavRef.current = false;
         return;
       }
-      const next = window.location.hash.replace('#', '').trim();
-      if (!next) {
-        setActiveTopicId('overview');
-        window.scrollTo({ top: 0, behavior: 'auto' });
-        return;
-      }
-      if (ALL_NAV_ITEMS.some((item) => item.id === next)) {
-        setActiveTopicId(next);
-        window.scrollTo({ top: 0, behavior: 'auto' });
-      }
+      const next = parseHashTarget(window.location.hash);
+      setActiveTopicId(next.topicId);
+      scrollToSection(next.sectionId);
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);

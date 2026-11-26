@@ -1,24 +1,44 @@
 # Spring-NWVMC (`0.1.0`) — Documentation Index for LLMs & AI Agents
 
-> Enterprise declarative REST, GraphQL, persistence, RBAC/ABAC security, resilience, and observability starter for **Java 21 LTS** and **Spring Boot 3.x** (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; optional JitPack mirror: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`).
+> Enterprise declarative REST, GraphQL, persistence, RBAC/ABAC security, resilience, and observability starter (*Next-Wave Virtual Multi-Controller*) for **Java 21 LTS** and **Spring Boot 3.x** (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; optional JitPack mirror: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`).
 
-## Quick Adoption Kit Links
+## Critical Anti-Hallucination & SDD/TDD Facts (Read First)
 
-- [AI-Agent Adoption Kit README](../ai-agent-kit/README.md): English onboarding guide, compatibility matrix for every AI coding tool and LLM, plus zero-clone 1-command installers (`install.ps1` / `install.sh`).
-- [INTRO](../ai-agent-kit/INTRO.md): Architecture, Maven Central / JitPack setup, 2-Directory Contract, 9 composable API interfaces.
-- [RULES](../ai-agent-kit/RULES.md): Strict anti-hallucination guardrails & verified runtime pitfalls.
-- [SKILL](../ai-agent-kit/SKILL.md): Step-by-step adoption workflows & troubleshooting matrix.
-- [CHECKLIST](../ai-agent-kit/CHECKLIST.md): 6-phase Pre-Flight, Design, Security Lockdown & Verification checklist.
-- [60 Annotations & 133 Attributes Reference](../ai-agent-kit/references/01-annotations-exact-matrix.md): 1:1 verified annotation specification.
-- [40 Auto-Endpoints & 13 Query Operators](../ai-agent-kit/references/02-endpoints-and-query-dsl.md): Complete route map & verified `curl` examples.
-- [YAML Properties & Profiles](../ai-agent-kit/references/03-yaml-properties-and-profiles.md): Exact `app.framework.*` properties & `dev`/`prod` profiles.
-- [Verified Cookbook Patterns](../ai-agent-kit/references/04-cookbook-verified-patterns.md): Copy-paste Java, YAML, `@MultiTenant`, DB-RBAC, Multi-Datasource, and `MockMvc` recipes.
-- [Exact Non-Annotation Class & SPI Imports](../ai-agent-kit/references/05-imports-and-spi-contracts.md): Verified imports & signatures for all non-annotation classes, constants, DTOs, helpers, and SPIs.
-- [SDD & TDD Playbook](../ai-agent-kit/references/06-sdd-and-tdd-playbook.md): Spec-Driven (`specs/<feature>/{spec,plan,tasks}.md`) & Test-Driven (`Red → Green → Refactor`, 4-Tier Test Pyramid) playbook with starter templates in [`../ai-agent-kit/templates/`](../ai-agent-kit/templates/).
+- **SDD + TDD Mandatory:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then), stop on `[NEEDS CLARIFICATION]`, build `plan.md` + `tasks.md`, execute **RED → GREEN → REFACTOR** across 4 test tiers with zero `@Disabled`.
+- **Artifact & Build:** Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` (no `v` prefix) + Java 21 + `<parameters>true</parameters>` in `maven-compiler-plugin`.
+- **9 Real Composable Interfaces (40 routes):** `AutoReadApi` (5), `AutoKeysetApi` (1), `AutoAnalyticsApi` (4), `AutoSchemaApi` (5), `AutoWriteApi` (6), `AutoBatchApi` (4), `AutoExportImportApi` (4), `AutoWorkflowApi` (9), `AutoAiApi` (2). NEVER invent `AutoAuditApi` or `AutoStateApi`.
+- **13 Real Filter Operators (`FilterOperatorConstant`):** `.eq`, `.ne`, `.like`, `.startsWith`, `.endsWith`, `.gt`, `.gte`, `.lt`, `.lte`, `.in`, `.notIn`, `.between`, `.null` (NEVER `__gte`, `.neq`, `.ilike`, `.isNull`, `.isNotNull`).
+- **Runtime & Security Guardrails:** Extend `BaseAuditEntity` (NEVER `@Data`, NEVER `@SoftDelete`); `@StateMachine` colon syntax `"FROM:TO1,TO2"` + `?targetState=` (illegal jumps return `422`); inject framework `@AutoComponent` helpers via `ObjectProvider<T>`; non-final `@Lazy @Service` + lazy injection (`0.1.0` supports method-level `@TargetDataSource` natively); use `HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY` for `"X-Idempotency-Key"`; dev JWT is `POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN` and `JwtTokenService.generateToken(username, userId, roles)`; harden prod (`studio.enabled=false`, `default-deny-unannotated-entities=true`, `require-authenticated-api-paths=true`, `JWT_SECRET >= 32` B, Springdoc off, `ddl-auto=validate`).
+
+## Quick Adoption Kit Links (Canonical HTTPS — GitHub Pages Safe)
+
+- [AI-Agent Adoption Kit README](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/README.md): English onboarding guide, compatibility matrix for every AI coding tool and LLM, hardened zero-clone 1-command installers (`install.ps1` / `install.sh`), and starter prompts.
+- [INTRO](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/INTRO.md): Architecture, Maven Central `0.1.0` setup, 2-Directory Contract, 9 composable API interfaces, 6 built-in platform endpoint groups.
+- [RULES](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/RULES.md): Mandatory SDD/TDD protocol, strict anti-hallucination & AppSec guardrails (`< 24 KB`).
+- [SKILL](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/SKILL.md): Progressive-disclosure `spring-nwvmc-adoption` runbook (**7 workflows** `0`–`6` + **15-row** troubleshooting matrix).
+- [CHECKLIST](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/CHECKLIST.md): **7-phase** (Phase 0–6) SDD, Pre-Flight, Design, Runtime Gotchas, Production Security Lockdown, Multi-Pod Performance & TDD Go-Live checklist.
+- [60 Annotations & 133 Attributes Reference](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/references/01-annotations-exact-matrix.md)
+- [40 Auto-Endpoints & 13 Query Operators](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/references/02-endpoints-and-query-dsl.md)
+- [YAML Properties & Profiles](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/references/03-yaml-properties-and-profiles.md)
+- [Verified Cookbook Patterns](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/references/04-cookbook-verified-patterns.md)
+- [Exact Non-Annotation Class & SPI Imports](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/references/05-imports-and-spi-contracts.md)
+- [SDD & TDD Playbook](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/references/06-sdd-and-tdd-playbook.md)
+- [SDD Starter Templates (`spec` / `plan` / `tasks`)](https://github.com/NatswarChuan/Spring-NWVMC-document/tree/main/ai-agent-kit/templates)
+
+## Platform Drop-In Adapters
+
+- [AGENTS.md](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/AGENTS.md)
+- [CLAUDE.md](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/CLAUDE.md)
+- [GEMINI.md](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/GEMINI.md)
+- [Cursor Rule (.mdc)](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/cursor/spring-nwvmc.mdc)
+- [GitHub Copilot Instructions](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/copilot-instructions.md)
+- [Windsurf Rules](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/windsurfrules)
+- [Cline / Roo Code Rules](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/clinerules)
+- [Generic LLM System Prompt](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/adapters/GENERIC_LLM_PROMPT.md)
 
 ## Multi-Language Documentation Guides (20 Languages × 7 Topics = 140 Guides)
 
-- [Interactive Portal (20 Languages)](index.html): Searchable Hub-and-Spoke portal (`34` pages) with 16-step continuous walkthrough and dedicated [`#ai-agent-kit`](index.html#ai-agent-kit) page.
+- [Interactive Portal (20 Languages)](https://natswarchuan.github.io/Spring-NWVMC-document/): Searchable Hub-and-Spoke portal (`34` pages) with dedicated [`#ai-agent-kit`](https://natswarchuan.github.io/Spring-NWVMC-document/#ai-agent-kit) page.
 - [All 20-Language Topic Guides Index (`topics/README.md`)](topics/README.md)
 - [AI-Agent Adoption Kit Topic Guide (EN)](topics/en/07_AI_AGENT_ADOPTION_KIT.md)
 - [AI-Agent Adoption Kit Topic Guide (VI)](topics/vi/07_AI_AGENT_ADOPTION_KIT.md)
@@ -28,4 +48,4 @@
 - [Tiếng Việt Manual](GUIDE_VI.md)
 - [日本語マニュアル](GUIDE_JA.md)
 - [中文参考手册](GUIDE_ZH.md)
-- [Full Root `llms.txt`](../llms.txt)
+- [Full Repository `llms.txt`](https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/llms.txt)

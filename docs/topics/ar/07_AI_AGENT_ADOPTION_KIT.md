@@ -1,20 +1,20 @@
 # 07. حزمة التبني الشاملة لوكلاء الذكاء الاصطناعي (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` و`llms.txt`، `0.1.0`)
 
-> **اللغات**: **العربية** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#ai-agent-kit)
+> **اللغات**: **العربية** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل (EN)](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. الهدف وبنية الحزمة (`ai-agent-kit/`)
 
-تزوّد **Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) **كل وكيل برمجة ذكاء اصطناعي وكل نموذج LLM في السوق** بحقائق متحقق منها آليًا 1:1 من الشيفرة المصدرية (`60` تعليقًا توضيحيًا ضمن `6` حزم Java دقيقة، `133` خاصية، `40` نقطة نهاية تلقائية، مفاتيح `app.framework.*` وضوابط تشغيل `0.1.0` مجربة) لدمج Spring-NWVMC بدقة من المحاولة الأولى دون هلوسة.
+تزوّد **Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) **كل وكيل برمجة ذكاء اصطناعي وكل نموذج LLM في السوق** بحقائق متحقق منها آليًا 1:1 من الشيفرة المصدرية (`60` تعليقًا توضيحيًا ضمن `6` حزم Java دقيقة، `133` خاصية، `40` نقطة نهاية تلقائية، مفاتيح `app.framework.*` وضوابط تشغيل `0.1.0` مجربة) لدمج Spring-NWVMC بدقة من المحاولة الأولى دون هلوسة.
 
 | الملف / المجلد | الدور |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نظرة معمارية: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` وJitPack `v0.1.0`، عقد المجلدين (`entity/` + `controller/`)، 9 واجهات قابلة للتركيب، 6 حزم تعليقات، 11 نظامًا فرعيًا مدمجًا |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ضوابط صارمة ضد الهلوسة (`17.2 KB`، دون سقف `24 KB`) توثق كل فخ تشغيلي مُثبت عمليًا |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارة `spring-nwvmc-adoption` التدريجية مع 6 مسارات عمل خطوة بخطوة ومصفوفة تشخيص لـ 10 أسباب جذرية |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | بوابة تحقق من 6 مراحل قبل التسليم (ما قبل البدء -> التصميم -> فخاخ التشغيل -> إغلاق الإنتاج -> الأداء -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 مراجع معمقة محققة آليًا (60 تعليقًا / 133 خاصية، 40 نقطة نهاية + 13 عاملًا بالنقطة، YAML + تعدد قواعد البيانات، وصفات عملية تشمل `@MultiTenant` + DB-RBAC من 4 كيانات + `JwtTokenService`، وجدول استيرادات الفئات وSPI الدقيقة) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نظرة معمارية: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` وJitPack `v0.1.0`، عقد المجلدين (`entity/` + `controller/`)، 9 واجهات قابلة للتركيب، 6 حزم تعليقات، 6 نظامًا فرعيًا مدمجًا |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ضوابط صارمة ضد الهلوسة (`19.0 KB`، دون سقف `24 KB`) توثق كل فخ تشغيلي مُثبت عمليًا |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارة `spring-nwvmc-adoption` التدريجية مع 7 مسارات عمل خطوة بخطوة ومصفوفة تشخيص لـ 15 أسباب جذرية |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | بوابة تحقق من 7 مراحل قبل التسليم (ما قبل البدء ← التصميم ← فخاخ التشغيل ← إغلاق الإنتاج ← الأداء ← `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) مراجع معمقة محققة آليًا (60 تعليقًا / 133 خاصية، 40 نقطة نهاية + 13 عاملًا بالنقطة، YAML + تعدد قواعد البيانات، وصفات عملية تشمل `@MultiTenant` + DB-RBAC من 4 كيانات + `JwtTokenService`، وجدول استيرادات الفئات وSPI الدقيقة) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | فهارس متوافقة مع `llmstxt.org` لوكلاء وزواحف الذكاء الاصطناعي |
 
 ---
@@ -27,10 +27,10 @@
 
 ```powershell
 # التثبيت لجميع وكلاء البرمجة والنماذج داخل المجلد الحالي (".")
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # أو استهداف وكيل محدد فقط (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # أضف -Force لاستبدال ملفات المحولات الموجودة (الوضع الافتراضي يحافظ عليها بأمان)
 ```
@@ -86,4 +86,4 @@ rm -rf /tmp/nwvmc-docs
 
 - **SDD — التطوير الموجّه بالمواصفات (`specs/<feature>/`):** مسار من 6 بوابات (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): اكتب `spec.md` بمعايير `REQ-ID` (`Given/When/Then`)، وتوقف عند `[NEEDS CLARIFICATION]` للتأكيد، وأنشئ مصفوفة تتبع 1:1 في `plan.md` مع التحقق من التطابق التام مع `/v3/api-docs` و`/metadata` و`/schema/zod`.
 - **TDD — أحمر ← أخضر ← إعادة هيكلة (هرم الاختبار من 4 مستويات):** اكتب أولًا اختبار JUnit 5 / `MockMvc` فاشلًا بوسم `@DisplayName("REQ-XXX: ...")` (واختبار تراجع لكل خطأ)، ثم اكتب الحد الأدنى من الشيفرة التصريحية حتى ينجح، ثم أعد الهيكلة. يغطي 4 مستويات: الوحدة، الأمان وتدفق العمل، انحراف العقد، وتزامن `@DistributedLock` + JMeter بنسبة خطأ `0.0%` دون `@Disabled`.
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **دليل العمل والقوالب:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

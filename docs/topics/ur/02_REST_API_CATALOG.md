@@ -1,6 +1,6 @@
 # 02. 40 آٹو جنریٹڈ REST معاہدے اور پلیٹ فارم کنٹرولرز کی فہرست (`0.1.0`)
 
-> **زبانیں**: **اردو** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#endpoints)
+> **زبانیں**: **اردو** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ (EN)](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#endpoints)
 
 ---
 
@@ -12,7 +12,7 @@
 
 | # | HTTP | ذیلی راستہ | میتھڈ | رویہ |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `""` | `getPage` | 13 فلٹر آپریٹرز، ملٹی کالم ترتیب، ایگر فیچ include اور منتخب فیلڈز کے ساتھ آفسیٹ پیجینیشن۔ |
+| 1 | `GET` | `""` | `getPage` | 13 فلٹر آپریٹرز، ملٹی کالم ترتیب، ایگر فیچ `?expand=` اور منتخب فیلڈز کے ساتھ آفسیٹ پیجینیشن۔ |
 | 2 | `GET` | `/keyset` | `getKeysetPage` | بڑی ٹیبلز پر SQL OFFSET اسکین سستی کے بغیر O(1) UUIDv7 کرسر پیجینیشن۔ |
 | 3 | `GET` | `/all` | `getAll` | ڈراپ ڈاؤن اور لک اپ ٹیبلز کے لیے ڈائنامک فلٹرز سے مطابقت رکھنے والے تمام ریکارڈز واپس کرتا ہے۔ |
 | 4 | `GET` | `/count` | `count` | ڈائنامک فلٹر شرائط کے مطابق SQL COUNT(*) چلاتا ہے۔ |
@@ -81,7 +81,7 @@
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`، `POST ""`، `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | مخصوص ISO-8601 UTC وقت پر اینٹیٹی کی تاریخی حالت کی بازتعمیر (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | `7` بنیادی ٹیلی میٹری `*Customizer` گروپس کے فعال SPI بینز کا معائنہ (`StorageCustomizer` الگ سے `StorageCustomizerRegistryHelper` کے تحت، کل `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j سرکٹ بریکرز کے لائیو ہیلتھ میٹرکس |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j سرکٹ بریکرز کے لائیو ہیلتھ میٹرکس |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | ملٹی ڈیٹاسورس صحت کی جانچ |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | فعال MDC میں W3C `traceparent` اور UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Tomcat کنٹینر ایررز (`400/404/405/413/431/500`) کو معیاری `ApiResponse<Void>` میں تبدیل کرتا ہے |

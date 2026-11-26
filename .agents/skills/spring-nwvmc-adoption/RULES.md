@@ -66,7 +66,7 @@ These 8 syntax rules prevent the most common LLM hallucinations and runtime fail
 ### Rule 2.3 — Dynamic Filter Operators Use DOT Syntax (`.gte`, `.like`), NOT Double Underscores (`__`)!
 - **CORRECT:** `GET /api/v1/product-catalogs?category=ELECTRONICS&retailPrice.gte=1000&productName.like=MacBook&fields=id,skuCode,productName,retailPrice`
 - **FORBIDDEN:** `retailPrice__gte=1000` (returns HTTP `400 Bad Request`).
-- All 13 real operators: `.eq`, `.neq`, `.gt`, `.gte`, `.lt`, `.lte`, `.like`, `.ilike`, `.startsWith`, `.endsWith`, `.in`, `.notIn`, `.isNull`.
+- All 13 real operators (`FilterOperatorConstant`): `.eq`, `.ne`, `.like`, `.startsWith`, `.endsWith`, `.gt`, `.gte`, `.lt`, `.lte`, `.in`, `.notIn`, `.between`, `.null`.
 
 ### Rule 2.4 — Auto-Derived Base Paths Follow Strict CamelCase-to-Kebab-Case Splitting
 - Every capital-letter transition inserts a hyphen and pluralizes:
@@ -93,13 +93,14 @@ These 8 syntax rules prevent the most common LLM hallucinations and runtime fail
   2. Annotate the `@Service` class with **`@Lazy`** (`org.springframework.context.annotation.Lazy`) so Spring creates its AOP proxy after framework aspects are registered.
   3. **CRITICAL:** Any consumer `@Component` (such as a Helper or Controller delegate) that injects a `@Lazy` AOP `@Service` MUST ALSO inject it via **`ObjectProvider<MyService>`** (or annotate the constructor parameter with **`@Lazy`**). Eager constructor injection forces early instantiation before `AutoCacheAspect` registers and silently defeats caching!
   4. **Never place `@Transactional` on a `public final class` Helper** — Spring CGLIB fails at startup with `AopConfigException: Cannot subclass final class`. Keep `@Transactional` strictly on non-final `@Lazy @Service` classes.
-  5. On JitPack `v0.1.0`, when annotating a service method with `@TargetDataSource(DataSourceConstant.DATASOURCE_REPLICA)`, also place `@TargetDataSource(DataSourceConstant.DATASOURCE_REPLICA)` at the class level so `DataSourceRoutingAspect` always binds a non-null key.
+  5. **`@TargetDataSource` in `0.1.0`:** Spring-NWVMC `0.1.0` natively splits method-level and class-level `@TargetDataSource` AspectJ pointcuts, so method-level `@TargetDataSource(DataSourceConstant.DATASOURCE_REPLICA)` works cleanly without forcing class-level `REPLICA` on mixed read/write services (class-level workaround was only needed on legacy `v0.0.3`).
+  6. **Multi-Pod Concurrency & `@Idempotent` Header Constant:** Default Caffeine `@DistributedLock` and `@Idempotent` stores are single-JVM only — plug Redis/JDBC `DistributedLockProvider` and `IdempotencyStoreProvider` (`io.github.natswarchuan.module.idempotent.provider.IdempotencyStoreProvider`) for multi-pod Kubernetes, acquire `@DistributedLock` in an outer non-transactional facade calling `@Transactional`, and use **`HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY`** (or `AopConstant.HEADER_IDEMPOTENCY_KEY`) for `"X-Idempotency-Key"` (NEVER `HttpHeaderConstant.HEADER_IDEMPOTENCY_KEY`, which equals `"Idempotency-Key"` and silently skips deduplication!).
 
 ### Rule 2.7 — Keep `@AutoRestController(readDto = ...)` Controllers Dedicated to That Entity's Projection
 - `ControllerDtoContractUtil` projects responses returned from a controller declaring `readDto = ProductReadDto.class` through `ProductReadDto` (stripping fields absent from the DTO).
 - Never mount unrelated custom DTO routes (e.g., `CategorySalesAnalyticsDto`) on a `readDto`-projected controller; mount them on a controller without `readDto` or a dedicated interface.
 
-### Rule 2.8 — Verified Runtime Event Names, Auth Token Endpoint & JitPack `v0.1.0` Caveats
+### Rule 2.8 — Verified Runtime Event Names, Auth Token Endpoint & `0.1.0` Native Fixes
 - **Dev Demo JWT Endpoint:** **`POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN`** (`200 OK`, JSON `$.data.token`, `$.data.userId`, `$.data.username`, `$.data.role`). NEVER call `GET /system/studio/demo-token` (`404`) or `GET /api/v1/auth/token` (`405`).
 - **Programmatic JWT Minting in Tests:** `jwtTokenService.generateToken(String username, String userId, Set<String> roles)` — **`username` is FIRST, `userId` is SECOND!**
 - **Outbox event types (`EventConstant`):** `"ENTITY_CREATED"`, `"ENTITY_UPDATED"`, `"ENTITY_DELETED"`, `"ENTITY_STATE_CHANGED"` (NOT `"CREATED"`).
@@ -119,15 +120,18 @@ These 8 syntax rules prevent the most common LLM hallucinations and runtime fail
 4. **Database-Driven RBAC (`@SecurityRoleEntity`, `@SecurityPermissionEntity`, `@SecurityUserRoleEntity`, `@SecurityPolicyEntity`):**
    - Never duplicate single-valued markers (e.g., two `@RoleCode` fields on the same entity) — startup fail-fast validation rejects it.
    - Explicit `DENY` policies strictly override `ALLOW`.
-5. **`@MultiTenant` Fail-Closed Isolation:**
+5. **`@MultiTenant` Fail-Closed Isolation + JWT Claim Verification:**
    - Every request to a `@MultiTenant` entity requires the `X-Tenant-ID` header (unless caller holds a `bypassTenantRoles` role); missing header or cross-tenant IDOR returns HTTP `403 Forbidden`.
+   - **CRITICAL AppSec Note (`0.1.0`):** `JwtAuthenticationFilter` reads `X-Tenant-ID` from the HTTP header; in multi-tenant production apps, ALWAYS implement a `SecurityIdentityCustomizer` (or upstream auth filter) verifying the caller's signed JWT `tenantId` claim / DB membership matches `X-Tenant-ID` so Tenant B cannot spoof `X-Tenant-ID: TENANT_A`.
 6. **Production Surface Lockdown (NEVER relax in `application.yml` / `application-prod.yml`):**
    - `app.framework.studio.enabled: false`
    - `app.framework.studio.demo-token-endpoint-enabled: false`
    - `app.framework.studio.show-i18n-diagnostics: false`
    - `app.framework.security.fail-fast-weak-jwt-secret: true`
-   - `app.framework.security.jwt-secret: ${JWT_SECRET}` (minimum **32 UTF-8 bytes** / 256 bits; NEVER commit secrets in Git).
-   - Only enable Studio & demo tokens inside `application-dev.yml`.
+   - `app.framework.security.default-deny-unannotated-entities: true`
+   - `app.framework.security.require-authenticated-api-paths: true` (explicitly allowlist only intentional public read-only routes via `SecurityIdentityCustomizer`; special routes like `/ai/query`, `/events`, `@CustomEndpoint` bypass `invokeProtectedOperation` in `0.1.0` unless authenticated at the filter/bean layer!)
+   - `app.framework.security.jwt-secret: ${JWT_SECRET}` (`>= 32` UTF-8 bytes for HS256 / `>= 64` bytes for HS512; shared across pods; NEVER commit secrets in Git).
+   - Disable Springdoc in prod (`springdoc.api-docs.enabled: false`, `springdoc.swagger-ui.enabled: false`), restrict CORS origins via `SecurityIdentityCustomizer`, keep `storage.enabled: false` & `ai.enabled: false` unless explicitly authorized, and use `ddl-auto: validate` + Flyway/Liquibase (enable Studio & H2 only in `application-dev.yml`).
 
 ---
 

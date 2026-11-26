@@ -1,6 +1,6 @@
 # 03. 13 عامل تصفية ديناميكي، ضوابط الاستعلام، Keyset O(1) ومخطط GraphQL SDL (`0.1.0`)
 
-> **اللغات**: **العربية** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#query-dsl)
+> **اللغات**: **العربية** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل (EN)](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. ترقيم الصفحات بالمؤشر Keyset O(1) (`GET /keyset`)
 
-لأن المفاتيح الأساسية تستخدم **UUIDv7** المرتبة زمنيًا، يقفز `/keyset` مباشرة إلى حدود المؤشر في الاتجاهين `dir=asc` و`dir=desc` بفحص `size + 1` بزمن $O(1)$:
+لأن المفاتيح الأساسية تستخدم **UUIDv7** المرتبة زمنيًا، يقفز `/keyset` مباشرة إلى حدود المؤشر في الاتجاهين `dir=asc` و`dir=desc` بفحص `size + 1` بزمن `O(1)`:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

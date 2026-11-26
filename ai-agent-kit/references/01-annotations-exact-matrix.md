@@ -29,11 +29,11 @@
 
 | Attribute | Java Type | Default | Required | Allowed / Example | Caveat |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `basePath` | `String` | `""` | no | `@AutoRestController(basePath = "/api/v1/product-catalogs")` | At startup the proxy registrar evaluates `basePath` before `path`. Avoid setting conflicting values on both attributes simultaneously. |
-| `path` | `String` | `""` | no | `@AutoRestController(path = "/api/v1/orders")` | At startup the proxy registrar evaluates `basePath` before `path`. Avoid setting conflicting values on both attributes simultaneously. |
-| `entityName` | `String` | `""` | no | `@AutoRestController(entityName = "ProductCatalog")` | Exposed directly in generated Swagger / OpenAPI 3.0 specifications and NWVMC Studio; extract strings into `OpenApiConstant` to obey zero hard-code rules. |
-| `enabledEndpoints` | `String[]` | `{}` | no | `@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | Acts as a strict allowlist: when non-empty, every AutoApiController method NOT listed here is omitted from Spring MVC and Swagger UI. Prefer this for public read-only APIs. |
-| `disabledEndpoints` | `String[]` | `{}` | no | `@AutoRestController(disabledEndpoints = {"deleteById", "batchDelete", "importCsv"})` | Evaluated after `enabledEndpoints`; use this denylist to block destructive or bulk endpoints while retaining the rest of the 40 generated contracts. |
+| `basePath` | `String` | `""` | no | `@AutoRestController(basePath = "/api/v1/product-catalogs")` | Primary route prefix read by `DynamicControllerProxyRegistrarHelper` on proxy interfaces. Always use `basePath` on `@AutoRestController` interfaces. |
+| `path` | `String` | `""` | no | `@AutoRestController(path = "/api/v1/orders")` | Only honored on concrete controllers (`SpringMvcEndpointBridge`); **ignored on proxy interfaces** by `DynamicControllerProxyRegistrarHelper` (`0.1.0`) — always use `basePath` instead. |
+| `entityName` | `String` | `""` | no | `@AutoRestController(entityName = "ProductCatalog")` | Exposed directly in generated Swagger / OpenAPI 3.0 specifications and NWVMC Studio; extract repeated literals into a constant class for maintainability. |
+| `enabledEndpoints` | `String[]` | `{}` | no | `@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | Acts as a strict allowlist (exact `AutoApiController` method names, case-insensitive): when non-empty, every method NOT listed here is omitted from Spring MVC and Swagger UI. Prefer this for public read-only APIs. |
+| `disabledEndpoints` | `String[]` | `{}` | no | `@AutoRestController(disabledEndpoints = {"deleteById", "batchChunked", "importCsv"})` | Evaluated **before** `enabledEndpoints` (denylist wins in `EndpointFeatureFilterHelper`); use exact `AutoApiController` method names (`deleteById`, `createBatch`, `batchChunked`, `updateBatchByFilter`, `importCsv`). |
 | `enableNestedSubResources` | `boolean` | `false` | no | `@AutoRestController(basePath = "/api/v1/orders", enableNestedSubResources = true)` | Keep `false` unless deep `GET /{id}/items/...` traversal is required; enabling globally across large schemas increases route count and requires `@EnableNestedSubResource` allowlists. |
 | `readDto` | `Class<?>` | `Void.class` | no | `@AutoRestController(readDto = ProductReadDto.class)` | Applies exclusively to the read (GET) pipeline; the DTO class needs a no-arg constructor/getters (or Lombok `@Builder`) and honors Jakarta `@Valid` and `@FieldSecurity`. |
 | `createDto` | `Class<?>` | `Void.class` | no | `@AutoRestController(createDto = ProductCreateDto.class)` | Applies exclusively to the create (POST) pipeline; the DTO class needs a no-arg constructor/getters (or Lombok `@Builder`) and honors Jakarta `@Valid` and `@FieldSecurity`. |
@@ -53,7 +53,7 @@
 | `targetBean` | `Class<?>` | `Void.class` | no | `@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | At startup the proxy registrar evaluates `targetBean` before `beanName`. Avoid setting conflicting values on both attributes simultaneously. |
 | `beanName` | `String` | `""` | no | `@ServiceOverride(beanName = "orderCustomService", methodName = "createOrder")` | At startup the proxy registrar evaluates `targetBean` before `beanName`. Avoid setting conflicting values on both attributes simultaneously. |
 | `methodName` | `String` | `""` | no | `@ServiceOverride(targetBean = OrderService.class, methodName = "createOrder")` | Must match the exact Java method/field identifier (case-sensitive, e.g., `"createOrder"`); mismatches silently skip or trigger a runtime lookup error. |
-| `bypassAutoDispatch` | `boolean` | `true` | no | `@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | When `true` (default), the built-in CRUD handler is skipped completely and your bean owns transaction/persistence. Set `false` only for pre/post hooks around default dispatch. |
+| `bypassAutoDispatch` | `boolean` | `true` | no | `@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | When `true` (default), the built-in CRUD handler is skipped and your bean owns execution/transaction/persistence. When `false`, `EscapeHatchResolutionUtil` disables the override (returns `null`, falling back directly to built-in CRUD). |
 
 ### `@CustomEndpoint`
 - **Import:** `import io.github.natswarchuan.core.annotation.CustomEndpoint;`
@@ -62,7 +62,7 @@
 - **How to use:** Combine with `@AutoPost`/`@AutoGet` or specify `httpMethod`/`path` on a controller method and point `delegateBean` + `delegateMethod` to a custom Spring bean helper.
 - **When to use:** Use for rich domain actions such as checkout, refund, order cancellation, report generation, or multi-entity transactions within an entity controller.
 - **When NOT to use:** Do NOT pair controller-proxy `@EntitySecurity`/`@RateLimit`/`@Idempotent` expecting interception here (`@CustomEndpoint` dispatches directly via `ControllerProxySpecialRouteUtil` before `invokeProtectedOperation` — apply Spring AOP/security inside the delegated `@Component`/`@Service` bean or use `@ServiceOverride`), and do NOT duplicate `@BusinessAction` state transitions.
-- **Runtime behavior:** Invokes delegateBean.delegateMethod through cached MethodHandle lookup with full validation and transaction wrapping.
+- **Runtime behavior:** Invokes `delegateBean.delegateMethod` directly through cached `MethodHandle` lookup (does NOT automatically wrap in a DB transaction — place `@Transactional` on a non-final `@Lazy @Service` delegate when mutating data).
 
 | Attribute | Java Type | Default | Required | Allowed / Example | Caveat |
 | :--- | :--- | :--- | :---: | :--- | :--- |
@@ -70,8 +70,8 @@
 | `httpMethod` | `String` | `"GET"` | no | `@CustomEndpoint(path = "/approve", httpMethod = "POST", delegateBean = "orderApprovalService")` | Validated eagerly during application bootstrap; misspelled names or invalid `httpMethod` values fail fast before serving traffic. |
 | `delegateBean` | `String` | `""` | no | `@CustomEndpoint(path = "/export", delegateBean = "orderReportService", delegateMethod = "buildReport")` | Validated eagerly during application bootstrap; misspelled names or invalid `delegateBean` values fail fast before serving traffic. |
 | `delegateMethod` | `String` | `""` | no | `@CustomEndpoint(path = "/export", delegateBean = "orderReportService", delegateMethod = "buildMonthlyReport")` | Must match the exact Java method/field identifier (case-sensitive, e.g., `"buildMonthlyReport"`); mismatches silently skip or trigger a runtime lookup error. |
-| `summary` | `String` | `""` | no | `@CustomEndpoint(path = "/revenue", summary = OpenApiConstant.SUM_MONTHLY_REVENUE)` | Exposed directly in generated Swagger / OpenAPI 3.0 specifications and NWVMC Studio; extract strings into `OpenApiConstant` to obey zero hard-code rules. |
-| `description` | `String` | `""` | no | `@CustomEndpoint(path = "/revenue", description = OpenApiConstant.DESC_MONTHLY_REVENUE)` | Exposed directly in generated Swagger / OpenAPI 3.0 specifications and NWVMC Studio; extract strings into `OpenApiConstant` to obey zero hard-code rules. |
+| `summary` | `String` | `""` | no | `@CustomEndpoint(path = "/revenue", summary = "Compute monthly revenue")` | Exposed directly in generated Swagger / OpenAPI 3.0 specifications and NWVMC Studio. |
+| `description` | `String` | `""` | no | `@CustomEndpoint(path = "/revenue", description = "Aggregates paid monthly revenue")` | Exposed directly in generated Swagger / OpenAPI 3.0 specifications and NWVMC Studio. |
 
 ### `@AutoGet`
 - **Import:** `import io.github.natswarchuan.core.annotation.AutoGet;`
@@ -286,7 +286,7 @@
 - **Purpose:** Controls execution priority order among SPI Customizer beans and filter chains.
 - **How to use:** Place `@OrderPriority(1)` on pure-Java interceptors, customizers, or beans ordered by `AutoBeanFactoryRegistrarBridge`.
 - **When to use:** Use when deterministic ordering of framework beans or multiple SPI customizers matters without relying on `@Order`.
-- **When NOT to use:** Do NOT confuse `@OrderPriority` with Spring Security filter ordering or JPA sort clauses — use `SecurityExposureCustomizer` and `?sort=` respectively.
+- **When NOT to use:** Do NOT confuse `@OrderPriority` with Spring Security filter ordering or JPA sort clauses — use `SecurityIdentityCustomizer` and `?sort=` respectively.
 - **Runtime behavior:** Lower integer values execute earlier (default Integer.MAX_VALUE).
 
 | Attribute | Java Type | Default | Required | Allowed / Example | Caveat |
@@ -343,8 +343,8 @@
 | Attribute | Java Type | Default | Required | Allowed / Example | Caveat |
 | :--- | :--- | :--- | :---: | :--- | :--- |
 | `initial` | `String` | `"ACTIVE"` | no | `@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | Automatically populated on `POST` creation when the incoming status field is blank/null; must match the left side (before `:`) of at least one entry in `transitions`. |
-| `transitions` | `String[]` | `{}` | no | `@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | Strictly enforces the exact colon syntax `"FROM:TO1,TO2"` (case-sensitive, comma-separated targets). Any `POST /{id}/transition` or `@BusinessAction` jumping to an undeclared state is rejected with HTTP `400`/`409`. |
-| `deletableStates` | `String[]` | `{}` | no | `@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | When non-empty, `DELETE /{id}` and `batchDelete` fail with HTTP `409 Conflict` if the entity is in any other state (e.g., `"PAID"` or `"SHIPPED"`). |
+| `transitions` | `String[]` | `{}` | no | `@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | Strictly enforces the exact colon syntax `"FROM:TO1,TO2"` (case-sensitive, comma-separated targets). Any `POST /{id}/transition` or `@BusinessAction` jumping to an undeclared state is rejected with HTTP `422 Unprocessable Entity` (`BusinessRuleViolationException`). |
+| `deletableStates` | `String[]` | `{}` | no | `@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | When non-empty, `DELETE /{id}` fails with HTTP `422 Unprocessable Entity` (`BusinessRuleViolationException`) if the entity is in any other state (e.g., `"PAID"` or `"SHIPPED"`). |
 
 ### `@HumanPolicy`
 - **Import:** `import io.github.natswarchuan.core.annotation.HumanPolicy;`
@@ -367,7 +367,7 @@
 - **Target:** `Class (TYPE)`
 - **Purpose:** Records field-level diffs across mutations powering Time-Travel state reconstruction and /diff inspection.
 - **How to use:** Annotate any `BaseAuditEntity` subclass with `@AuditTrail(recordFieldDiffs = true)`. All POST/PUT/PATCH/DELETE mutations log revision snapshots via `AuditTrailService` automatically.
-- **When to use:** Use on compliance-sensitive entities (orders, payments, clinical records, accounts, RBAC policies) needing `GET /{id}/revisions` Time-Travel auditing.
+- **When to use:** Use on compliance-sensitive entities (orders, payments, clinical records, accounts, RBAC policies) needing `GET /api/v1/system/time-travel/{entityName}/{id}` Time-Travel auditing.
 - **When NOT to use:** Set `recordFieldDiffs = false` or omit `@AuditTrail` on ultra-high-churn telemetry/log tables to avoid magnifying write amplification in audit storage.
 - **Runtime behavior:** Captures oldValue and newValue deltas on create, update, patch, transition, and restore.
 
@@ -411,7 +411,7 @@
 
 | Attribute | Java Type | Default | Required | Allowed / Example | Caveat |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `prefix` | `String` | `Required (no default)` | YES | `@AutoCode(prefix = "INV") private String invoiceCode;` | Required attribute; generates sequential or date-stamped codes like `INV-2026-0001` only when the field is null/blank on creation, preserving caller-supplied codes if present. |
+| `prefix` | `String` | `Required (no default)` | YES | `@AutoCode(prefix = "INV-") private String invoiceCode;` | Required attribute; appends an 8-character uppercase UUIDv7 hash (e.g. `INV-0194E1A0`) when the field is null/blank on create or clone, preserving caller-supplied codes if present. |
 
 ### `@AutoSlug`
 - **Import:** `import io.github.natswarchuan.core.annotation.AutoSlug;`
@@ -729,7 +729,7 @@
 - **Purpose:** Automatically retries transient failures with configurable exponential backoff.
 - **How to use:** Place `@EntityRetry(maxAttempts = 3, waitDurationMs = 500L)` on `@AutoRestController` methods or classes to automatically recover from transient network/DB lock glitches via Resilience4j.
 - **When to use:** Use for idempotent GET reads, `@AutoPut` replacements, or downstream calls guarded by `@Idempotent` encountering transient hiccups.
-- **When NOT to use:** NEVER place on non-idempotent POST creations or payment charges lacking `@Idempotent` (retries would duplicate charges!), and never stack long backoff delays inside latency-critical endpoints. **Published JitPack `v0.1.0` Caveat:** Class-level `@EntityRetry` wraps caught 4xx `BaseBusinessException` into `500 RetryExhaustedException` on the published `v0.1.0` JAR (fixed on `main` post-`v0.1.0`); apply `@EntityRetry` selectively on transient downstream I/O methods rather than endpoints expected to return `404`/`409`.
+- **When NOT to use:** NEVER place on non-idempotent POST creations or payment charges lacking `@Idempotent` (retries would duplicate charges!), and never stack long backoff delays inside latency-critical endpoints. **Version Note:** `0.1.0` natively excludes 4xx `BaseBusinessException` from `@EntityRetry` retries (legacy `v0.0.3` wrapped caught 4xx into `500 RetryExhaustedException` — upgrade to `0.1.0`).
 - **Runtime behavior:** Throws standardized exception if all configured retry attempts exhaust.
 
 | Attribute | Java Type | Default | Required | Allowed / Example | Caveat |
@@ -745,7 +745,7 @@
 - **Purpose:** Computes RFC 7232 weak ETags (W/"...") and emits Cache-Control + HTTP 304 Not Modified responses.
 - **How to use:** Place `@HttpCacheable(maxAgeSeconds = 120, isPrivate = false)` on read-only `@AutoRestController` interfaces or GET methods to emit standard RFC 7232/9111 HTTP caching.
 - **When to use:** Use for semi-static catalogs, reference dictionaries, OpenAPI metadata, or public storefront listings where HTTP `304` eliminates JSON re-transmission.
-- **When NOT to use:** NEVER leave `isPrivate = false` (default) on user-specific PII, tenant-isolated financials, or role-masked endpoints — set `isPrivate = true` or omit HTTP caching completely so CDNs cannot serve one user’s response to another! **Published JitPack `v0.1.0` `@ServiceOverride` Caveat:** On the published `v0.1.0` JAR, have `@ServiceOverride` cache helpers return `ApiResponse<MyDto>` (not `ResponseEntity`) and compute weak ETag on the deterministic DTO via `ObjectProvider<HttpCacheEvaluatorHelper>` (see `references/04-cookbook-verified-patterns.md` Recipe 1).
+- **When NOT to use:** NEVER leave `isPrivate = false` (default) on user-specific PII, tenant-isolated financials, or role-masked endpoints — set `isPrivate = true` or omit HTTP caching completely so CDNs cannot serve one user’s response to another! **Version Note:** `0.1.0` natively supports `ResponseEntity<ApiResponse<MyDto>>` on `@ServiceOverride` methods, unwrapping `ApiResponse.getData()` before SHA-256 ETag hashing (legacy `v0.0.3` required returning `ApiResponse<MyDto>` and manual `HttpCacheEvaluatorHelper` hashing).
 - **Runtime behavior:** Records HIT/MISS counters in nwvmc.cache.http.requests.
 
 | Attribute | Java Type | Default | Required | Allowed / Example | Caveat |
@@ -827,7 +827,7 @@
 | `source` | `String` | `""` | no | `@PublishCloudEvent(source = "/services/order-api")` | Populates the CNCF CloudEvents `source` URI attribute for cross-microservice lineage tracing. |
 | `publishOnCreate` | `boolean` | `true` | no | `@PublishCloudEvent(publishOnCreate = true, publishOnUpdate = false, publishOnDelete = false)` | Emitted only after commit (`AFTER_COMMIT`) via Spring `ApplicationEventPublisher` / Kafka / RabbitMQ bridge. |
 | `publishOnUpdate` | `boolean` | `true` | no | `@PublishCloudEvent(publishOnUpdate = true)` | Disable (`false`) on high-churn entities whose minor updates (e.g., view counters) should not flood downstream message brokers. |
-| `publishOnDelete` | `boolean` | `true` | no | `@PublishCloudEvent(publishOnDelete = true)` | Fires for both hard deletes and `@SoftDelete` tombstones so downstream read-models stay synchronized. |
+| `publishOnDelete` | `boolean` | `true` | no | `@PublishCloudEvent(publishOnDelete = true)` | Fires for both permanent deletes and `BaseAuditEntity.deleted` soft-delete tombstones so downstream read-models stay synchronized. |
 
 ### `@TargetDataSource`
 - **Import:** `import io.github.natswarchuan.module.datasource.annotation.TargetDataSource;`

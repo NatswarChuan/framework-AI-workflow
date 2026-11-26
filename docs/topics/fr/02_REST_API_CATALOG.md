@@ -1,6 +1,6 @@
 # 02. Catalogue des 40 Contrats REST Auto-Générés et Contrôleurs Plateforme (`0.1.0`)
 
-> **Langues**: **Français** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Les 20 Langues](../README.md) | [Manuel Complet](../../GUIDE_EN.md) | [Portail Interactif (20 Langues)](../../index.html#endpoints)
+> **Langues**: **Français** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Les 20 Langues](../README.md) | [Manuel Complet (EN)](../../GUIDE_EN.md) | [Portail Interactif (20 Langues)](../../index.html#endpoints)
 
 ---
 
@@ -12,7 +12,7 @@ L’extension de `AutoApiController<E>` (ou la composition sélective de `AutoRe
 
 | # | HTTP | Sous-Chemin | Méthode | Comportement |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `""` | `getPage` | Pagination par décalage avec 13 opérateurs de filtre, tri multicolonne, préchargement include et sélection de champs. |
+| 1 | `GET` | `""` | `getPage` | Pagination par décalage avec 13 opérateurs de filtre, tri multicolonne, préchargement `?expand=` et sélection de champs. |
 | 2 | `GET` | `/keyset` | `getKeysetPage` | Pagination par curseur UUIDv7 en temps O(1) sans dégradation SQL OFFSET sur les grandes tables. |
 | 3 | `GET` | `/all` | `getAll` | Retourne tous les enregistrements correspondant aux filtres dynamiques pour les listes et référentiels. |
 | 4 | `GET` | `/count` | `count` | Exécute un SQL COUNT(*) correspondant aux prédicats de filtre dynamiques. |
@@ -77,11 +77,11 @@ L’extension de `AutoApiController<E>` (ou la composition sélective de `AutoRe
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | Developer Studio en 20 langues (RTL `ar`, `fa`, `ur`) ; renvoie `401` si `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | Exporte du code Spring MVC standard (Controller/Service/Repository) ; protégé par `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | Génère un JWT HMAC-SHA512 de démonstration ; renvoie `404` si `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Reconstruction d’entité à un instant donné ISO-8601 UTC (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Inspecte les beans SPI actifs des `7` groupes de télémétrie `*Customizer` (`StorageCustomizer` géré par `StorageCustomizerRegistryHelper`, `8` SPI au total) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Métriques temps réel des disjoncteurs Resilience4j |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Métriques temps réel des disjoncteurs Resilience4j |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Contrôle de santé des sources de données multiples |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Contexte MDC actif W3C `traceparent` et UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Convertit les erreurs conteneur Tomcat `400/404/405/413/431/500` en `ApiResponse<Void>` |

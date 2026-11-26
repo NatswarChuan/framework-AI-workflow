@@ -1,6 +1,6 @@
 # 03. 13개 동적 필터 연산자, Query Guardrails, Keyset O(1) 및 GraphQL SDL (`0.1.0`)
 
-> **언어**: **한국어** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#query-dsl)
+> **언어**: **한국어** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼 (EN)](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. O(1) 커서 Keyset 페이지네이션 (`GET /keyset`)
 
-기본 키가 시간순 단조 증가 **UUIDv7**이므로 `/keyset`은 `dir=asc` 및 `dir=desc` 양방향에서 `size + 1` 프로브로 $O(1)$ 시간에 커서 경계로 바로 이동합니다:
+기본 키가 시간순 단조 증가 **UUIDv7**이므로 `/keyset`은 `dir=asc` 및 `dir=desc` 양방향에서 `size + 1` 프로브로 `O(1)` 시간에 커서 경계로 바로 이동합니다:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

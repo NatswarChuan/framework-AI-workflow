@@ -1,6 +1,6 @@
 # 05. 8 SPI Customizer इंटरफ़ेस, `@CustomEndpoint` और `@ServiceOverride` (`0.1.0`)
 
-> **भाषाएँ**: **हिन्दी** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#spi-customizers)
+> **भाषाएँ**: **हिन्दी** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल (EN)](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 `io.github.natswarchuan.customization.customizer` के अंतर्गत सभी एक्सटेंशन हुक इंटरफ़ेस `default` मेथड्स प्रदान करते हैं, जिससे फ़्रेमवर्क के आंतरिक कोड को बदले बिना Spring Bean ओवरराइड संभव होते हैं:
 
-| # | SPI इंटरफ़ेस | Context DTO | विस्तार दायरा |
+| # | SPI इंटरफ़ेस | संदर्भ DTO | विस्तार दायरा |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | कोर बीन कंटेनर, `TaskExecutor`, टास्क शेड्यूलिंग |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` प्रॉम्प्ट, वेक्टर हुक्स, RAG पाइपलाइन |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` बकेट नीतियाँ, प्री-साइंड URL और अपलोड सीमाएँ |
 
 `7` मुख्य टेलीमेट्री समूहों (`CustomizerGroupConstant`) के सक्रिय बीन्स `GET /api/v1/system/customizers` द्वारा देखे जा सकते हैं (`StorageCustomizer` को `StorageCustomizerRegistryHelper` अलग से प्रबंधित करता है)।
+
+
+> **सक्रिय रनटाइम इंटरसेप्टर बनाम मेटाडेटा/टेलीमेट्री हुक्स (`0.1.0`):** `SecurityIdentityCustomizer` हर अनुरोध पर `SecurityFilterChainBridge` व `SecurityAuthorityDecisionHelper` द्वारा सक्रिय रूप से चलता है; शेष `7` `*Customizer` केवल मेटाडेटा/टेलीमेट्री विवरण पंजीकृत करते हैं।
 
 ---
 

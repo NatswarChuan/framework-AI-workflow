@@ -16,7 +16,7 @@ Read files under `.agents/skills/spring-nwvmc-adoption/` on demand before emitti
 - `references/06-sdd-and-tdd-playbook.md` & `templates/{spec,plan,tasks}.template.md` — SDD templates & 4-Tier TDD Red-Green-Refactor playbook
 
 ## Mandatory SDD + TDD Workflow
-- **SDD First:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, security/tenant rules, NFRs). Stop on `[NEEDS CLARIFICATION]` until user confirms, then write `plan.md` & `tasks.md`. Keep `spec.md` synced with live `/v3/api-docs` & `/schema/zod`.
+- **SDD First:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, security/tenant rules, NFRs). Stop on `[NEEDS CLARIFICATION]` until user confirms, then write `plan.md` & `tasks.md`. Keep `spec.md` synced with live `/v3/api-docs` & `/schema/zod`. *(Small tweaks/prototypes: lightweight mini-spec + 1 `MockMvc`/regression test.)*
 - **TDD Red → Green → Refactor:** Write a failing JUnit 5 / `MockMvc` test (`@DisplayName("REQ-XXX: ...")`) BEFORE production code (and regression test first for every bug fix), verify RED failure, implement minimal declarative code until GREEN, then REFACTOR. NEVER weaken assertions or add `@Disabled`. Cover all 4 tiers (Unit, `MockMvc` Integration, Contract Drift, Concurrency/JMeter).
 
 ## Mandatory Guardrails
@@ -36,7 +36,7 @@ Read files under `.agents/skills/spring-nwvmc-adoption/` on demand before emitti
    - Query filters: dot syntax (`retailPrice.gte=1000&productName.like=MacBook`), NEVER `__gte`.
    - CamelCase base paths: `ECommerceOrder` -> `/api/v1/e-commerce-orders` (or set explicit `basePath`).
    - Inject framework `@AutoComponent` helpers (`DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`) via `ObjectProvider<T>` and call `.getObject()` at runtime.
-   - Consumer `@Service` beans using `@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, or `@TargetDataSource` MUST be non-final and `@Lazy` (class + method `@TargetDataSource` for `REPLICA` on `v0.1.0`), AND callers injecting them MUST use `ObjectProvider<MyService>` or `@Lazy`. NEVER put `@Transactional` on `public final class` Helpers.
+   - Consumer `@Service` beans using `@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, or `@TargetDataSource` MUST be non-final and `@Lazy`, AND callers injecting them MUST use `ObjectProvider<MyService>` or `@Lazy` (`0.1.0` supports method-level `@TargetDataSource` natively). NEVER put `@Transactional` on `public final class` Helpers. Use `HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY` for `"X-Idempotency-Key"`.
    - Dev JWT endpoint is `POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN`; `JwtTokenService.generateToken(username, userId, roles)` takes `username` FIRST.
    - Controllers with `readDto = X.class` map ALL responses through `X`; put other DTO endpoints on a controller without `readDto`.
    - `@ServiceOverride` custom methods default to `writeRoles` (fail-closed); `@CustomEndpoint` dispatches directly to the delegated Spring bean (place security/AOP on the delegated bean).

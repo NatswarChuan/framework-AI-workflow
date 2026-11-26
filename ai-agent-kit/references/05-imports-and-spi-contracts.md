@@ -1,6 +1,6 @@
-# Spring-NWVMC (`v0.1.0`) — Exact Non-Annotation Class, Constant & SPI Imports
+# Spring-NWVMC (`0.1.0`) — Exact Non-Annotation Class, Constant & SPI Imports
 
-> **Zero `javap` Guarantee:** Every import path, method signature, and constant below is verified 1:1 against the published `com.github.NatswarChuan:Spring-NWVMC:v0.1.0` JAR and `controller-to-api-framework/`.
+> **Zero `javap` Guarantee:** Every import path, method signature, and constant below is verified 1:1 against the published Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` JAR (optional JitPack mirror `v0.1.0`) and `controller-to-api-framework/`.
 > Use this table whenever writing consumer entities, controllers, helpers, services, exceptions, customizers, or tests — never guess package names.
 
 ---
@@ -10,17 +10,17 @@
 | Class / Interface | Exact Import | Key Methods / Signature |
 | :--- | :--- | :--- |
 | `BaseAuditEntity` | `io.github.natswarchuan.common.entity.BaseAuditEntity` | UUIDv7 `id`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, `deleted`, `@Version version` |
-| `ApiResponse<T>` | `io.github.natswarchuan.common.response.ApiResponse` | `ApiResponse.success(T data)`, `ApiResponse.success(T data, String message)`, `ApiResponse.<T>builder()...build()` |
+| `ApiResponse<T>` | `io.github.natswarchuan.common.response.ApiResponse` | `ApiResponse.success(T data)`, `ApiResponse.<T>builder().statusCode(...).message(...).data(...).build()` |
 | `AutoApiController<E>` | `io.github.natswarchuan.core.controller.AutoApiController` | Master interface exposing all 40 contracts |
 | `AutoReadApi<E>` | `io.github.natswarchuan.core.controller.AutoReadApi` | 5 read routes (`/`, `/all`, `/count`, `/exists`, `/{id}`) |
 | `AutoKeysetApi<E>` | `io.github.natswarchuan.core.controller.AutoKeysetApi` | `GET /keyset` O(1) cursor pagination |
 | `AutoAnalyticsApi<E>` | `io.github.natswarchuan.core.controller.AutoAnalyticsApi` | `/aggregate`, `/distinct`, `/top`, `/group-by` |
 | `AutoSchemaApi<E>` | `io.github.natswarchuan.core.controller.AutoSchemaApi` | `/metadata`, `/schema/{json,typescript,zod,client}` |
 | `AutoApiReadController<E>` | `io.github.natswarchuan.core.controller.AutoApiReadController` | Composite of the 4 read interfaces (15 routes) |
-| `AutoWriteApi<E>` | `io.github.natswarchuan.core.controller.AutoWriteApi` | `POST /`, `/upsert`, `PUT /{id}`, `PATCH /{id}`, `DELETE /{id}`, `/{id}/hard`, `POST /{id}/restore` |
-| `AutoBatchApi<E>` | `io.github.natswarchuan.core.controller.AutoBatchApi` | `POST /batch`, `/batch/chunked`, `DELETE /batch` |
+| `AutoWriteApi<E>` | `io.github.natswarchuan.core.controller.AutoWriteApi` | 6 single-record mutations: `POST /`, `/upsert`, `PUT /{id}`, `PATCH /{id}`, `DELETE /{id}`, `POST /{id}/restore` |
+| `AutoBatchApi<E>` | `io.github.natswarchuan.core.controller.AutoBatchApi` | 4 bulk routes: `POST /batch`, `POST /upsert-batch`, `POST /batch-chunked`, `PATCH /batch-update` |
 | `AutoExportImportApi<E>` | `io.github.natswarchuan.core.controller.AutoExportImportApi` | `/export/{csv,jsonl}`, `/import/{csv,jsonl}` |
-| `AutoWorkflowApi<E>` | `io.github.natswarchuan.core.controller.AutoWorkflowApi` | `/{id}/transition`, `/{id}/clone`, `/{id}/increment`, `/{id}/patch`, `/{id}/diff`, `/policy-summary`, `/health`, `/events` |
+| `AutoWorkflowApi<E>` | `io.github.natswarchuan.core.controller.AutoWorkflowApi` | 9 workflow routes: `/{id}/transition`, `/{id}/clone`, `/{id}/increment`, `/{id}/patch-rfc6902`, `/{id}/diff`, `/human-policy`, `/health`, `/events` (`@Hidden`), `/{id}/**` |
 | `AutoAiApi<E>` | `io.github.natswarchuan.core.controller.AutoAiApi` | `GET /ai/context`, `POST /ai/query` |
 | `AutoApiEnterpriseController<E>` | `io.github.natswarchuan.core.controller.AutoApiEnterpriseController` | Composite of `AutoWorkflowApi` + `AutoAiApi` (11 routes) |
 
@@ -41,8 +41,8 @@
 | Constant Class | Exact Import | Frequently Used Constants |
 | :--- | :--- | :--- |
 | `RoleConstant` | `io.github.natswarchuan.common.constant.RoleConstant` | `ROLE_USER`, `ROLE_ADMIN`, `ROLE_SUPER_ADMIN` |
-| `HttpHeaderConstant` | `io.github.natswarchuan.common.constant.HttpHeaderConstant` | `HEADER_AUTHORIZATION`, `HEADER_IDEMPOTENCY_KEY` (`"X-Idempotency-Key"`), `HEADER_TENANT_ID` (`"X-Tenant-ID"`), `HEADER_REQUEST_ID` (`"X-Request-ID"`) |
-| `AopConstant` | `io.github.natswarchuan.common.constant.AopConstant` | `SECONDS_PER_DAY` (`86400L`), `DEFAULT_IDEMPOTENCY_TTL` |
+| `HttpHeaderConstant` | `io.github.natswarchuan.common.constant.HttpHeaderConstant` | `HEADER_AUTHORIZATION`, `HEADER_IDEMPOTENCY_KEY` (`"Idempotency-Key"`), **`HEADER_X_IDEMPOTENCY_KEY`** (`"X-Idempotency-Key"`), `HEADER_TENANT_ID` (`"X-Tenant-ID"`), **`HEADER_TRACE_ID`** (`"X-Request-ID"`) |
+| `AopConstant` | `io.github.natswarchuan.common.constant.AopConstant` | `HEADER_IDEMPOTENCY_KEY` (`"X-Idempotency-Key"`), `SECONDS_PER_DAY` (`86400L`), `DEFAULT_IDEMPOTENCY_TTL_SECONDS` (`300L`) |
 | `EventConstant` | `io.github.natswarchuan.common.constant.EventConstant` | `EVENT_TYPE_CREATED` (`"ENTITY_CREATED"`), `EVENT_TYPE_UPDATED` (`"ENTITY_UPDATED"`), `EVENT_TYPE_DELETED` (`"ENTITY_DELETED"`), `EVENT_TYPE_STATE_CHANGED` (`"ENTITY_STATE_CHANGED"`) |
 | `SecurityConstant` | `io.github.natswarchuan.common.constant.SecurityConstant` | `READ_OPERATIONS` (read operation allowlist for fail-closed `@ServiceOverride`) |
 | `DataSourceConstant` | `io.github.natswarchuan.module.datasource.constant.DataSourceConstant` | `DATASOURCE_PRIMARY` (`"PRIMARY"`), `DATASOURCE_REPLICA` (`"REPLICA"`) |
@@ -72,11 +72,11 @@
 | Class / Interface | Exact Import | Purpose |
 | :--- | :--- | :--- |
 | `DynamicRoutingDataSource` | `io.github.natswarchuan.module.datasource.routing.DynamicRoutingDataSource` | `registerDataSourceEntry(String key, DataSource ds)` + `setDefaultTargetDataSource(DataSource ds)` |
-| `DataSourceContextHolder` | `io.github.natswarchuan.module.datasource.context.DataSourceContextHolder` | `getDataSourceType()`, `setDataSourceType(String)`, `clearDataSourceType()` |
+| `DataSourceContextHolder` | `io.github.natswarchuan.module.datasource.context.DataSourceContextHolder` | `getDataSourceKey()`, `setDataSourceKey(String key)`, `isReplica()`, `clear()` |
 | `OutboxEvent` | `io.github.natswarchuan.module.event.OutboxEvent` | Committed outbox event (`getAggregateType()`, `getAggregateId()`, `getEventType()`, `getStatus()`, `getPayload()`, `getTraceId()`) |
-| `OutboxEventDispatcherProvider` | `io.github.natswarchuan.module.event.provider.OutboxEventDispatcherProvider` | SPI interface (`@Component`): `boolean dispatch(OutboxEvent event, Map<String, String> headers)` |
-| `DistributedLockProvider` | `io.github.natswarchuan.module.lock.provider.DistributedLockProvider` | SPI interface (`@Component`) to plug in Redis / Redisson / JDBC locks |
-| `IdempotencyStoreProvider` | `io.github.natswarchuan.core.provider.IdempotencyStoreProvider` | SPI interface (`@Component`) to plug in Redis / DB idempotency storage |
+| `OutboxEventDispatcherProvider` | `io.github.natswarchuan.module.event.provider.OutboxEventDispatcherProvider` | Active Runtime SPI (`@Component`): `boolean dispatch(OutboxEvent event, Map<String, String> headers) throws Exception` |
+| `DistributedLockProvider` | `io.github.natswarchuan.module.lock.provider.DistributedLockProvider` | Active Runtime SPI (`@Component`) to plug in Redis / Redisson / JDBC locks (multi-pod required!) |
+| `IdempotencyStoreProvider` | `io.github.natswarchuan.module.idempotent.provider.IdempotencyStoreProvider` | Active Runtime SPI (`@Component`) to plug in Redis / DB idempotency storage (multi-pod required!) |
 | `AiQueryRequestDto` | `io.github.natswarchuan.common.dto.AiQueryRequestDto` | Builder: `.prompt(...)`, `.page(0)`, `.size(10)`, `.sort(...)`, `.dir("asc")` |
 | `AiQueryExecutionResultDto<E>` | `io.github.natswarchuan.common.dto.AiQueryExecutionResultDto` | Result wrapper returned by `AiNaturalLanguageQueryParserHelper` |
 | `ThirdPartyCallRequestDto` | `io.github.natswarchuan.module.integration.dto.ThirdPartyCallRequestDto` | Builder: `.serviceName(...)`, `.targetUrl(...)`, `.httpMethod("GET"/"POST")`, `.headers(...)`, `.payload(...)` |
@@ -85,11 +85,15 @@
 
 ---
 
-## 6. Extension Customizer SPIs (`8` Interfaces)
+## 6. Extension Customizer SPIs (`8` Interfaces — Active Runtime vs Metadata/Telemetry Hooks)
 
 All 8 non-invasive customizer interfaces use Java `default` methods under `io.github.natswarchuan.customization.customizer.*`:
 
-- `io.github.natswarchuan.customization.customizer.SecurityIdentityCustomizer` (`HttpSecurity` tuning, role augmentation, ABAC `TRUE`/`FALSE`/`null` voting)
+### Active Runtime Security Interceptor (Invoked on Boot & Every Request in `0.1.0`)
+- **`io.github.natswarchuan.customization.customizer.SecurityIdentityCustomizer`** — Active runtime hook wired into `SecurityFilterChainBridge`, `PureJavaSecurityFilterBridge`, and `SecurityAuthorityDecisionHelper` (`customizeSecurityFilterChain`, `augmentSubjectAuthorities`, `evaluateCustomAuthorization` ABAC voting, and JWT `tenantId` vs `X-Tenant-ID` verification).
+
+### Metadata / Telemetry Registration Hooks (`GET /api/v1/system/customizers` & `StorageCustomizerRegistryHelper`)
+> **Honesty Note (`0.1.0`):** The 7 customizers below register context descriptors (`*CustomizerContextDto`) indexed for platform telemetry and extension metadata; they do **not** intercept live JPA, Resilience4j, or STOMP request pipelines in `0.1.0` (use `@ServiceOverride`, `@CustomEndpoint`, `OutboxEventDispatcherProvider`, `DistributedLockProvider`, or `IdempotencyStoreProvider` for live request/event interception):
 - `io.github.natswarchuan.customization.customizer.SpringCoreCustomizer`
 - `io.github.natswarchuan.customization.customizer.PlatformAiCustomizer`
 - `io.github.natswarchuan.customization.customizer.DataAccessCustomizer`

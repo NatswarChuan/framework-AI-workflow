@@ -1,6 +1,6 @@
 # 05. 8 Interfaces SPI Customizer, `@CustomEndpoint` y `@ServiceOverride` (`0.1.0`)
 
-> **Idiomas**: **Español** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Los 20 Idiomas](../README.md) | [Manual Completo](../../GUIDE_EN.md) | [Portal Interactivo (20 Idiomas)](../../index.html#spi-customizers)
+> **Idiomas**: **Español** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Los 20 Idiomas](../README.md) | [Manual Completo (EN)](../../GUIDE_EN.md) | [Portal Interactivo (20 Idiomas)](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Todos los puntos de extensión bajo `io.github.natswarchuan.customization.customizer` exponen métodos `default` en interfaces para personalizar selectivamente mediante Spring Beans sin modificar el núcleo del framework:
 
-| # | Interfaz SPI | Context DTO | Ámbito de Extensión |
+| # | Interfaz SPI | DTO de Contexto | Ámbito de Extensión |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Contenedor principal de beans, `TaskExecutor` y planificación de tareas |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Prompts Spring AI `ChatClient`, hooks vectoriales y pipelines RAG |
@@ -20,6 +20,9 @@ Todos los puntos de extensión bajo `io.github.natswarchuan.customization.custom
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Políticas de buckets `LOCAL`/`S3`/`GCS`, URLs prefirmadas y límites de carga |
 
 Los beans activos registrados en los `7` grupos principales de telemetría (`CustomizerGroupConstant`) se inspeccionan en `GET /api/v1/system/customizers` (`StorageCustomizer` se gestiona por separado mediante `StorageCustomizerRegistryHelper`).
+
+
+> **Interceptor Activo vs. Hooks de Metadatos/Telemetría (`0.1.0`):** `SecurityIdentityCustomizer` se ejecuta activamente en cada petición (`SecurityFilterChainBridge` y `SecurityAuthorityDecisionHelper`); los otros `7` `*Customizer` registran descriptores de metadatos y telemetría inspeccionables en `GET /api/v1/system/customizers`.
 
 ---
 

@@ -1,6 +1,6 @@
 # 05. 8 个 SPI Customizer 扩展接口、`@CustomEndpoint` 与 `@ServiceOverride`（`0.1.0`）
 
-> **语言**: [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | **中文** | [全部 20 种语言](../README.md) | [完整参考手册](../../GUIDE_ZH.md) | [20 语言互动文档门户](../../index.html#spi-customizers)
+> **语言**: [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | **中文** | [全部 20 种语言](../README.md) | [完整参考手册](../../GUIDE_ZH.md) | [20 语言互动文档门户](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 `io.github.natswarchuan.customization.customizer` 下的全部扩展钩子均采用 `interface` + `default` 方法，支持通过注册 Spring Bean 按需覆写而无需修改框架源码：
 
-| # | SPI 接口 | Context DTO | 扩展范围 |
+| # | SPI 接口 | 上下文 DTO | 扩展范围 |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | 核心 Bean 容器、`TaskExecutor` 与任务调度 |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` 提示词、向量检索钩子与 RAG 流水线 |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` 存储桶策略、预签名 URL 与上传大小限制 |
 
 `7` 个核心遥测分组（`CustomizerGroupConstant`）已注册的 Bean 可通过 `GET /api/v1/system/customizers` 实时巡检（`StorageCustomizer` 由 `StorageCustomizerRegistryHelper` 独立管理）。
+
+
+> **运行期拦截器与元数据/遥测钩子说明（`0.1.0`）：** `SecurityIdentityCustomizer` 会由 `SecurityFilterChainBridge` 与 `SecurityAuthorityDecisionHelper` 在每次请求中实时执行（自定义权限增强与 ABAC 投票）；其余 `7` 个 `*Customizer` 用于注册上下文元数据与遥测描述符，可通过 `GET /api/v1/system/customizers` 与 `StorageCustomizerRegistryHelper` 查询。
 
 ---
 

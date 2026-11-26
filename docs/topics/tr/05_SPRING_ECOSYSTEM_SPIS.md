@@ -1,6 +1,6 @@
 # 05. 8 SPI Customizer Arayüzü, `@CustomEndpoint` ve `@ServiceOverride` (`0.1.0`)
 
-> **Diller**: **Türkçe** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#spi-customizers)
+> **Diller**: **Türkçe** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz (EN)](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 `io.github.natswarchuan.customization.customizer` altındaki tüm genişletme noktaları `interface` `default` metotları sunar; böylece çekirdek kodu değiştirmeden yalnızca ilgili Spring Bean’ler geçersiz kılınabilir:
 
-| # | SPI Arayüzü | Context DTO | Genişletme Kapsamı |
+| # | SPI Arayüzü | Bağlam DTO | Genişletme Kapsamı |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Çekirdek bean kapsayıcısı, `TaskExecutor`, görev zamanlama |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` istemleri, vektör kancaları, RAG boru hatları |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` kova politikaları, ön imzalı URL’ler ve yükleme sınırları |
 
 `7` çekirdek telemetri grubundaki (`CustomizerGroupConstant`) etkin bean’ler `GET /api/v1/system/customizers` üzerinden incelenebilir (`StorageCustomizer`, `StorageCustomizerRegistryHelper` tarafından ayrı yönetilir).
+
+
+> **Etkin Çalışma Zamanı Kesicisi vs. Meta Veri/Telemetri Kancaları (`0.1.0`):** `SecurityIdentityCustomizer` her istekte `SecurityFilterChainBridge` ve `SecurityAuthorityDecisionHelper` tarafından çalıştırılır; diğer `7` özelleştirici `GET /api/v1/system/customizers` için meta veri/telemetri kaydeder.
 
 ---
 

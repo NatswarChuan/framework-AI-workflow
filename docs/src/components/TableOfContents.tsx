@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SupportedLanguage, TocHeading } from '../types/docs';
 import { UI_LABELS, pickText } from '../data/locales';
 
@@ -13,6 +13,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
 }) => {
   const [headings, setHeadings] = useState<TocHeading[]>([]);
   const [activeId, setActiveId] = useState<string>('');
+  const scrollLockUntilRef = useRef<number>(0);
 
   useEffect(() => {
     const container = document.getElementById('doc-reading-canvas');
@@ -59,6 +60,9 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     }
 
     const onScroll = () => {
+      if (Date.now() < scrollLockUntilRef.current) {
+        return;
+      }
       const nearBottom =
         window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 16;
       if (nearBottom) {
@@ -91,14 +95,16 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
         {headings.map((item) => (
           <a
             key={item.id}
-            href={`#${item.id}`}
+            href={`#${activeTopicId}/${item.id}`}
             className={`toc-link level-${item.level} ${activeId === item.id ? 'active' : ''}`}
             onClick={(event) => {
               event.preventDefault();
               const target = document.getElementById(item.id);
               if (target) {
+                scrollLockUntilRef.current = Date.now() + 450;
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 setActiveId(item.id);
+                window.history.replaceState(null, '', `#${activeTopicId}/${item.id}`);
               }
             }}
           >

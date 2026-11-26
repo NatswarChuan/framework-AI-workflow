@@ -1,6 +1,6 @@
 # 05. 8 อินเทอร์เฟซ SPI Customizer, `@CustomEndpoint` และ `@ServiceOverride` (`0.1.0`)
 
-> **ภาษา**: **ไทย** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#spi-customizers)
+> **ภาษา**: **ไทย** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์ (EN)](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 จุดขยายทั้งหมดภายใต้ `io.github.natswarchuan.customization.customizer` ใช้เมธอด `default` ของอินเทอร์เฟซ ทำให้ลงทะเบียน Spring Bean เพื่อปรับแต่งเฉพาะส่วนได้โดยไม่ต้องแก้โค้ดแกนกลาง:
 
-| # | อินเทอร์เฟซ SPI | Context DTO | ขอบเขตการขยาย |
+| # | อินเทอร์เฟซ SPI | DTO บริบท | ขอบเขตการขยาย |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | คอนเทนเนอร์ Bean แกนกลาง, `TaskExecutor`, การตั้งเวลาทำงาน |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | พรอมต์ Spring AI `ChatClient`, เวกเตอร์ฮุก, ไปป์ไลน์ RAG |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | นโยบายบัคเก็ต `LOCAL`/`S3`/`GCS`, URL แบบลงนามล่วงหน้า และขีดจำกัดการอัปโหลด |
 
 ตรวจสอบ Bean ที่ลงทะเบียนใน `7` กลุ่มเทเลเมทรีหลัก (`CustomizerGroupConstant`) ได้ที่ `GET /api/v1/system/customizers` (ส่วน `StorageCustomizer` จัดการแยกผ่าน `StorageCustomizerRegistryHelper`)
+
+
+> **ตัวดักจับรันไทม์จริง vs. ฮุคเมทาดาทา/เทเลเมทรี (`0.1.0`):** `SecurityIdentityCustomizer` ทำงานจริงในทุกคำขอผ่าน `SecurityFilterChainBridge` และ `SecurityAuthorityDecisionHelper` ส่วนอีก `7` ตัวใช้ลงทะเบียนเมทาดาทาและเทเลเมทรีสำหรับ `GET /api/v1/system/customizers`
 
 ---
 

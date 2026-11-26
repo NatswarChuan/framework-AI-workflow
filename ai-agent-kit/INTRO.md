@@ -71,13 +71,13 @@ You never have to expose all 40 endpoints on sensitive or public-facing entities
 | `AutoAnalyticsApi<E>` | 4 | Aggregations (`GET /aggregate`, `/distinct`, `/top`, `/group-by`) |
 | `AutoSchemaApi<E>` | 5 | Runtime contracts (`GET /metadata`, `/schema/json`, `/schema/typescript`, `/schema/zod`, `/schema/client`) |
 | `AutoApiReadController<E>` | 15 | Composite of the 4 read interfaces above |
-| `AutoWriteApi<E>` | 7 | Single-record mutations (`POST /`, `POST /upsert`, `PUT /{id}`, `PATCH /{id}`, `DELETE /{id}`, `DELETE /{id}/hard`, `POST /{id}/restore`) |
-| `AutoBatchApi<E>` | 3 | Bulk operations (`POST /batch`, `POST /batch/chunked`, `DELETE /batch`) |
+| `AutoWriteApi<E>` | 6 | Single-record mutations (`POST /`, `POST /upsert`, `PUT /{id}`, `PATCH /{id}`, `DELETE /{id}`, `POST /{id}/restore`) |
+| `AutoBatchApi<E>` | 4 | Bulk operations (`POST /batch`, `POST /upsert-batch`, `POST /batch-chunked`, `PATCH /batch-update`) |
 | `AutoExportImportApi<E>` | 4 | Data transfer (`GET /export/csv`, `GET /export/jsonl`, `POST /import/csv`, `POST /import/jsonl`) |
-| `AutoWorkflowApi<E>` | 9 | Lifecycle & realtime (`POST /{id}/transition?targetState=`, `/{id}/clone`, `PATCH /{id}/increment`, `PATCH /{id}/patch`, `GET /{id}/diff`, `/policy-summary`, `/health`, `/events` `@Hidden`, `/{id}/**`) |
+| `AutoWorkflowApi<E>` | 9 | Lifecycle & realtime (`POST /{id}/transition?targetState=`, `/{id}/clone`, `PATCH /{id}/increment`, `PATCH /{id}/patch-rfc6902`, `GET /{id}/diff`, `/human-policy`, `/health`, `/events` `@Hidden`, `/{id}/**`) |
 | `AutoAiApi<E>` | 2 | Spring AI context & natural-language query (`GET /ai/context` alias `/ai-context`, `POST /ai/query` alias `/ai-query`) |
 | `AutoApiEnterpriseController<E>` | 11 | Composite of `AutoWorkflowApi<E>` + `AutoAiApi<E>` |
-| **`AutoApiController<E>`** | **40** | Master contract combining all interfaces above (**38** visible in Swagger UI; `/events` and `/stream` marked `@Hidden`) |
+| **`AutoApiController<E>`** | **40** | Master contract combining all interfaces above (**38** visible by default in Swagger UI; `/events` is `@Hidden` and `/{id}/**` is opt-in disabled by default via `enableNestedSubResources = false`) |
 
 ---
 
@@ -103,7 +103,7 @@ Once Spring-NWVMC is on the classpath, these enterprise endpoints activate autom
 | **Dynamic GraphQL** | `GET /api/v1/graphql/schema`, `POST /api/v1/graphql`, `GET /api/v1/graphql/explorer` (`@Hidden`) | Auto-generated from JPA entities; supports `$variables`, `__schema`/`__type`, and full `@EntitySecurity` + `@MultiTenant` + `@FieldSecurity` parity |
 | **File Storage (LOCAL / S3 / GCS)** | `POST /api/v1/storage/upload` (`201 Created`), `GET /download/{id}`, `GET /metadata/{id}`, `GET /exists/{id}`, `POST /presigned-url`, `DELETE /{id}` | Configured under `app.framework.storage.*` |
 | **Audit Time-Travel** | `GET /api/v1/system/time-travel/{entityName}/{id}?timestamp=...` | Reconstructs historical state for `@AuditTrail` entities |
-| **System Telemetry** | `GET /api/v1/system/databases/health`, `/api/v1/system/trace-context`, `/api/v1/system/customizers`, `/api/v1/system/circuit-breakers` | W3C `traceparent` + UUIDv7 `X-Request-ID` + Micrometer (`11` metrics) |
+| **System Telemetry** | `GET /api/v1/system/databases/health`, `/api/v1/system/trace-context`, `/api/v1/system/customizers`, `/api/v1/system/resilience/circuit-breakers` | W3C `traceparent` + UUIDv7 `X-Request-ID` + Micrometer (`11` metrics) |
 | **Dev Studio & Code Ejection** | `GET /system/studio`, `GET /system/studio/eject?target=<Entity>`, `POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN` | **Locked off (`false`) by default** — enable only in `application-dev.yml` (`POST /api/v1/auth/token` returns `200 OK` with `data.token`) |
 | **Frontend Codegen** | `GET /api/v1/{entity}/schema/typescript`, `/schema/zod`, `/schema/client`, `/schema/json` | Emits zero-drift TypeScript interfaces, Zod schemas, and typed Fetch clients |
 

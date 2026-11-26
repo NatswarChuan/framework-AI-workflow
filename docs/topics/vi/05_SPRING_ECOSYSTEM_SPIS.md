@@ -1,6 +1,6 @@
 # 05. 8 Interface SPI Tùy Biến, `@CustomEndpoint` & `@ServiceOverride` (`0.1.0`)
 
-> **Ngôn ngữ**: [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | **Tiếng Việt** | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Đủ 20 Ngôn Ngữ](../README.md) | [Cẩm Nang Đầy Đủ](../../GUIDE_VI.md) | [Cổng Tài Liệu 20 Ngôn Ngữ](../../index.html#spi-customizers)
+> **Ngôn ngữ**: [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | **Tiếng Việt** | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Đủ 20 Ngôn Ngữ](../README.md) | [Cẩm Nang Đầy Đủ](../../GUIDE_VI.md) | [Cổng Tài Liệu 20 Ngôn Ngữ](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Mọi điểm mở rộng trong `io.github.natswarchuan.customization.customizer` dùng `interface` kèm phương thức `default`, cho phép đăng ký Spring Bean chọn lọc mà không sửa mã nguồn lõi:
 
-| # | SPI Interface | Context DTO | Phạm Vi Tùy Biến |
+| # | SPI Interface | DTO Ngữ cảnh | Phạm Vi Tùy Biến |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Container Bean, `TaskExecutor`, lập lịch |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Prompt Spring AI `ChatClient`, Vector Store, RAG |
@@ -20,6 +20,9 @@ Mọi điểm mở rộng trong `io.github.natswarchuan.customization.customizer
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Chính sách bucket `LOCAL`/`S3`/`GCS`, pre-signed URL |
 
 Kiểm tra danh sách bean thuộc 7 nhóm `*Customizer` chuẩn (`CustomizerGroupConstant`) qua `GET /api/v1/system/customizers` (`StorageCustomizer` được quản lý riêng qua `StorageCustomizerRegistryHelper`).
+
+
+> **Interceptor thực thi trực tiếp vs. Hook Metadata/Telemetry (`0.1.0`):** `SecurityIdentityCustomizer` được gọi trực tiếp trên từng request bởi `SecurityFilterChainBridge` và `SecurityAuthorityDecisionHelper` (bổ sung quyền JWT/ABAC & biểu quyết). `7` `*Customizer` còn lại đăng ký metadata và ngữ cảnh telemetry tại `GET /api/v1/system/customizers` và `StorageCustomizerRegistryHelper`.
 
 ---
 

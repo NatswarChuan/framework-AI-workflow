@@ -1,6 +1,6 @@
 # 03. 13 動的フィルタ演算子、Query Guardrails、Keyset O(1) および GraphQL SDL（`0.1.0`）
 
-> **言語**: [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | **日本語** | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [全 20 言語一覧](../README.md) | [完全リファレンスマニュアル](../../GUIDE_JA.md) | [20言語インタラクティブポータル](../../index.html#query-dsl)
+> **言語**: [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | **日本語** | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [全 20 言語一覧](../README.md) | [完全リファレンスマニュアル](../../GUIDE_JA.md) | [20言語インタラクティブポータル](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. 定数時間 O(1) カーソル Keyset ページネーション（`GET /keyset`）
 
-主キーに時系列単調増加の **UUIDv7** を採用しているため、`/keyset` は `dir=asc`・`dir=desc` の双方向で `size + 1` プローブを用い $O(1)$ シーク時間でカーソル境界へ直接到達します：
+主キーに時系列単調増加の **UUIDv7** を採用しているため、`/keyset` は `dir=asc`・`dir=desc` の双方向で `size + 1` プローブを用い `O(1)` シーク時間でカーソル境界へ直接到達します：
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

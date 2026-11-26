@@ -29,6 +29,28 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 [JitPack](https://jitpack.io) 経由で GitHub リリースを直接参照する場合：
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **ローカル開発のヒント:** `JWT_SECRET` が未設定の場合、`application-dev.yml` にのみ `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` を設定してください（`application.yml`/`application-prod.yml` は必ず fail-closed のまま維持）。
+
 ---
 
 ## 4. エンドポイントの細粒度フィルタリング（`enabledEndpoints` と `disabledEndpoints`）
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | 例外クラス | 発生条件 | 対処方法 |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` が JVM `< 21` を検出 | Java 21 LTS 以降で実行する |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` かつ独自 `jwt-secret` が `32` UTF-8 バイト未満 | `${JWT_SECRET}` に 32 バイト以上の秘密鍵を設定する |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`、`maxFilterCriteria < 1`、または `maxPageSize < 1` | `app.framework.query-guardrails.*` に正の整数を設定する |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` かつ独自 `jwt-secret` が `32` UTF-8 バイト未満 | `${JWT_SECRET}` に 32 バイト以上の秘密鍵を設定する |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`、`maxFilterCriteria < 1`、または `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | `app.framework.query-guardrails.*` に正の整数を設定する |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` または `ComputedFieldFailFastUtil` が `@Id` 欠如、引数なしコンストラクタ欠如、または不正な `@ComputedField` ソース項目を検出 | `BaseAuditEntity` を継承し、`@NoArgsConstructor` を維持し、正確なエンティティ項目名と一致させる |

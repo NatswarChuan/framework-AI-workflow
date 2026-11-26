@@ -1,6 +1,6 @@
 # 05. ۸ اینترفیس SPI Customizer، `@CustomEndpoint` و `@ServiceOverride` (`0.1.0`)
 
-> **زبان‌ها**: **فارسی** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#spi-customizers)
+> **زبان‌ها**: **فارسی** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل (EN)](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 تمامی نقاط توسعه زیر `io.github.natswarchuan.customization.customizer` متدهای `default` ارائه می‌دهند تا بدون دست‌کاری هسته فریم‌ورک بتوانید با ثبت Spring Bean رفتار دلخواه را بازنویسی کنید:
 
-| # | اینترفیس SPI | Context DTO | حوزه توسعه |
+| # | اینترفیس SPI | DTO زمینه | حوزه توسعه |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | کانتینر اصلی بین‌ها، `TaskExecutor` و زمان‌بندی وظایف |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | پرامپت‌های Spring AI `ChatClient`، قلاب‌های برداری و خطوط RAG |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | سیاست‌های باکت `LOCAL`/`S3`/`GCS`، نشانی‌های پیش‌امضاشده و سقف آپلود |
 
 بین‌های فعال در `7` گروه تله‌متری اصلی (`CustomizerGroupConstant`) از طریق `GET /api/v1/system/customizers` قابل مشاهده‌اند (`StorageCustomizer` جداگانه توسط `StorageCustomizerRegistryHelper` مدیریت می‌شود).
+
+
+> **رهگیر فعال زمان اجرا در برابر هوک‌های فراداده/تله‌متری (`0.1.0`):** `SecurityIdentityCustomizer` در هر درخواست به‌صورت فعال توسط `SecurityFilterChainBridge` و `SecurityAuthorityDecisionHelper` اجرا می‌شود؛ `7` رابط دیگر توصیف‌گرهای فراداده و تله‌متری را در `GET /api/v1/system/customizers` ثبت می‌کنند.
 
 ---
 

@@ -1,6 +1,6 @@
 # 03. 13 Dynamic Filter Operators, Query Guardrails, Keyset O(1) & GraphQL SDL (`0.1.0`)
 
-> **Languages**: **English** | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#query-dsl)
+> **Languages**: **English** | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@ All filter query parameters compile to parameterized JPA Criteria queries valida
 
 ## 2. O(1) Cursor Keyset Pagination (`GET /keyset`)
 
-Because primary keys use monotonic timestamp-ordered **UUIDv7** identifiers, `/keyset` jumps straight to the cursor boundary in both `dir=asc` and `dir=desc` using a `size + 1` probe in $O(1)$ seek time:
+Because primary keys use monotonic timestamp-ordered **UUIDv7** identifiers, `/keyset` jumps straight to the cursor boundary in both `dir=asc` and `dir=desc` using a `size + 1` probe in `O(1)` seek time:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

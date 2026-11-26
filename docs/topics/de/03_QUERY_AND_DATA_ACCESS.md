@@ -1,6 +1,6 @@
 # 03. 13 dynamische Filteroperatoren, Query Guardrails, Keyset O(1) & GraphQL SDL (`0.1.0`)
 
-> **Sprachen**: **Deutsch** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Alle 20 Sprachen](../README.md) | [Vollständiges Handbuch](../../GUIDE_EN.md) | [Interaktives Portal (20 Sprachen)](../../index.html#query-dsl)
+> **Sprachen**: **Deutsch** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Alle 20 Sprachen](../README.md) | [Vollständiges Handbuch (EN)](../../GUIDE_EN.md) | [Interaktives Portal (20 Sprachen)](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@ Alle Filter-Query-Parameter werden durch `QueryFilterParameterUtil` (`PATTERN_MA
 
 ## 2. O(1)-Cursor-Keyset-Paginierung (`GET /keyset`)
 
-Da Primärschlüssel zeitlich monoton steigende **UUIDv7**-Werte sind, springt `/keyset` sowohl bei `dir=asc` als auch `dir=desc` mittels `size + 1`-Probe in $O(1)$-Zeit direkt zur Cursor-Grenze:
+Da Primärschlüssel zeitlich monoton steigende **UUIDv7**-Werte sind, springt `/keyset` sowohl bei `dir=asc` als auch `dir=desc` mittels `size + 1`-Probe in `O(1)`-Zeit direkt zur Cursor-Grenze:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

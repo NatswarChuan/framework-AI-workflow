@@ -1,13 +1,13 @@
 # 04. الأمان، التخزين متعدد السحب، `@ServiceOverride`، المقاييس والتدويل بـ 20 لغة (`0.1.0`)
 
-> **اللغات**: **العربية** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#security-rbac)
+> **اللغات**: **العربية** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل (EN)](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#security-rbac)
 
 ---
 
 ## 1. أمان NIST المستوى 2، RBAC من قاعدة البيانات، إغلاق السطح والحماية من الماسحات
 
 - **`@EntitySecurity` و`@FieldSecurity` و`@MultiTenant`**: تحكم RBAC تصريحي على مستوى الجدول (`readRoles`، `writeRoles`، `deleteRoles`، `permissions` مع دعم التعليقات المركبة)، وحماية المالك (`ownerField`)، وإخفاء/تصفير الأعمدة الحساسة (`viewRoles`، `maskPattern`، `nullifyInsteadOfMask`)، وعزل `@MultiTenant` بنهج الرفض الآمن (`403` عند غياب المستأجر، ومنع الانتحال عند الإنشاء وفحوص IDOR).
-- **RBAC الديناميكي عبر قاعدة البيانات (`DynamicDatabaseRbacProviderHelper`)**: وسّم 4 كيانات JPA بـ `@SecurityRoleEntity` و`@SecurityPermissionEntity` و`@SecurityUserRoleEntity` و`@SecurityPolicyEntity` مع مؤشراتها. يفرض أولوية `DENY` > `ALLOW`، وسياق `X-Tenant-ID`، وإبطال ذاكرة L1 Caffeine تلقائيًا عبر `DatabaseRbacCacheInvalidationListener`، والتعايش الآمن مع `SecurityFilterChain` عبر `PureJavaSecurityFilterBridge` والتوسع عبر `SecurityIdentityCustomizer` (`app.framework.security.dynamic-database-rbac-enabled=true`).
+- **RBAC الديناميكي عبر قاعدة البيانات (`DynamicDatabaseRbacProviderHelper`)**: وسّم 4 كيانات JPA بـ `@SecurityRoleEntity` و`@SecurityPermissionEntity` و`@SecurityUserRoleEntity` و`@SecurityPolicyEntity` مع مؤشراتها. يفرض أولوية `DENY > ALLOW`، وسياق `X-Tenant-ID`، وإبطال ذاكرة L1 Caffeine تلقائيًا عبر `DatabaseRbacCacheInvalidationListener`، والتعايش الآمن مع `SecurityFilterChain` عبر `PureJavaSecurityFilterBridge` والتوسع عبر `SecurityIdentityCustomizer` (`app.framework.security.dynamic-database-rbac-enabled=true`).
 - **إغلاق آمن افتراضيًا (`DevStudioProperties` + `SurfaceAccessGuardrailUtil`)**: عند `app.framework.studio.enabled=false` (الافتراضي) تُمنع الطلبات غير المصادق عليها إلى `/system/**` بـ `401` ويُرجع Studio المعطل `404 Not Found` (`403` دون صلاحية مدير)؛ وعند `demo-token-endpoint-enabled=false` يُرجع `POST /api/v1/auth/token` رمز `404`.
 - **تفكيك الأخطاء وتنقيتها**: يسجل `ExceptionCauseUnwrapperUtil` السبب الجذري الكامل في سجلات الخادم بينما يعيد للعميل `ApiResponse<Void>` منقًى وآمنًا.
 - **CORS لتطبيقات SPA وعدم التكرار (`SecurityFilterChainBridge`)**: يسمح بأنماط أصول قابلة للتهيئة (`*`) مع الترويسات `Authorization` و`Idempotency-Key` و`X-Idempotency-Key` و`X-Language` و`X-Tenant-ID` و`traceparent` و`X-Request-ID`.
@@ -44,7 +44,7 @@
 ## 4. `/system/studio` بـ 20 لغة، دعم RTL وتوطين التطبيق (`i18n/`)
 
 - **20 لغة مدمجة (`I18nConstant`)**: `en, zh, hi, es, fr, ar, bn, pt, ru, ur, id, de, ja, vi, ko, tr, it, th, fa, pl` (تُفعّل `ar` و`fa` و`ur` اتجاه `dir="rtl"`).
-- **تحديد اللغة الحتمي (`LocaleResolutionUtil` و`HeaderLocaleResolver`)**: `?lang=` -> `X-Language` -> ملف تعريف الارتباط `NWVMC_LANG` -> `Accept-Language` -> `app.framework.i18n.default-locale` (`en`). وتعود الوسوم غير المعروفة بأمان إلى `en`.
+- **تحديد اللغة الحتمي (`LocaleResolutionUtil` و`HeaderLocaleResolver`)**: `?lang=` ← `X-Language` ← ملف تعريف الارتباط `NWVMC_LANG` ← `Accept-Language` ← `app.framework.i18n.default-locale` (`en`). وتعود الوسوم غير المعروفة بأمان إلى `en`.
 - **تخصيص التطبيق المضيف**: يضبط `I18nConfig` مورد رسائل UTF-8 (`classpath:i18n/messages`، `cacheSeconds=3600`)؛ وتفعيل `app.framework.studio.show-i18n-diagnostics=true` يعرض شريط التشخيص داخل `/system/studio`.
 
 ---
@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. التخزين متعدد السحب (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+يوفر `FileStorageController` (`/api/v1/storage/*`) نقاط `POST /upload` و`GET /download/{fileId}` و`GET /metadata/{fileId}` و`GET /exists/{fileId}` و`DELETE /{fileId}` و`POST /presigned-url` عبر `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`) و`StorageCustomizer`.
+
+> **تأمين الإنتاج:** فعّل `app.framework.security.require-authenticated-api-paths: true` واحمِ مسار `/api/v1/storage/**` عبر `SecurityFilterChain`.

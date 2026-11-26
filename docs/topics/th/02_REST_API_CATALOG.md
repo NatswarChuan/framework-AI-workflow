@@ -1,6 +1,6 @@
 # 02. แคตตาล็อก 40 สัญญา REST ที่สร้างอัตโนมัติ และ Controller ระบบในตัว (`0.1.0`)
 
-> **ภาษา**: **ไทย** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#endpoints)
+> **ภาษา**: **ไทย** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์ (EN)](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#endpoints)
 
 ---
 
@@ -12,7 +12,7 @@
 
 | # | HTTP | เส้นทางย่อย | เมธอด | การทำงาน |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `""` | `getPage` | แบ่งหน้าแบบ Offset รองรับตัวดำเนินการกรอง 13 แบบ เรียงหลายคอลัมน์ ดึงความสัมพันธ์ include และเลือกฟิลด์เฉพาะได้ |
+| 1 | `GET` | `""` | `getPage` | แบ่งหน้าแบบ Offset รองรับตัวดำเนินการกรอง 13 แบบ เรียงหลายคอลัมน์ ดึงความสัมพันธ์ `?expand=` และเลือกฟิลด์เฉพาะได้ |
 | 2 | `GET` | `/keyset` | `getKeysetPage` | แบ่งหน้าแบบเคอร์เซอร์ UUIDv7 ความเร็ว O(1) ไม่เกิดปัญหา SQL OFFSET ช้าบนตารางขนาดใหญ่ |
 | 3 | `GET` | `/all` | `getAll` | คืนค่ารายการทั้งหมดที่ตรงตามตัวกรองแบบไดนามิกสำหรับดรอปดาวน์และตารางอ้างอิง |
 | 4 | `GET` | `/count` | `count` | รันคำสั่ง SQL COUNT(*) ตามเงื่อนไขตัวกรองแบบไดนามิก |
@@ -77,11 +77,11 @@
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | Developer Studio 20 ภาษา (รองรับ RTL `ar`, `fa`, `ur`) คืน `401` เมื่อ `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | ส่งออกโค้ด Spring MVC มาตรฐาน (Controller/Service/Repository) คุ้มครองโดย `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | ออกโทเคนเดโม HMAC-SHA512 JWT คืน `404` เมื่อ `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | สร้างสถานะของ Entity ย้อนหลังตามเวลา ISO-8601 UTC (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | ตรวจสอบ SPI Bean ที่ทำงานอยู่ใน `7` กลุ่มหลัก (`StorageCustomizer` แยกจัดการผ่าน `StorageCustomizerRegistryHelper` รวม `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | เมตริกสถานะสดของ Resilience4j Circuit Breaker |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | เมตริกสถานะสดของ Resilience4j Circuit Breaker |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | ตรวจสุขภาพแหล่งข้อมูลหลายฐานข้อมูล |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | บริบท MDC ปัจจุบันของ W3C `traceparent` และ UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | แปลงข้อผิดพลาดระดับ Tomcat (`400/404/405/413/431/500`) เป็น `ApiResponse<Void>` มาตรฐาน |

@@ -1,6 +1,6 @@
 # 03. 13 种动态过滤运算符、查询护栏、O(1) 游标分页与 GraphQL SDL（`0.1.0`）
 
-> **语言**: [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | **中文** | [全部 20 种语言](../README.md) | [完整参考手册](../../GUIDE_ZH.md) | [20 语言互动文档门户](../../index.html#query-dsl)
+> **语言**: [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | **中文** | [全部 20 种语言](../README.md) | [完整参考手册](../../GUIDE_ZH.md) | [20 语言互动文档门户](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. O(1) 游标 Keyset 分页（`GET /keyset`）
 
-由于主键采用按时间单调递增的 **UUIDv7**，`/keyset` 在 `dir=asc` 与 `dir=desc` 双向均可通过 `size + 1` 探测以 $O(1)$ 定位游标边界：
+由于主键采用按时间单调递增的 **UUIDv7**，`/keyset` 在 `dir=asc` 与 `dir=desc` 双向均可通过 `size + 1` 探测以 `O(1)` 定位游标边界：
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

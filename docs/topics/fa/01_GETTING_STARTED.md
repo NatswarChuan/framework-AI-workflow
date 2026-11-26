@@ -1,6 +1,6 @@
 # 01. شروع سریع، قرارداد دو پوشه‌ای و عیب‌یابی Fail-Fast در زمان بالا آمدن (`0.1.0`)
 
-> **زبان‌ها**: **فارسی** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#quickstart)
+> **زبان‌ها**: **فارسی** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل (EN)](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#quickstart)
 
 ---
 
@@ -29,6 +29,28 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 برای بیلد مستقیم از گیت‌هاب از طریق [JitPack](https://jitpack.io):
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **نکته توسعه محلی:** اگر `JWT_SECRET` تنظیم نشده است، فقط در `application-dev.yml` مقدار `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` قرار دهید (`application.yml`/`application-prod.yml` را همیشه fail-closed نگه دارید).
+
 ---
 
 ## 4. فیلتر کردن دقیق Endpointها (`enabledEndpoints` و `disabledEndpoints`)
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | استثنا (Exception) | شرط وقوع | راه‌حل |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` نسخه JVM `< 21` را تشخیص دهد | برنامه را روی Java 21 LTS یا جدیدتر اجرا کنید |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` و `jwt-secret` سفارشی کمتر از `32` بایت UTF-8 باشد | مقدار `${JWT_SECRET}` را دست‌کم 32 بایت تنظیم کنید |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`، `maxFilterCriteria < 1` یا `maxPageSize < 1` | اعداد صحیح مثبت زیر `app.framework.query-guardrails.*` تنظیم کنید |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` و `jwt-secret` سفارشی کمتر از `32` بایت UTF-8 باشد | مقدار `${JWT_SECRET}` را دست‌کم 32 بایت تنظیم کنید |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`، `maxFilterCriteria < 1` یا `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | اعداد صحیح مثبت زیر `app.framework.query-guardrails.*` تنظیم کنید |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` یا `ComputedFieldFailFastUtil` نبود `@Id`، نبود سازنده بدون پارامتر یا نام فیلد نامعتبر در `@ComputedField` را بیابد | از `BaseAuditEntity` ارث ببرید، `@NoArgsConstructor` را حفظ کنید و نام دقیق فیلدها را تطبیق دهید |

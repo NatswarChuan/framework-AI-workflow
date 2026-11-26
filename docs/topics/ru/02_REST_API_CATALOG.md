@@ -1,6 +1,6 @@
 # 02. Каталог 40 автогенерируемых REST-контрактов и системных контроллеров (`0.1.0`)
 
-> **Языки**: **Русский** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Все 20 языков](../README.md) | [Полное руководство](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#endpoints)
+> **Языки**: **Русский** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Все 20 языков](../README.md) | [Полное руководство (EN)](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#endpoints)
 
 ---
 
@@ -77,11 +77,11 @@
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | 20-языковая Developer Studio (RTL `ar`, `fa`, `ur`); возвращает `401` при `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | Экспортирует стандартный код Spring MVC (Controller/Service/Repository); защищён `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | Выпускает демонстрационный HMAC-SHA512 JWT; возвращает `404` при `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Восстановление состояния сущности на момент времени ISO-8601 UTC (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Инспекция активных SPI-бинов по `7` группам телеметрии `*Customizer` (`StorageCustomizer` через `StorageCustomizerRegistryHelper`, всего `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Метрики состояния выключателей Resilience4j в реальном времени |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Метрики состояния выключателей Resilience4j в реальном времени |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Проверка состояния нескольких источников данных |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Активный контекст MDC: W3C `traceparent` и UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Преобразует контейнерные ошибки Tomcat `400/404/405/413/431/500` в единый `ApiResponse<Void>` |

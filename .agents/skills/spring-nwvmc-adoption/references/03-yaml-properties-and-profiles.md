@@ -1,13 +1,13 @@
-# Spring-NWVMC (`v0.1.0`) — Exact YAML Configuration Properties & Profiles
+# Spring-NWVMC (`0.1.0`) — Exact YAML Configuration Properties & Profiles
 
 > **100% Verified 1:1** against `controller-to-api-framework/src/main/java/io/github/natswarchuan/config/properties/*.java`.
 > Use ONLY these exact keys under `app.framework.*` and `spring-nwvmc.human-policies.*`.
 
 ---
 
-## 1. Secure Production Baseline (`src/main/resources/application.yml`)
+## 1. Hardened Production Baseline (`src/main/resources/application.yml`)
 
-Copy-paste ready baseline with Java 21 Virtual Threads, safe HikariCP/JPA defaults, query guardrails, locked-down Dev Studio, and fail-fast JWT entropy enforcement:
+Copy-paste production baseline with Java 21 Virtual Threads, externalized PostgreSQL + `ddl-auto: validate` (Flyway/Liquibase), query guardrails, locked-down Dev Studio, fail-closed security (`default-deny-unannotated-entities: true`, `require-authenticated-api-paths: true`), disabled Springdoc, and fail-fast JWT entropy enforcement:
 
 ```yaml
 server:
@@ -24,13 +24,12 @@ spring:
     virtual:
       enabled: true
   datasource:
-    url: jdbc:h2:mem:appdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: ""
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/appdb}
+    username: ${DB_USERNAME:appuser}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate                  # ALWAYS validate + Flyway/Liquibase in prod (NEVER update!)
     open-in-view: false
     properties:
       hibernate:
@@ -40,8 +39,15 @@ spring:
         order_inserts: true
         order_updates: true
 
+springdoc:
+  api-docs:
+    enabled: false                        # ALWAYS disable OpenAPI/Swagger in prod unless behind internal VPN/auth
+  swagger-ui:
+    enabled: false
+
 app:
   framework:
+    # Compatibility fields (live base paths use @AutoRestController(basePath = ...)):
     base-path-prefix: /api/v1
     default-page-size: 20
     max-page-size: 100
@@ -63,11 +69,11 @@ app:
       row-level-security-enabled: true
       dynamic-database-rbac-enabled: true
       database-rbac-cache-ttl-seconds: 60
-      jwt-secret: ${JWT_SECRET}           # MUST be >= 32 UTF-8 bytes in production!
+      jwt-secret: ${JWT_SECRET}           # Shared across pods! >= 32 UTF-8 bytes (HS256) / >= 64 bytes (HS512)
       jwt-expiration-seconds: 86400
       fail-fast-weak-jwt-secret: true     # ALWAYS true in prod!
-      default-deny-unannotated-entities: false
-      require-authenticated-api-paths: false
+      default-deny-unannotated-entities: true   # Fail-closed: reject entities missing @EntitySecurity
+      require-authenticated-api-paths: true     # Fail-closed: require auth on /api/v1/** (allowlist public GETs via SecurityIdentityCustomizer)
 
     studio:
       enabled: false                      # ALWAYS false in prod!
@@ -83,7 +89,7 @@ app:
       idempotency-ttl-seconds: 300
 
     cache:
-      type: CAFFEINE                      # CAFFEINE | REDIS | TWO_TIER | SIMPLE | NONE
+      type: CAFFEINE                      # CAFFEINE (single-JVM) | REDIS | TWO_TIER (multi-pod) | SIMPLE | NONE
       caffeine:
         initial-capacity: 100
         maximum-size: 5000
@@ -94,10 +100,10 @@ app:
         cache-null-values: false
 
     storage:
-      enabled: true
+      enabled: false                      # Enable ONLY when authenticated & restricted to allowed-extensions + S3/GCS!
       provider: LOCAL                     # LOCAL | S3 | GCS
       max-file-size: 52428800             # 50 MB
-      allowed-extensions: []              # e.g. [png, jpg, pdf, csv, txt]
+      allowed-extensions: [png, jpg, pdf, csv, txt]
       local:
         base-dir: target/uploads
         create-dir-if-missing: true
@@ -109,8 +115,8 @@ app:
       max-emitters-per-entity: 1000
 
     ai:
-      enabled: true
-      natural-language-query-enabled: true
+      enabled: false                      # Enable ONLY with require-authenticated-api-paths: true & scoped controllers
+      natural-language-query-enabled: false
 
     i18n:
       default-locale: en
@@ -125,7 +131,9 @@ app:
       enabled-entities: []
 ```
 
-> **Dynamic GraphQL Note:** `GET /api/v1/graphql/schema` and `POST /api/v1/graphql` activate **automatically** whenever `spring-nwvmc` is on the classpath — no extra `app.framework.graphql.*` YAML key is required.
+> **Production Security Notes:**
+> - **CORS Restriction:** `SecurityFilterChainBridge` permits `*` origins by default — restrict allowed origins via `SecurityIdentityCustomizer` in production.
+> - **Dynamic GraphQL:** `GET /api/v1/graphql/schema` and `POST /api/v1/graphql` activate automatically whenever `spring-nwvmc` is on the classpath; `require-authenticated-api-paths: true` protects them at the filter layer.
 
 ---
 
@@ -136,30 +144,53 @@ When using `@TargetDataSource(DataSourceConstant.DATASOURCE_REPLICA)` and `GET /
 ```yaml
 app:
   datasource:
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: ""
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     maximum-pool-size: 20
-    primary-url: jdbc:h2:mem:novamart_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
-    replica-url: jdbc:h2:mem:novamart_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    primary-url: ${DB_PRIMARY_URL}
+    replica-url: ${DB_REPLICA_URL}
 ```
 
 ---
 
 ## 3. Local Development Profile (`src/main/resources/application-dev.yml`)
 
-Enable Dev Studio and demo JWT minting **strictly** in `dev`:
+Boots cleanly out of the box with H2, `ddl-auto: update`, Swagger UI, Dev Studio, demo JWT endpoint, and a dev-only fallback secret:
 
 ```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:devdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 app:
   framework:
     security:
+      jwt-secret: ${JWT_SECRET:DevOnlyLocalSecretKeyAtLeast32BytesLong!}
       fail-fast-weak-jwt-secret: false
+      require-authenticated-api-paths: false
     studio:
       enabled: true
       demo-token-endpoint-enabled: true
       show-i18n-diagnostics: true
       hide-framework-fingerprint: true
+    storage:
+      enabled: true
+    ai:
+      enabled: true
+      natural-language-query-enabled: true
 ```
 
 Run locally with:
@@ -169,14 +200,54 @@ mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
 
 ---
 
-## 3. Cloud Storage Profiles (`S3` / MinIO & `GCS`)
+## 4. Automated Test Profile (`src/test/resources/application-test.yml`)
+
+Dedicated test profile used by `@ActiveProfiles("test")` in JUnit 5 / `MockMvc` / `RANDOM_PORT` TDD suites:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+springdoc:
+  api-docs:
+    enabled: true
+
+app:
+  framework:
+    security:
+      jwt-secret: TestOnlyJwtSecretKeyAtLeast32BytesLongForHs256!
+      fail-fast-weak-jwt-secret: true
+      default-deny-unannotated-entities: true
+      require-authenticated-api-paths: false
+    studio:
+      enabled: false
+      demo-token-endpoint-enabled: false
+    storage:
+      enabled: true
+    ai:
+      enabled: true
+      natural-language-query-enabled: true
+```
+
+---
+
+## 5. Cloud Storage Profiles (`S3` / MinIO & `GCS`)
 
 ```yaml
 # Amazon S3 or MinIO (application-prod.yml)
 app:
   framework:
     storage:
+      enabled: true
       provider: S3
+      allowed-extensions: [png, jpg, pdf, csv]
       s3:
         bucket-name: ${S3_BUCKET}
         region: ${AWS_REGION:ap-southeast-1}
@@ -196,7 +267,7 @@ app:
 
 ---
 
-## 4. Natural-Language Policy Overrides (`spring-nwvmc.human-policies.*`)
+## 6. Natural-Language Policy Overrides (`spring-nwvmc.human-policies.*`)
 
 Bound by `HumanPolicyConfigurationProperties` — lets ops/business teams adjust lifecycle, RBAC, and masking without recompiling Java:
 

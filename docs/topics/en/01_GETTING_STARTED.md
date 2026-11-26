@@ -29,6 +29,28 @@ Domain workflows beyond generic CRUD live in `Service` interfaces and independen
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 For direct GitHub builds via [JitPack](https://jitpack.io):
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **Local Dev Tip:** If `JWT_SECRET` is not exported yet, create `application-dev.yml` with `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` and `app.framework.studio.enabled: true` (keep `application.yml` / `application-prod.yml` fail-closed without fallback).
+
 ---
 
 ## 4. Granular Endpoint Filtering (`enabledEndpoints` & `disabledEndpoints`)
@@ -93,11 +117,11 @@ app:
 
 ```java
 @AutoRestController(
-    basePath = "/api/v1/commercial-products",
+    basePath = "/api/v1/product-catalogs",
     disabledEndpoints = {"batchChunked", "deleteById", "importCsv"},
     enableNestedSubResources = true
 )
-public interface CommercialProductController extends AutoApiController<CommercialProduct> {
+public interface ProductCatalogController extends AutoApiController<ProductCatalog> {
 }
 ```
 
@@ -108,6 +132,6 @@ public interface CommercialProductController extends AutoApiController<Commercia
 | Exception | Trigger Condition | Remediation |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` detects JVM `< 21` | Run on Java 21 LTS or newer |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` and custom `jwt-secret` `< 32` UTF-8 bytes | Set `${JWT_SECRET}` to at least 32 bytes |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1`, or `maxPageSize < 1` | Configure positive integers under `app.framework.query-guardrails.*` |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` and custom `jwt-secret` `< 32` UTF-8 bytes | Set `${JWT_SECRET}` to at least 32 bytes |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1`, or `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | Configure positive integers under `app.framework.query-guardrails.*` |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` or `ComputedFieldFailFastUtil` detects missing `@Id`, missing no-arg constructor, or invalid `@ComputedField` source fields | Extend `BaseAuditEntity`, retain `@NoArgsConstructor`, and match exact entity field names |

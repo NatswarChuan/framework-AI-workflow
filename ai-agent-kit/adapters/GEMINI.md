@@ -17,7 +17,7 @@ Activate the `spring-nwvmc-adoption` skill in `.agents/skills/spring-nwvmc-adopt
 - [06-sdd-and-tdd-playbook.md](.agents/skills/spring-nwvmc-adoption/references/06-sdd-and-tdd-playbook.md) & `templates/{spec,plan,tasks}.template.md` — SDD & 4-Tier TDD Red-Green-Refactor playbook
 
 ## 1.5 Mandatory SDD + TDD Delivery Discipline
-- **SDD (Spec-First):** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, RBAC/tenant rules, NFRs). Resolve all `[NEEDS CLARIFICATION]` items with the user BEFORE writing `plan.md`, `tasks.md`, or Java code. Verify zero drift against `/v3/api-docs`, `/metadata`, and `/schema/zod`.
+- **SDD (Spec-First):** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, schema, API surface, RBAC/tenant rules, NFRs). Resolve all `[NEEDS CLARIFICATION]` items with the user BEFORE writing `plan.md`, `tasks.md`, or Java code. Verify zero drift against `/v3/api-docs`, `/metadata`, and `/schema/zod`. *(Small tweaks/prototypes: lightweight mini-spec + 1 `MockMvc`/regression test.)*
 - **TDD (Test-First):** Follow strict **RED → GREEN → REFACTOR** per `REQ-ID` (and failing regression test first for every bug fix). Run `mvn test -Dtest=...` to verify RED failure before coding, NEVER weaken assertions or use `@Disabled`, and verify all 4 tiers (Unit, `MockMvc` Integration, Contract Drift, Concurrency/JMeter).
 
 ## 2. Strict Non-Negotiable Rules
@@ -35,7 +35,7 @@ Activate the `spring-nwvmc-adoption` skill in `.agents/skills/spring-nwvmc-adopt
    - Query operators: dot syntax (`retailPrice.gte=1000&productName.like=MacBook`), NEVER `__gte`.
    - CamelCase routes: `ECommerceOrder` → `/api/v1/e-commerce-orders` (or set explicit `basePath`).
    - Inject framework `@AutoComponent` helpers (`DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`) via `ObjectProvider<T>` and call `.getObject()` at runtime.
-   - Consumer `@Service` beans using framework AOP (`@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, `@TargetDataSource`) MUST be **non-final** and **`@Lazy`** (plus class-level `@TargetDataSource` for `REPLICA` on `v0.1.0`), AND callers injecting them MUST use **`ObjectProvider<MyService>`** or **`@Lazy`**. NEVER place `@Transactional` on `public final class` Helpers.
+   - Consumer `@Service` beans using framework AOP (`@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, `@TargetDataSource`) MUST be **non-final** and **`@Lazy`**, AND callers injecting them MUST use **`ObjectProvider<MyService>`** or **`@Lazy`** (`0.1.0` supports method-level `@TargetDataSource` natively). NEVER place `@Transactional` on `public final class` Helpers. Use `HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY` for `"X-Idempotency-Key"`.
    - Dev JWT endpoint is **`POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN`**; `JwtTokenService.generateToken(username, userId, roles)` takes **`username` FIRST**.
    - Controllers with `readDto = X.class` project ALL responses through `X`; mount other DTO routes on a controller without `readDto`.
    - `@ServiceOverride` custom methods default to `writeRoles` (fail-closed); `@CustomEndpoint` dispatches directly to the delegated Spring bean (place security/AOP on the bean).

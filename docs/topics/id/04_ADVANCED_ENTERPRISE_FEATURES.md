@@ -1,6 +1,6 @@
 # 04. Keamanan, Penyimpanan Multi-Cloud, `@ServiceOverride`, Metrik & i18n 20 Bahasa (`0.1.0`)
 
-> **Bahasa**: **Bahasa Indonesia** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#security-rbac)
+> **Bahasa**: **Bahasa Indonesia** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap (EN)](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@ Saat endpoint tertentu melampaui semantik CRUD dinamis:
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. Penyimpanan Multi-Cloud (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+`FileStorageController` (`/api/v1/storage/*`) menyediakan `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, dan `POST /presigned-url` dengan `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`) serta `StorageCustomizer`.
+
+> **Pengamanan Produksi:** Aktifkan `app.framework.security.require-authenticated-api-paths: true` dan lindungi `/api/v1/storage/**` di `SecurityFilterChain`.

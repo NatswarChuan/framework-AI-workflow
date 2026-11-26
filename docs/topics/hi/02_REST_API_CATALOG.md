@@ -1,6 +1,6 @@
 # 02. 40 ऑटो-जनरेटेड REST अनुबंध और प्लेटफ़ॉर्म कंट्रोलर सूची (`0.1.0`)
 
-> **भाषाएँ**: **हिन्दी** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#endpoints)
+> **भाषाएँ**: **हिन्दी** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल (EN)](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#endpoints)
 
 ---
 
@@ -12,7 +12,7 @@
 
 | # | HTTP | उप-पथ | मेथड | व्यवहार |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `""` | `getPage` | 13 फ़िल्टर ऑपरेटरों, मल्टी-कॉलम सॉर्ट, ईगर-फ़ेच include और स्पार्स फ़ील्ड्स के साथ ऑफ़सेट पेजिनेशन। |
+| 1 | `GET` | `""` | `getPage` | 13 फ़िल्टर ऑपरेटरों, मल्टी-कॉलम सॉर्ट, ईगर-फ़ेच `?expand=` और स्पार्स फ़ील्ड्स के साथ ऑफ़सेट पेजिनेशन। |
 | 2 | `GET` | `/keyset` | `getKeysetPage` | बड़ी तालिकाओं पर SQL OFFSET स्कैन गिरावट के बिना O(1) UUIDv7 कर्सर पेजिनेशन। |
 | 3 | `GET` | `/all` | `getAll` | ड्रॉपडाउन और लुकअप तालिकाओं के लिए डायनेमिक फ़िल्टर से मेल खाने वाले सभी रिकॉर्ड लौटाता है। |
 | 4 | `GET` | `/count` | `count` | डायनेमिक फ़िल्टर विधेयों से मेल खाने वाली SQL COUNT(*) क्वेरी निष्पादित करता है। |
@@ -77,11 +77,11 @@
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | 20-भाषा Developer Studio (RTL `ar`, `fa`, `ur`); `app.framework.studio.enabled=false` होने पर `401` लौटाता है |
 | `GET /system/studio/eject` | `DevEjectionController` | मानक Spring MVC कोड (Controller/Service/Repository) निर्यात करता है; `SurfaceAccessGuardrailUtil` द्वारा सुरक्षित |
 | `POST /api/v1/auth/token` | `AuthController` | डेमो HMAC-SHA512 JWT जारी करता है; `demo-token-endpoint-enabled=false` होने पर `404` लौटाता है |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | निर्दिष्ट ISO-8601 UTC समय पर एंटिटी की स्थिति का पुनर्निर्माण (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | `7` मुख्य टेलीमेट्री `*Customizer` समूहों में सक्रिय SPI बीन्स का निरीक्षण (`StorageCustomizer` अलग से `StorageCustomizerRegistryHelper` द्वारा प्रबंधित, कुल `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j सर्किट ब्रेकर के लाइव स्वास्थ्य मेट्रिक्स |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j सर्किट ब्रेकर के लाइव स्वास्थ्य मेट्रिक्स |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | मल्टी-डेटासोर्स स्वास्थ्य परीक्षण |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | सक्रिय MDC संदर्भ में W3C `traceparent` और UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Tomcat कंटेनर त्रुटियों (`400/404/405/413/431/500`) को मानक `ApiResponse<Void>` में रूपांतरित करता है |

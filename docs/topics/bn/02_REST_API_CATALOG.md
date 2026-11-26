@@ -1,6 +1,6 @@
 # 02. ৪০টি অটো-জেনারেটেড REST কন্ট্র্যাক্ট এবং প্ল্যাটফর্ম কন্ট্রোলার তালিকা (`0.1.0`)
 
-> **ভাষাসমূহ**: **বাংলা** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#endpoints)
+> **ভাষাসমূহ**: **বাংলা** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল (EN)](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#endpoints)
 
 ---
 
@@ -12,7 +12,7 @@
 
 | # | HTTP | সাব-পাথ | মেথড | আচরণ |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `""` | `getPage` | ১৩টি ফিল্টার অপারেটর, মাল্টি-কলাম সর্ট, ইগার-ফেচ include এবং স্পার্স ফিল্ড সমর্থিত অফসেট পেজিনেশন। |
+| 1 | `GET` | `""` | `getPage` | ১৩টি ফিল্টার অপারেটর, মাল্টি-কলাম সর্ট, ইগার-ফেচ `?expand=` এবং স্পার্স ফিল্ড সমর্থিত অফসেট পেজিনেশন। |
 | 2 | `GET` | `/keyset` | `getKeysetPage` | বড় টেবিলে SQL OFFSET স্ক্যান বিলম্ব ছাড়াই O(1) UUIDv7 কার্সার পেজিনেশন। |
 | 3 | `GET` | `/all` | `getAll` | ড্রপডাউন এবং লুকআপ টেবিলের জন্য ডায়নামিক ফিল্টারের সাথে মিল থাকা সব রেকর্ড ফেরত দেয়। |
 | 4 | `GET` | `/count` | `count` | ডায়নামিক ফিল্টার শর্তের সাথে মিল রেখে SQL COUNT(*) চালায়। |
@@ -77,11 +77,11 @@
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | ২০-ভাষার Developer Studio (RTL `ar`, `fa`, `ur`); `app.framework.studio.enabled=false` হলে `401` ফেরত দেয় |
 | `GET /system/studio/eject` | `DevEjectionController` | স্ট্যান্ডার্ড Spring MVC কোড (Controller/Service/Repository) এক্সপোর্ট করে; `SurfaceAccessGuardrailUtil` দ্বারা সুরক্ষিত |
 | `POST /api/v1/auth/token` | `AuthController` | ডেমো HMAC-SHA512 JWT তৈরি করে; `demo-token-endpoint-enabled=false` হলে `404` ফেরত দেয় |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | নির্দিষ্ট ISO-8601 UTC সময়ে এনটিটির ঐতিহাসিক অবস্থা পুনর্গঠন (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | `7`টি মূল টেলিমেট্রি `*Customizer` গ্রুপের সক্রিয় SPI বিন তালিকা (`StorageCustomizer` আলাদাভাবে `StorageCustomizerRegistryHelper`-এ পরিচালিত, মোট `8`টি SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j সার্কিট ব্রেকারের লাইভ হেলথ মেট্রিক্স |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j সার্কিট ব্রেকারের লাইভ হেলথ মেট্রিক্স |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | মাল্টি-ডেটাসোর্স হেলথ চেক পরিদর্শন |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | সক্রিয় MDC কনটেক্সটে W3C `traceparent` এবং UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Tomcat কনটেইনার ত্রুটি (`400/404/405/413/431/500`)-কে একীভূত `ApiResponse<Void>`-এ রূপান্তর করে |

@@ -1,6 +1,6 @@
 # 04. Segurança, Armazenamento Multi-Cloud, `@ServiceOverride`, Métricas e i18n em 20 Idiomas (`0.1.0`)
 
-> **Idiomas**: **Português** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Todos os 20 Idiomas](../README.md) | [Manual Completo](../../GUIDE_EN.md) | [Portal Interativo (20 Idiomas)](../../index.html#security-rbac)
+> **Idiomas**: **Português** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Todos os 20 Idiomas](../README.md) | [Manual Completo (EN)](../../GUIDE_EN.md) | [Portal Interativo (20 Idiomas)](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@ Quando um endpoint específico ultrapassa a semântica CRUD dinâmica:
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. Armazenamento Multi-Cloud (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+O `FileStorageController` (`/api/v1/storage/*`) expõe `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` e `POST /presigned-url` via `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`) e `StorageCustomizer`.
+
+> **Segurança em Produção:** Ative `app.framework.security.require-authenticated-api-paths: true` e proteja `/api/v1/storage/**` no `SecurityFilterChain`.

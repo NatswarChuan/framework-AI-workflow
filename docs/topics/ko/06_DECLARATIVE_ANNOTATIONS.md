@@ -1,6 +1,6 @@
 # 06. 60개 선언적 애노테이션 전체 기술 명세서 (`0.1.0`)
 
-> **언어**: **한국어** | [English](../en/06_DECLARATIVE_ANNOTATIONS.md) | [Tiếng Việt](../vi/06_DECLARATIVE_ANNOTATIONS.md) | [日本語](../ja/06_DECLARATIVE_ANNOTATIONS.md) | [中文](../zh/06_DECLARATIVE_ANNOTATIONS.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#annotations)
+> **언어**: **한국어** | [English](../en/06_DECLARATIVE_ANNOTATIONS.md) | [Tiếng Việt](../vi/06_DECLARATIVE_ANNOTATIONS.md) | [日本語](../ja/06_DECLARATIVE_ANNOTATIONS.md) | [中文](../zh/06_DECLARATIVE_ANNOTATIONS.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼 (EN)](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#annotations)
 
 `io.github.natswarchuan:spring-nwvmc:0.1.0`의 **60개 선언적 애노테이션** 전체를 Java `@interface` 소스에서 직접 추출한 상세 기술 명세서입니다. 정확한 패키지, `@Target`, **모든 속성**, Java 타입, 기본값, 필수/선택 여부, **사용 방법**, **사용해야 할 때**, **사용하지 말아야 할 때와 주의사항**, 검증된 Java 코드 예제를 제공합니다.
 
@@ -32,29 +32,29 @@
 | [`@HumanPolicy`](#humanpolicy) | `entity` | `Class (TYPE)` | `lifecycle (""), security (""), masking (""), stateField ("")` | 읽기 쉬운 정책 문구를 활성 RBAC, 상태 전이 및 마스킹 규칙으로 컴파일합니다. |
 | [`@AuditTrail`](#audittrail) | `entity` | `Class (TYPE)` | `category (""), recordFieldDiffs (true)` | 변경 전반의 필드 단위 차이를 기록해 타임트래블 상태 복원 및 /diff 검사를 지원합니다. |
 | [`@MultiTenant`](#multitenant) | `entity` | `Class (TYPE)` | `tenantField ("tenantId"), bypassTenantRoles ({"ROLE_SUPER_ADMIN"})` | 바이패스 역할이 없는 한 활성 테넌트 컨텍스트 기준으로 행 조회와 변경을 자동 격리합니다. |
-| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `(Marker annotation — no attributes)` | 생성, 수정, Upsert 영속화 직전에 필드 유일성을 사전 검증합니다. |
-| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (REQUIRED)` | 생성 또는 복제 시 비어 있는 경우 접두사가 붙은 고유 비즈니스 코드를 자동 생성합니다. |
-| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (REQUIRED)` | sourceField에서 URL 친화적인 정규화 ASCII 슬러그를 자동 생성합니다. |
+| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `(마커 어노테이션 — 속성 없음)` | 생성, 수정, Upsert 영속화 직전에 필드 유일성을 사전 검증합니다. |
+| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (필수)` | 생성 또는 복제 시 비어 있는 경우 접두사가 붙은 고유 비즈니스 코드를 자동 생성합니다. |
+| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (필수)` | sourceField에서 URL 친화적인 정규화 ASCII 슬러그를 자동 생성합니다. |
 | [`@ComputedField`](#computedfield) | `entity` | `Field (FIELD)` | `operation ("MULTIPLY"), sourceFields ({}), collectionField (""), itemField (""), subtractField (""), addField ("")` | 엔티티 변경 저장 전 파생 수치 합계를 깔끔하게 자동 계산합니다. |
 | [`@CustomQuery`](#customquery) | `entity` | `Method (METHOD)` | `value (""), nativeQuery (true), resultClass (Void.class), sqlProvider (Void.class), providerMethod (""), modifying (false)` | 커스텀 SQL/JPQL 또는 프로바이더 헬퍼 메서드를 컨트롤러 엔드포인트에 바인딩합니다. |
 | [`@SecurityRoleEntity`](#securityroleentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | JPA 엔티티를 실시간 데이터베이스 RBAC 역할 카탈로그 테이블로 지정합니다. |
-| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityRoleEntity 내부의 고유 역할 코드 컬럼을 매핑합니다. |
-| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityRoleEntity에서 사람이 읽을 수 있는 역할 표시 이름 필드를 식별합니다. |
-| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 역할 엔티티에서 부여된 권한 코드 컬렉션 또는 CSV 문자열 필드를 표시합니다. |
+| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityRoleEntity 내부의 고유 역할 코드 컬럼을 매핑합니다. |
+| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityRoleEntity에서 사람이 읽을 수 있는 역할 표시 이름 필드를 식별합니다. |
+| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | 역할 엔티티에서 부여된 권한 코드 컬렉션 또는 CSV 문자열 필드를 표시합니다. |
 | [`@SecurityPermissionEntity`](#securitypermissionentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | 리소스-액션 권한과 동적 필드 마스킹 규칙을 저장하는 JPA 엔티티를 지정합니다. |
-| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPermissionEntity 내 고유 권한 식별자 필드를 지정합니다. |
-| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPermissionEntity에서 대상 엔티티 또는 API 리소스 이름(또는 *)을 매핑합니다. |
-| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPermissionEntity 규칙이 보호하는 CRUD 또는 커스텀 액션 동사를 매핑합니다. |
-| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 이 DB 권한 규칙이 적용될 때 동적으로 가릴 쉼표 구분 엔티티 필드를 선언합니다. |
+| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityPermissionEntity 내 고유 권한 식별자 필드를 지정합니다. |
+| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityPermissionEntity에서 대상 엔티티 또는 API 리소스 이름(또는 *)을 매핑합니다. |
+| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityPermissionEntity 규칙이 보호하는 CRUD 또는 커스텀 액션 동사를 매핑합니다. |
+| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | 이 DB 권한 규칙이 적용될 때 동적으로 가릴 쉼표 구분 엔티티 필드를 선언합니다. |
 | [`@SecurityUserRoleEntity`](#securityuserroleentity) | `rbac` | `Entity (TYPE)` | `enabled (true)` | 인증된 사용자 주체를 DB 역할 및 선택적 테넌트 범위에 바인딩하는 JPA 엔티티를 매핑합니다. |
-| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityUserRoleEntity에서 주체(사용자명 / JWT sub) 필드를 식별합니다. |
-| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityUserRoleEntity 내부에 할당된 역할 코드 컬럼을 바인딩합니다. |
-| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityUserRoleEntity 할당을 특정 테넌트 ID(또는 전역 *) 범위로 제한합니다. |
+| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityUserRoleEntity에서 주체(사용자명 / JWT sub) 필드를 식별합니다. |
+| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityUserRoleEntity 내부에 할당된 역할 코드 컬럼을 바인딩합니다. |
+| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityUserRoleEntity 할당을 특정 테넌트 ID(또는 전역 *) 범위로 제한합니다. |
 | [`@SecurityPolicyEntity`](#securitypolicyentity) | `rbac` | `Entity (TYPE)` | `priority (100)` | priority 순으로 평가되는 명시적 ALLOW / DENY 인가 정책을 저장하는 JPA 엔티티를 표시합니다. |
-| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity에서 대상 리소스 식별자 패턴을 매핑합니다. |
-| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity 내부에서 보호되는 작업 동사(READ, WRITE, DELETE, methodName, *)를 매핑합니다. |
-| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity 규칙이 대상으로 하는 역할 컬렉션 또는 쉼표 구분 문자열을 매핑합니다. |
-| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | @SecurityPolicyEntity 규칙의 ALLOW 또는 DENY 정책 결정 결과를 지정합니다. |
+| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityPolicyEntity에서 대상 리소스 식별자 패턴을 매핑합니다. |
+| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityPolicyEntity 내부에서 보호되는 작업 동사(READ, WRITE, DELETE, methodName, *)를 매핑합니다. |
+| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityPolicyEntity 규칙이 대상으로 하는 역할 컬렉션 또는 쉼표 구분 문자열을 매핑합니다. |
+| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `(마커 어노테이션 — 속성 없음)` | @SecurityPolicyEntity 규칙의 ALLOW 또는 DENY 정책 결정 결과를 지정합니다. |
 | [`@DistributedLock`](#distributedlock) | `resilience` | `Method (METHOD)` | `key (""), waitTimeMs (3000L), leaseTimeMs (5000L)` | AST 맵(최대 1024개)에 캐시된 SpEL 키를 기반으로 동시 접근을 직렬화합니다(기본 waitTimeMs=3000L, leaseTimeMs=5000L). |
 | [`@Idempotent`](#idempotent) | `resilience` | `Type / Method (TYPE, METHOD)` | `headerName ("X-Idempotency-Key"), ttlSeconds (300L)` | 설정 가능한 TTL 창 내에서 동시 또는 재전송된 중복 쓰기를 방지합니다. |
 | [`@RateLimit`](#ratelimit) | `resilience` | `Type / Method (TYPE, METHOD)` | `requests (60), windowSeconds (60), partitionKey ("IP")` | IP, 사용자 또는 테넌트 파티션별로 슬라이딩 윈도 요청 제한을 적용합니다. |
@@ -88,8 +88,8 @@
 | `basePath` | `String` | `""` | 아니오 (선택) | `/`로 시작하는 유효한 HTTP 경로(예: `/api/v1/product-catalogs`) 또는 자동 유도를 위한 빈 문자열 `""`.<br/>`@AutoRestController(basePath = "/api/v1/product-catalogs")` | 명시적 루트 URI 경로(예: "/api/v1/product-catalogs"). 비어 있으면 컨트롤러 이름에서 복수형 kebab-case로 자동 유도됩니다.<br/>*주의:* 시작 시 프록시 등록기는 `path`보다 `basePath`를 우선 평가합니다. 두 속성에 충돌하는 값을 넣지 마세요. |
 | `path` | `String` | `""` | 아니오 (선택) | `/`로 시작하는 유효한 HTTP 경로(예: `/api/v1/orders`) 또는 자동 유도를 위한 빈 문자열 `""`.<br/>`@AutoRestController(path = "/api/v1/orders")` | 경로 별칭 속성. 프록시 등록기가 extractCustomBasePath()로 basePath를 우선 읽으므로 basePath 사용을 권장합니다.<br/>*주의:* 시작 시 프록시 등록기는 `path`보다 `basePath`를 우선 평가합니다. 두 속성에 충돌하는 값을 넣지 마세요. |
 | `entityName` | `String` | `""` | 아니오 (선택) | 비어 있지 않은 식별자 문자열(예: `"ProductCatalog"`). `""`이면 프레임워크 기본 규칙을 따릅니다.<br/>`@AutoRestController(entityName = "ProductCatalog")` | OpenAPI/Studio 메타데이터에 표시되는 엔티티 이름을 명시적으로 재정의합니다.<br/>*주의:* 생성된 Swagger / OpenAPI 3.0 및 NWVMC Studio에 직접 노출됩니다. 하드코딩 방지를 위해 `OpenApiConstant` 상수를 사용하세요. |
-| `enabledEndpoints` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"search"`, `"keysetPage"`, `"exportCsv"`, `"importCsv"`.<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | 허용할 정확한 메서드 이름 화이트리스트(예: "getPage", "create"). 비어 있으면 상속된 전체 메서드가 활성화됩니다.<br/>*주의:* 엄격한 화이트리스트로 동작합니다. 비어 있지 않으면 목록에 없는 모든 계약 메서드가 Spring MVC와 Swagger UI에서 제외됩니다. |
-| `disabledEndpoints` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `"deleteById"`, `"batchDelete"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`.<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "batchDelete", "importCsv"})` | MVC 매핑 전 제외할 정확한 메서드 이름 블랙리스트(예: "deleteById", "batchChunked").<br/>*주의:* `enabledEndpoints` 이후에 평가됩니다. 나머지 40개 계약을 유지하면서 삭제나 대량 처리 엔드포인트만 차단할 때 적합합니다. |
+| `enabledEndpoints` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"getKeysetPage"`, `"count"`, `"exportCsv"`, `"importCsv"`.<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | 허용할 정확한 메서드 이름 화이트리스트(예: "getPage", "create"). 비어 있으면 상속된 전체 메서드가 활성화됩니다.<br/>*주의:* 엄격한 화이트리스트로 동작합니다. 비어 있지 않으면 목록에 없는 모든 계약 메서드가 Spring MVC와 Swagger UI에서 제외됩니다. |
+| `disabledEndpoints` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `"deleteById"`, `"updateBatchByFilter"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`.<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "updateBatchByFilter", "importCsv"})` | MVC 매핑 전 제외할 정확한 메서드 이름 블랙리스트(예: "deleteById", "batchChunked").<br/>*주의:* `enabledEndpoints` 이후에 평가됩니다. 나머지 40개 계약을 유지하면서 삭제나 대량 처리 엔드포인트만 차단할 때 적합합니다. |
 | `enableNestedSubResources` | `boolean` | `false` | 아니오 (선택) | `true`(활성화) 또는 `false`(비활성화).<br/>`@AutoRestController(basePath = "/api/v1/orders", enableNestedSubResources = true)` | 재귀 하위 리소스 탐색 GET /{id}/**을 활성화합니다. 대규모 스키마의 라우트 폭증을 막기 위해 기본값은 false입니다.<br/>*주의:* `GET /{id}/items/...` 탐색이 꼭 필요한 경우에만 `true`로 설정하고, `@EnableNestedSubResource`로 허용 관계를 제한하세요. |
 | `readDto` | `Class<?>` | `Void.class` | 아니오 (선택) | 임의의 구체 Java DTO 클래스 리터럴(예: `ProductReadDto.class`) 또는 매핑 비활성화용 `Void.class`.<br/>`@AutoRestController(readDto = ProductReadDto.class)` | 응답 직렬화 시 엔티티 내부 필드를 숨기는 선택적 Read DTO 타입입니다. 기본 Void.class는 엔티티를 반환합니다.<br/>*주의:* 조회 (GET) 파이프라인에만 적용됩니다. DTO 클래스는 기본 생성자/게터가 필요하며 `@Valid` 및 `@FieldSecurity`와 연동됩니다. |
 | `createDto` | `Class<?>` | `Void.class` | 아니오 (선택) | 임의의 구체 Java DTO 클래스 리터럴(예: `ProductCreateDto.class`) 또는 매핑 비활성화용 `Void.class`.<br/>`@AutoRestController(createDto = ProductCreateDto.class)` | POST 매핑 전 Jakarta Validation을 수행하고 엔티티 E로 변환하는 선택적 생성 DTO입니다.<br/>*주의:* 생성 (POST) 파이프라인에만 적용됩니다. DTO 클래스는 기본 생성자/게터가 필요하며 `@Valid` 및 `@FieldSecurity`와 연동됩니다. |
@@ -116,10 +116,10 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 
 | 속성 | Java 타입 | 기본값 | 필수 여부 | 허용 값 및 예제 | 설명 및 런타임 주의사항 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `targetBean` | `Class<?>` | `Void.class` | 아니오 (선택) | 임의의 구체 Java DTO 클래스 리터럴(예: `OrderCustomService.class`) 또는 매핑 비활성화용 `Void.class`.<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | 대상 Spring 빈 클래스(beanName보다 우선 적용됩니다).<br/>*주의:* 시작 시 프록시 등록기는 `beanName`보다 `targetBean`를 우선 평가합니다. 두 속성에 충돌하는 값을 넣지 마세요. |
-| `beanName` | `String` | `""` | 아니오 (선택) | ApplicationContext에 등록된 정확한 빈 이름(예: `"orderCustomService"`) 또는 자동 해석용 `""`.<br/>`@ServiceOverride(beanName = "orderCustomService", methodName = "createOrder")` | targetBean이 Void.class일 때 사용하는 Spring 컨테이너의 명시적 빈 이름입니다.<br/>*주의:* 시작 시 프록시 등록기는 `beanName`보다 `targetBean`를 우선 평가합니다. 두 속성에 충돌하는 값을 넣지 마세요. |
+| `targetBean` | `Class<?>` | `Void.class` | 아니오 (선택) | 구체 Spring `@Service`/`@Component` 빈 클래스(예: `OrderCustomService.class`) 또는 `beanName` 조회용 `Void.class`.<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | 대상 Spring 빈 클래스(beanName보다 우선 적용됩니다).<br/>*주의:* 시작 시 프록시 등록기는 `beanName`보다 `targetBean`을 우선 평가합니다. 두 속성에 충돌하는 값을 넣지 마세요. |
+| `beanName` | `String` | `""` | 아니오 (선택) | ApplicationContext에 등록된 정확한 빈 이름(예: `"orderCustomService"`) 또는 자동 해석용 `""`.<br/>`@ServiceOverride(beanName = "orderCustomService", methodName = "createOrder")` | targetBean이 Void.class일 때 사용하는 Spring 컨테이너의 명시적 빈 이름입니다.<br/>*주의:* 시작 시 프록시 등록기는 `beanName`보다 `targetBean`을 우선 평가합니다. 두 속성에 충돌하는 값을 넣지 마세요. |
 | `methodName` | `String` | `""` | 아니오 (선택) | 비어 있지 않은 식별자 문자열(예: `"createOrder"`). `""`이면 프레임워크 기본 규칙을 따릅니다.<br/>`@ServiceOverride(targetBean = OrderService.class, methodName = "createOrder")` | 대상 빈의 메서드 이름입니다. 비어 있으면 컨트롤러 메서드 이름을 그대로 사용합니다.<br/>*주의:* Java 메서드/필드 식별자와 대소문자까지 정확히 일치해야 합니다(예: `"createOrder"`). 불일치 시 런타임 조회 오류가 발생합니다. |
-| `bypassAutoDispatch` | `boolean` | `true` | 아니오 (선택) | `true`(기본 프록시를 우회하고 대상 빈 직접 호출) 또는 `false`(기본 디스패치와 함께 실행).<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | true일 때 기본 CRUD 디스패치를 완전히 건너뛰고 MethodHandleCacheUtil로 커스텀 빈을 실행합니다.<br/>*주의:* `true`(기본값)이면 내장 CRUD를 완전히 건너뛰고 대상 빈이 트랜잭션을 담당합니다. 보조 훅으로만 쓸 때 `false`로 설정하세요. |
+| `bypassAutoDispatch` | `boolean` | `true` | 아니오 (선택) | `true`(기본값 — 오버라이드 활성화 후 대상 빈 호출) 또는 `false`(오버라이드 비활성화 후 기본 CRUD 실행).<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | true일 때 기본 CRUD 디스패치를 완전히 건너뛰고 MethodHandleCacheUtil로 커스텀 빈을 실행합니다.<br/>*주의:* `true`(기본값)일 때 `EscapeHatchDispatchHelper`가 대상 빈을 호출합니다. `false`는 `@ServiceOverride`를 비활성화해 기본 CRUD를 실행합니다(전/후 훅 아님). |
 
 ```java
 @ServiceOverride(targetBean = TagEscapeHatchHelper.class, methodName = "buildTaxonomyStats")
@@ -528,8 +528,8 @@ private String nationalId;
 | 속성 | Java 타입 | 기본값 | 필수 여부 | 허용 값 및 예제 | 설명 및 런타임 주의사항 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `initial` | `String` | `"ACTIVE"` | 아니오 (선택) | 비어 있지 않은 식별자 문자열(예: `"CREATED"`). `""`이면 프레임워크 기본 규칙을 따릅니다.<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 생성 시 필드가 비어 있을 때 자동 할당되는 초기 상태("ACTIVE")입니다.<br/>*주의:* `POST` 생성 시 상태가 비어 있으면 자동 설정되며, `transitions`의 `:` 앞 시작 상태와 일치해야 합니다. |
-| `transitions` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`).<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 콜론 형식 `"FROM:TO_1,TO_2"`로 선언하는 허용 상태 전이 규칙입니다.<br/>*주의:* 정확한 콜론 문법 `"FROM:TO1,TO2"`(쉼표로 대상 구분, 대소문자 구분)를 요구합니다. 선언되지 않은 전이는 HTTP `400`/`409`로 거부됩니다. |
-| `deletableStates` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `{"CREATED", "CANCELLED"}` (state names where DELETE is allowed).<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | 삭제(DELETE)가 허용되는 상태 화이트리스트입니다(미포함 시 HTTP 422).<br/>*주의:* 비어 있지 않으면 지정 외 상태(예: `"PAID"`)의 레코드 삭제 시 HTTP `409 Conflict`로 차단됩니다. |
+| `transitions` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`).<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 콜론 형식 `"FROM:TO_1,TO_2"`로 선언하는 허용 상태 전이 규칙입니다.<br/>*주의:* 정확한 콜론 문법 `"FROM:TO1,TO2"`(쉼표로 대상 구분, 대소문자 구분)를 요구합니다. 선언되지 않은 전이는 HTTP `422`로 거부됩니다. |
+| `deletableStates` | `String[]` | `{}` | 아니오 (선택) | 0개 이상의 유효한 값 배열: `{"CREATED", "CANCELLED"}` (state names where DELETE is allowed).<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | 삭제(DELETE)가 허용되는 상태 화이트리스트입니다(미포함 시 HTTP 422).<br/>*주의:* 비어 있지 않으면 지정 외 상태(예: `"PAID"`)의 레코드 삭제 시 HTTP `422 Unprocessable Entity`로 차단됩니다. |
 
 ```java
 @StateMachine(
@@ -577,7 +577,7 @@ private String nationalId;
 | 속성 | Java 타입 | 기본값 | 필수 여부 | 허용 값 및 예제 | 설명 및 런타임 주의사항 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `category` | `String` | `""` | 아니오 (선택) | 비어 있지 않은 식별자 문자열(예: `"FINANCE_LEDGER"`). `""`이면 프레임워크 기본 규칙을 따릅니다.<br/>`@AuditTrail(category = "FINANCE_LEDGER", recordFieldDiffs = true)` | 감사 이벤트에 기록될 논리적 카테고리입니다. 비어 있으면 엔티티 클래스명을 사용합니다.<br/>*주의:* 감사 로그를 도메인별로 분류·필터링할 때 사용하며, `""`이면 JPA 엔티티 클래스명이 기본 적용됩니다. |
-| `recordFieldDiffs` | `boolean` | `true` | 아니오 (선택) | `true`(활성화) 또는 `false`(비활성화).<br/>`@AuditTrail(category = "PAYMENTS", recordFieldDiffs = true)` | true일 때 타임 트래블(`/{id}/revisions`)을 위한 필드 변경 전후 차이를 저장합니다.<br/>*주의:* `PUT`/`PATCH` 시 변경 전후 필드를 기록합니다. 대용량 텍스트나 초고빈도 갱신 테이블에서는 `false`로 저장 공간을 아끼세요. |
+| `recordFieldDiffs` | `boolean` | `true` | 아니오 (선택) | `true`(활성화) 또는 `false`(비활성화).<br/>`@AuditTrail(category = "PAYMENTS", recordFieldDiffs = true)` | true일 때 타임 트래블(`GET /api/v1/system/time-travel/{entityName}/{id}`)을 위한 필드 변경 전후 차이를 저장합니다.<br/>*주의:* `PUT`/`PATCH` 시 변경 전후 필드를 기록합니다. 대용량 텍스트나 초고빈도 갱신 테이블에서는 `false`로 저장 공간을 아끼세요. |
 
 ```java
 @AuditTrail(category = "FINANCIAL", recordFieldDiffs = true)
@@ -631,7 +631,7 @@ private String code;
 
 | 속성 | Java 타입 | 기본값 | 필수 여부 | 허용 값 및 예제 | 설명 및 런타임 주의사항 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `prefix` | `String` | `Required (no default)` | **예 (필수)** | 비어 있지 않은 식별자 문자열(예: `"ORD"`). `""`이면 프레임워크 기본 규칙을 따릅니다.<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | 8자리 대문자 UUIDv7 해시 앞에 붙는 필수 코드 접두사(예: "PRD-")입니다.<br/>*주의:* 필수 속성입니다. 생성 시 필드가 비어 있을 때만 `INV-2026-0001` 형식의 코드를 자동 생성합니다. |
+| `prefix` | `String` | `필수 (기본값 없음)` | **예 (필수)** | 필수 비어 있지 않은 접두사 문자열(예: `"PRD-"`, `"INV-"`) — 생략 시 컴파일 실패.<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | 8자리 대문자 UUIDv7 해시 앞에 붙는 필수 코드 접두사(예: "PRD-")입니다.<br/>*주의:* 필수 속성입니다. 생성/복제 시 필드가 비어 있을 때만 8자리 대문자 UUIDv7 해시(`INV-0194E1A0`)를 붙이며 전달된 값은 보존합니다. |
 
 ```java
 @AutoCode(prefix = "PRD-")
@@ -650,7 +650,7 @@ private String code;
 
 | 속성 | Java 타입 | 기본값 | 필수 여부 | 허용 값 및 예제 | 설명 및 런타임 주의사항 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `sourceField` | `String` | `Required (no default)` | **예 (필수)** | 엔티티의 문자열 필드와 정확히 일치하는 Java 속성 이름(예: `"title"`).<br/>`@AutoSlug(sourceField = "productName") private String slug;` | 소문자 하이픈 ASCII 슬러그로 정규화할 필수 원본 엔티티 필드명입니다.<br/>*주의:* 필수 속성입니다. 유니코드 문자열을 URL 안전한 kebab-case로 정규화하며, 유일성을 위해 `@UniqueField`와 함께 쓰세요. |
+| `sourceField` | `String` | `필수 (기본값 없음)` | **예 (필수)** | 엔티티의 문자열 필드와 정확히 일치하는 Java 속성 이름(예: `"title"`).<br/>`@AutoSlug(sourceField = "productName") private String slug;` | 소문자 하이픈 ASCII 슬러그로 정규화할 필수 원본 엔티티 필드명입니다.<br/>*주의:* 필수 속성입니다. 유니코드 문자열을 URL 안전한 kebab-case로 정규화하며, 유일성을 위해 `@UniqueField`와 함께 쓰세요. |
 
 ```java
 @AutoSlug(sourceField = "name")
@@ -696,7 +696,7 @@ private BigDecimal lineTotal;
 | `value` | `String` | `""` | 아니오 (선택) | 지원되는 값 중 하나: Parameterized SQL or JPQL statement using positional `?1`/`?2` or named `:param` placeholders.<br/>`@CustomQuery(value = "SELECT * FROM orders WHERE tenant_id = :tenantId AND total >= :minTotal", nativeQuery = true)` | 이름 기반 `:param` 바인딩을 지원하는 인라인 SQL 또는 JPQL 문자열입니다.<br/>*주의:* SQL 인젝션 방지를 위해 항상 `:param` 또는 `?1` 바인딩을 사용하세요. `sqlProvider` 사용 시 `""`로 비워 둡니다. |
 | `nativeQuery` | `boolean` | `true` | 아니오 (선택) | `true`(데이터베이스 네이티브 SQL 실행) 또는 `false`(이식 가능한 JPA JPQL 실행).<br/>`@CustomQuery(value = "SELECT o FROM OrderEntity o WHERE o.status = :status", nativeQuery = false)` | true면 네이티브 SQL, false면 JPA JPQL로 실행합니다.<br/>*주의:* 네이티브 SQL(`true`)은 CTE와 윈도우 함수를 지원하며, H2/PostgreSQL/MySQL 이식성이 필요하면 `false`(JPQL)를 사용하세요. |
 | `resultClass` | `Class<?>` | `Void.class` | 아니오 (선택) | 임의의 구체 Java DTO 클래스 리터럴(예: `MonthlyRevenueDto.class`) 또는 매핑 비활성화용 `Void.class`.<br/>`@CustomQuery(value = "SELECT currency, SUM(total) FROM invoices GROUP BY currency", resultClass = MonthlyRevenueDto.class)` | 조회 결과를 매핑할 선택적 대상 클래스입니다.<br/>*주의:* 집계·리포트 쿼리에는 `SELECT *` 방지와 타입 안전성을 위해 항상 DTO 프로젝션 클래스를 지정하세요. |
-| `sqlProvider` | `Class<?>` | `Void.class` | 아니오 (선택) | 임의의 구체 Java DTO 클래스 리터럴(예: `OrderAnalyticsSqlProvider.class`) 또는 매핑 비활성화용 `Void.class`.<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | 부팅 시 검증되는 동적 SQL 문자열 제공 클래스(선택)입니다.<br/>*주의:* 애플리케이션 부트스트랩 시 즉시 검증됩니다. 오타나 잘못된 `sqlProvider` 값은 트래픽 수신 전에 Fail-Fast로 중단됩니다. |
+| `sqlProvider` | `Class<?>` | `Void.class` | 아니오 (선택) | 구체 Pure Java SQL 프로바이더 클래스(예: `OrderAnalyticsSqlProvider.class`) 또는 인라인 `value` 사용 시 `Void.class`.<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | 부팅 시 검증되는 동적 SQL 문자열 제공 클래스(선택)입니다.<br/>*주의:* 애플리케이션 부트스트랩 시 즉시 검증됩니다. 오타나 잘못된 `sqlProvider` 값은 트래픽 수신 전에 Fail-Fast로 중단됩니다. |
 | `providerMethod` | `String` | `""` | 아니오 (선택) | 비어 있지 않은 식별자 문자열(예: `"buildRevenueSql"`). `""`이면 프레임워크 기본 규칙을 따릅니다.<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | `sqlProvider` 내에서 SQL 문자열을 반환하는 메서드 이름입니다.<br/>*주의:* Java 메서드/필드 식별자와 대소문자까지 정확히 일치해야 합니다(예: `"buildRevenueSql"`). 불일치 시 런타임 조회 오류가 발생합니다. |
 | `modifying` | `boolean` | `false` | 아니오 (선택) | `true`(쓰기 트랜잭션 내 UPDATE/DELETE DML 실행) 또는 `false`(읽기 전용 SELECT 쿼리).<br/>`@CustomQuery(value = "UPDATE orders SET status = :status WHERE id = :id", modifying = true)` | INSERT/UPDATE/DELETE 쿼리 실행 시 반드시 `true`여야 합니다.<br/>*주의:* `UPDATE`/`DELETE` 문에서는 `true`가 필수이며 쓰기 트랜잭션으로 자동 감쌉니다. |
 
@@ -1284,7 +1284,7 @@ private String effect; // ALLOW or DENY
 | `source` | `String` | `""` | 아니오 (선택) | `/`로 시작하는 유효한 HTTP 경로(예: `/services/order-api`) 또는 자동 유도를 위한 빈 문자열 `""`.<br/>`@PublishCloudEvent(source = "/services/order-api")` | 발행 바운디드 컨텍스트를 나타내는 CloudEvents `source` URI입니다.<br/>*주의:* 마이크로서비스 간 이벤트 추적을 위한 CNCF CloudEvents `source` URI를 채웁니다. |
 | `publishOnCreate` | `boolean` | `true` | 아니오 (선택) | `true`(활성화) 또는 `false`(비활성화).<br/>`@PublishCloudEvent(publishOnCreate = true, publishOnUpdate = false, publishOnDelete = false)` | 생성 커밋 후 CloudEvent 발행 여부(기본 true)입니다.<br/>*주의:* 트랜잭션 커밋(`AFTER_COMMIT`) 이후에만 Spring Events / Kafka / RabbitMQ로 발행됩니다. |
 | `publishOnUpdate` | `boolean` | `true` | 아니오 (선택) | `true`(활성화) 또는 `false`(비활성화).<br/>`@PublishCloudEvent(publishOnUpdate = true)` | 수정 커밋 후 CloudEvent 발행 여부(기본 true)입니다.<br/>*주의:* 조회수처럼 갱신이 잦은 엔티티에서는 브로커 과부하 방지를 위해 `false`로 끄세요. |
-| `publishOnDelete` | `boolean` | `true` | 아니오 (선택) | `true`(활성화) 또는 `false`(비활성화).<br/>`@PublishCloudEvent(publishOnDelete = true)` | 삭제 커밋 후 CloudEvent 발행 여부(기본 true)입니다.<br/>*주의:* 물리 삭제와 `@SoftDelete` 모두에서 발행되어 하위 읽기 모델을 동기화합니다. |
+| `publishOnDelete` | `boolean` | `true` | 아니오 (선택) | `true`(활성화) 또는 `false`(비활성화).<br/>`@PublishCloudEvent(publishOnDelete = true)` | 삭제 커밋 후 CloudEvent 발행 여부(기본 true)입니다.<br/>*주의:* 물리 삭제와 `BaseAuditEntity.deleted` 모두에서 발행되어 하위 읽기 모델을 동기화합니다. |
 
 ```java
 @PublishCloudEvent(eventType = "com.example.order.created", source = "/orders")

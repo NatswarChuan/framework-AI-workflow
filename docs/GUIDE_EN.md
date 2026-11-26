@@ -9,11 +9,11 @@
 
 ## 1. Architecture & Core Design
 
-`controller-to-api-framework` comprises `591` main Java source files (`251` test files, `569` tests), `60` Pure Java declarative `@interface` annotations (`54` in `core/annotation/` + `6` in `module/*/annotation/`, including `18` database-driven RBAC annotations), `9` composable controller capability interfaces (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), `16` `@AutoConfigurationBean` / `@ConfigurationProperties` classes (`18` groups in `META-INF/spring-configuration-metadata.json` across `20` `*Properties` classes), `21` i18n message bundles (`classpath:i18n/messages*.properties`), and AOT hints registered via `NwvmcRuntimeHintsRegistrar` (`META-INF/spring/aot.factories`).
+`controller-to-api-framework` comprises `593` main Java source files (`257` test files, `586` passing unit tests), `60` Pure Java declarative `@interface` annotations (`54` in `core/annotation/` + `6` in `module/*/annotation/`, including `18` database-driven RBAC annotations), `9` composable controller capability interfaces (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), `16` `@AutoConfigurationBean` / `@ConfigurationProperties` classes (`18` groups in `META-INF/spring-configuration-metadata.json` across `20` `*Properties` classes), `21` i18n message bundles (`classpath:i18n/messages*.properties`), and AOT hints registered via `NwvmcRuntimeHintsRegistrar` (`META-INF/spring/aot.factories`).
 
 - **Decoupled Domain Contract**: Application code declares JPA `entity/` classes extending `BaseAuditEntity` (`@Version` optimistic locking returning `409 Conflict` on stale updates, `JpaAssociationReferenceUtil` FK reference resolution on detached stubs) and `controller/` interfaces extending `AutoApiController<E>` or composable subsets such as `AutoReadApi<E>` without static Spring MVC imports or generated boilerplate (standard Spring `@RequestBody`, `@RequestParam`, and `@PathVariable` bindings are also supported alongside `@AutoBody`/`@AutoParam`/`@AutoVariable`, plus `@AutoRestController(readDto, createDto, updateDto)`). Only Spring AOT (`autoconfigure/`, `common/constant/AotConstant`, `common/util/AotRuntimeHintsUtil`) and property metadata (`config/properties/`) retain compile-time Spring annotations (`10` imports across the entire framework).
 - **`MethodHandle` Hot-Path Dispatch**: `MethodHandleCacheUtil` and `LambdaAccessorUtil` replace reflective `Method.invoke` overhead on controller routing and entity field mutations.
-- **UUIDv7 Primary Keys (`UuidUtil.generateUuidV7`)**: Time-ordered RFC 9562 identifiers preserve sequential B-Tree locality during inserts and back $O(1)$ `/keyset` pagination.
+- **UUIDv7 Primary Keys (`UuidUtil.generateUuidV7`)**: Time-ordered RFC 9562 identifiers preserve sequential B-Tree locality during inserts and back `O(1)` `/keyset` pagination.
 - **Zero-Allocation Error Handling**: `GlobalExceptionHandlerHelper`, `CustomContainerErrorController` (`/error`), and `ExceptionCauseUnwrapperUtil` log full server causes internally while emitting sanitized `ApiResponse<Void>` responses with RFC 9562 UUIDv7 `X-Request-ID` and W3C `traceparent` headers.
 
 ---
@@ -34,11 +34,26 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 ```
 
 ```kotlin
 dependencies {
   implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+  options.compilerArgs.add("-parameters")
 }
 ```
 
@@ -171,7 +186,7 @@ Use `enabledEndpoints` / `disabledEndpoints` or `readDto`/`createDto`/`updateDto
 ## 7. Security, Resilience, Storage & Observability
 
 - **Access Control, Database-Driven RBAC & Masking**: `@EntitySecurity` (RBAC + `ownerField` row-level security, also composable via custom meta-annotations like `@AuditedRecordSecurity`), `@FieldSecurity` (`maskPattern = "******"` or nullification), `@MultiTenant` (fail-closed HTTP `403` when tenant context is missing without bypass role, force-overwrites incoming spoofed `tenantId` on create, and validates tenant ownership across all single-ID read/write/delete/clone/diff/sub-resource calls), database-driven dynamic RBAC (`@SecurityRoleEntity`, `@SecurityPermissionEntity`, `@SecurityUserRoleEntity`, `@SecurityPolicyEntity` + `@PermissionFieldMask` with explicit `DENY` > `ALLOW` priority, tenant `X-Tenant-ID`, automatic L1 Caffeine cache invalidation via `DatabaseRbacCacheInvalidationListener`, controlled by `app.framework.security.dynamic-database-rbac-enabled`), `SecurityIdentityCustomizer` (`customizeSecurityFilterChain`, `augmentSubjectAuthorities`, `evaluateCustomAuthorization`), and non-destructive `SecurityFilterChain` coexistence via `PureJavaSecurityFilterBridge`.
-- **Concurrency, Caching & SPIs**: `@DistributedLock` (`DistributedLockProvider` SPI with Caffeine + `ReentrantLock` default protecting active locked mutexes), `@Idempotent` (`IdempotencyStoreProvider` SPI + atomic Caffeine `compute`/`replace`, `X-Idempotency-Key`, returns `409 ConflictBusinessException`; blank keys bypass), granular per-entity `@AutoCacheEvict(allEntries = false)` key invalidation, `TransactionalOutboxHelper` (`PENDING -> PROCESSING` atomic claim), `@RateLimit`, `@EntityCircuitBreaker` (`/api/v1/system/circuit-breakers`), `@EntityRetry`.
+- **Concurrency, Caching & SPIs**: `@DistributedLock` (`DistributedLockProvider` SPI with Caffeine + `ReentrantLock` default protecting active locked mutexes), `@Idempotent` (`IdempotencyStoreProvider` SPI + atomic Caffeine `compute`/`replace`, `X-Idempotency-Key`, returns `409 ConflictBusinessException`; blank keys bypass), granular per-entity `@AutoCacheEvict(allEntries = false)` key invalidation, `TransactionalOutboxHelper` (`PENDING -> PROCESSING` atomic claim), `@RateLimit`, `@EntityCircuitBreaker` (`/api/v1/system/resilience/circuit-breakers`), `@EntityRetry`.
 - **Micrometer Metrics (`DynamicEntityMetricsHelper` / `MetricConstant`, 11 metrics)**: Emits `dynamic.entity.requests.total`, `dynamic.entity.duration.seconds`, `nwvmc.proxy.request.duration`, `nwvmc.cache.http.requests`, `nwvmc.outbox.pending.events`, `nwvmc.outbox.dispatch.duration`, `nwvmc.resilience.circuitbreaker.state`, `nwvmc.ratelimit.rejected.total`, `framework.outbox.dispatched.total`, `framework.realtime.active.connections` (SSE streams via `SseEmitterRegistryHelper`), and `framework.datasource.routing.total` (opt-in helper counter via `DynamicEntityMetricsHelper.recordDataSourceRouting`).
 - **Storage, Events & Time-Travel**: Multi-cloud `FileStorageController` (`LOCAL`, `AWS S3`, `GCS`), `@EntityWebhook` HMAC-SHA256 dispatch, `@PublishCloudEvent`, WebSocket `/ws-connect`, and `TimeTravelDynamicApiController` (`/api/v1/system/time-travel/{entityName}/{id}`).
 
@@ -236,10 +251,12 @@ For the exhaustive specification of every attribute, Java type, default value, *
 
 Use the model-agnostic **SDD + TDD AI-Agent Adoption Kit** (`INTRO.md`, `RULES.md`, `SKILL.md`, `CHECKLIST.md`, 6 machine-verified `references/01..06` including the **SDD & TDD Playbook**, starter templates in `templates/{spec,plan,tasks}.template.md`, and 8 drop-in `adapters/`) so **any AI coding agent or LLM** (Antigravity/Gemini, Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, Cline/Roo Code, ChatGPT, DeepSeek, Qwen, Grok, Mistral, Llama/Ollama, Aider) delivers Spring-NWVMC `0.1.0` features spec-first and test-first with zero hallucinated annotations or runtime pitfalls:
 
-```bash
-# Windows (PowerShell — run directly inside your Spring Boot project root, zero clone needed)
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+```powershell
+# Windows (PowerShell — NOT cmd.exe; run directly inside your Spring Boot project root, zero clone needed)
+$ErrorActionPreference='Stop'; $s=Join-Path $env:TEMP ("nwvmc-install-" + [guid]::NewGuid().ToString("N") + ".ps1"); try { [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
+```
 
+```bash
 # macOS / Linux / Git Bash (run directly inside your Spring Boot project root, zero clone needed)
-curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
+curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

@@ -91,16 +91,29 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ currentLang, theme }
   <groupId>io.github.natswarchuan</groupId>
   <artifactId>spring-nwvmc</artifactId>
   <version>0.1.0</version>
-</dependency>`,
+</dependency>
+
+<!-- Mandatory: retain parameter names for SpEL keys & Spring MVC bindings -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <configuration>
+    <parameters>true</parameters>
+  </configuration>
+</plugin>`,
           },
           {
             id: 'gradle',
             label: 'Gradle (Kotlin)',
             language: 'kotlin',
             fileName: 'build.gradle.kts',
-            highlightLines: [2],
+            highlightLines: [2, 6],
             code: `dependencies {
   implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+
+tasks.withType<JavaCompile> {
+  options.compilerArgs.add("-parameters")
 }`,
           },
           {
@@ -208,7 +221,7 @@ import io.github.natswarchuan.core.controller.AutoApiController;
 
 @AutoRestController
 public interface ProductCatalogController extends AutoApiController<ProductCatalog> {
-  // Automatically mounts 36 REST/Batch/Keyset/Schema/AI endpoints at /api/v1/product-catalogs
+  // Automatically mounts 40 REST/Batch/Keyset/Schema/AI contracts (38 visible in Swagger UI) at /api/v1/product-catalogs
 }`,
           },
         ]}

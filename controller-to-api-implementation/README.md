@@ -1,6 +1,6 @@
 # NovaMart Multi-Merchant E-Commerce Backend
 
-Enterprise multi-merchant e-commerce platform built on **Java 21 LTS**, **Spring Boot 3.3.5**, and **Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0`)** from public JitPack.
+Enterprise multi-merchant e-commerce reference application built on **Java 21 LTS**, **Spring Boot 3.3.5**, and **Spring-NWVMC (`io.github.natswarchuan:spring-nwvmc:0.1.0`)** from **Maven Central** (`58` main `.java` files, `14` test `.java` files, `23/23` passing unit & integration tests).
 
 ---
 
@@ -19,7 +19,7 @@ Following Spring-NWVMC's **2-Directory Domain Contract** (`entity/` + `controlle
 | **7** | **Dynamic Database RBAC** | `NovaRole`, `NovaPermission`, `NovaUserRole`, `NovaAccessPolicy` + 4 controllers | `@SecurityRoleEntity`, `@SecurityPermissionEntity`, `@SecurityUserRoleEntity`, `@SecurityPolicyEntity` enforcing live roles, permissions, and `DENY > ALLOW` |
 | **8** | **Read-Replica Sales Analytics & L1 Cache** | `SalesAnalyticsService`, `SalesAnalyticsServiceImpl`, `SalesAnalyticsHelper`, `SalesAnalyticsDispatchHelper`, `NovaDataSourceConfig` | `DynamicRoutingDataSource` (`PRIMARY` + `REPLICA`), `@TargetDataSource(REPLICA)`, `@TargetDatabasePlatform`, `@AutoCacheable` / `@AutoCacheEvict`, mounted on `StorefrontProductController` (no `readDto`) |
 | **9** | **Ecosystem Integrations** | `CatalogAiAssistantHelper`, `PartnerShippingGatewayHelper` | `ObjectProvider<T>` injection of `DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`; Dot-DSL, `/keyset`, `?fields=`, GraphQL, File Storage, Spring AI, Zod/TS SDK codegen |
-| **10** | **Security Lockdown & Load Testing** | `ProductionSecurityLockdownIntegrationTest`, `src/test/jmeter/novamart-load-test.jmx` | Production `application.yml` locks down Studio & demo token endpoints (`false`); Apache JMeter load test achieving `0.0%` error rate |
+| **10** | **Security Lockdown & Load Testing** | `ProductionSecurityLockdownIntegrationTest`, `src/test/jmeter/novamart-load-test.jmx` | Production `application.yml` locks down Studio & demo token endpoints (`false`); Apache JMeter smoke load suite (`1,003` requests, `0.0%` error rate) |
 
 ---
 
@@ -31,30 +31,41 @@ mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
 - **Swagger UI:** `http://localhost:8080/swagger-ui/index.html`
 - **Dev Studio:** `http://localhost:8080/system/studio`
-- **Demo Token:** `http://localhost:8080/system/studio/demo-token?role=ROLE_ADMIN`
+- **Mint Dev Demo JWT (`POST /api/v1/auth/token`, returns `200 OK` with `data.token`):**
+  - **Windows (PowerShell):**
+    ```powershell
+    $token = (Invoke-RestMethod -Method Post "http://localhost:8080/api/v1/auth/token?username=admin&role=ROLE_ADMIN").data.token
+    ```
+  - **macOS / Linux (Bash):**
+    ```bash
+    ADMIN_TOKEN=$(curl -s -X POST "http://localhost:8080/api/v1/auth/token?username=admin&role=ROLE_ADMIN" | jq -r '.data.token')
+    ```
 
 ### Production Baseline
 `src/main/resources/application.yml` enforces:
 - `app.framework.studio.enabled: false`
 - `app.framework.studio.demo-token-endpoint-enabled: false`
 - `app.framework.security.fail-fast-weak-jwt-secret: true`
-- `app.framework.security.jwt-secret: ${JWT_SECRET}` (minimum 32 UTF-8 bytes)
+- `app.framework.security.jwt-secret: ${JWT_SECRET}` (minimum 32 UTF-8 bytes for HS256 / 64 bytes for HS512)
 - `spring.threads.virtual.enabled: true` and `spring.jpa.open-in-view: false`
 
 ---
 
 ## Verification & Apache JMeter Load Testing
 
-### Full Unit & Integration Test Suite
+### Full Unit & Integration Test Suite (`23/23` tests)
 ```powershell
 mvn clean verify
 ```
 
-### Apache JMeter Load Test (Against Live Local `dev` Server)
+### Apache JMeter Smoke Load Test (Against Live Local `dev` Server)
 ```powershell
-# 1. Start the packaged app in dev profile
+# 1. Build the executable JAR first
+mvn clean package -DskipTests
+
+# 2. Start the packaged app in dev profile (in a separate terminal)
 java -jar target/novamart-ecommerce-1.0.0.jar --spring.profiles.active=dev
 
-# 2. Execute JMeter load test & generate HTML dashboard (target/jmeter/reports/)
-mvn jmeter:configure jmeter:jmeter jmeter:results
+# 3. Execute JMeter smoke load test (1,003 requests) & generate HTML dashboard (target/jmeter/reports/)
+mvn -Pjmeter jmeter:configure jmeter:jmeter jmeter:results
 ```

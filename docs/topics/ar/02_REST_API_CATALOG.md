@@ -1,6 +1,6 @@
 # 02. دليل 40 عقد REST مولد تلقائيًا ووحدات التحكم المدمجة للمنصة (`0.1.0`)
 
-> **اللغات**: **العربية** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#endpoints)
+> **اللغات**: **العربية** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل (EN)](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#endpoints)
 
 ---
 
@@ -81,7 +81,7 @@
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema` و`POST ""` و`GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | إعادة بناء حالة الكيان عند طابع زمني محدد بتنسيق ISO-8601 UTC (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | فحص مكونات SPI النشطة عبر `7` مجموعات قياس `*Customizer` (تُدار `StorageCustomizer` عبر `StorageCustomizerRegistryHelper` بإجمالي `8` واجهات SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | مقاييس الصحة الحية لقواطع الدائرة Resilience4j |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | مقاييس الصحة الحية لقواطع الدائرة Resilience4j |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | فحص صحة مصادر البيانات المتعددة |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | سياق MDC النشط لـ W3C `traceparent` ومعرف UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | يحول أخطاء حاوية Tomcat (`400/404/405/413/431/500`) إلى استجابة `ApiResponse<Void>` موحدة |

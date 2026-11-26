@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. 多云对象存储（`FileStorageController` — `LOCAL` / `S3` / `GCS`）
+
+内置 `FileStorageController`（`/api/v1/storage/*`）提供 `POST /upload`、`GET /download/{fileId}`、`GET /metadata/{fileId}`、`GET /exists/{fileId}`、`DELETE /{fileId}` 与 `POST /presigned-url`，由 `app.framework.storage.provider`（`LOCAL`/`S3`/`GCS`）与 `StorageCustomizer` 驱动。
+
+> **生产安全加固：** 暴露前请启用 `app.framework.security.require-authenticated-api-paths: true` 并在 Spring Security `SecurityFilterChain` 中保护 `/api/v1/storage/**`（同时配置 `max-file-size-bytes` 与允许的 MIME 类型）。

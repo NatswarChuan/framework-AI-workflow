@@ -57,3 +57,11 @@ Khi một endpoint cần nghiệp vụ riêng vượt ngoài CRUD chuẩn:
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. Lưu Trữ Tập Tin Đa Đám Mây (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+`FileStorageController` tích hợp sẵn (`/api/v1/storage/*`) cung cấp `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` và `POST /presigned-url`, chuyển đổi linh hoạt qua `app.framework.storage.provider` (`LOCAL` / `S3` / `GCS`) cùng `StorageCustomizer`.
+
+> **Khóa Bảo Mật Production:** Bật `app.framework.security.require-authenticated-api-paths: true` và bảo vệ `/api/v1/storage/**` trong `SecurityFilterChain` (kèm giới hạn dung lượng & MIME cho phép) trước khi đưa lên mạng công cộng.

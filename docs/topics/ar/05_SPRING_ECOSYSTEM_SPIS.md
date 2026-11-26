@@ -1,6 +1,6 @@
 # 05. 8 واجهات SPI Customizer و`@CustomEndpoint` و`@ServiceOverride` (`0.1.0`)
 
-> **اللغات**: **العربية** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#spi-customizers)
+> **اللغات**: **العربية** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل (EN)](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 توفر جميع نقاط الامتداد تحت `io.github.natswarchuan.customization.customizer` دوال `default` ضمن واجهات تتيح التخصيص الانتقائي عبر Spring Beans دون تعديل نواة الإطار:
 
-| # | واجهة SPI | Context DTO | نطاق الامتداد |
+| # | واجهة SPI | نموذج السياق DTO | نطاق الامتداد |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | حاوية المكونات الأساسية، `TaskExecutor`، جدولة المهام |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | مطالبات Spring AI `ChatClient`، خطافات المتجهات ومسارات RAG |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | سياسات حاويات `LOCAL`/`S3`/`GCS` والروابط الموقعة مسبقًا وحدود الرفع |
 
 يمكن فحص المكونات النشطة في مجموعات القياس الأساسية الـ `7` (`CustomizerGroupConstant`) عبر `GET /api/v1/system/customizers` (تُدار `StorageCustomizer` عبر `StorageCustomizerRegistryHelper`).
+
+
+> **المعترض النشط مقابل خطافات البيانات الوصفية والقياس (`0.1.0`):** يعمل `SecurityIdentityCustomizer` فعليًا على كل طلب عبر `SecurityFilterChainBridge` و`SecurityAuthorityDecisionHelper`؛ بينما تسجل الواجهات الـ `7` الأخرى بيانات التعريف والقياس عبر `GET /api/v1/system/customizers`.
 
 ---
 

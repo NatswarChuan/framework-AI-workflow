@@ -1,6 +1,6 @@
-# 03. Truy Vấn Động 13 Toán Tử, Query Guardrails, Keyset $O(1)$ & GraphQL SDL (`0.1.0`)
+# 03. Truy Vấn Động 13 Toán Tử, Query Guardrails, Keyset `O(1)` & GraphQL SDL (`0.1.0`)
 
-> **Ngôn ngữ**: [English](../en/03_QUERY_AND_DATA_ACCESS.md) | **Tiếng Việt** | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Đủ 20 Ngôn Ngữ](../README.md) | [Cẩm Nang Đầy Đủ](../../GUIDE_VI.md) | [Cổng Tài Liệu 20 Ngôn Ngữ](../../index.html#query-dsl)
+> **Ngôn ngữ**: [English](../en/03_QUERY_AND_DATA_ACCESS.md) | **Tiếng Việt** | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Đủ 20 Ngôn Ngữ](../README.md) | [Cẩm Nang Đầy Đủ](../../GUIDE_VI.md) | [Cổng Tài Liệu 20 Ngôn Ngữ](../../index.html#query-operators)
 
 ---
 
@@ -37,9 +37,9 @@ Mọi tham số lọc HTTP được biên dịch sang JPA Criteria có tham số
 
 ---
 
-## 2. Phân Trang Con Trỏ Keyset $O(1)$ (`GET /keyset`)
+## 2. Phân Trang Con Trỏ Keyset `O(1)` (`GET /keyset`)
 
-Phân trang `OFFSET` truyền thống có chi phí quét tuyến tính $O(N)$ khi đi sâu vào các trang cuối. Vì khóa chính của thực thể dùng **UUIDv7 (RFC 9562)** tăng dần đơn điệu theo dấu thời gian 48-bit, endpoint `/keyset` truy cập trực tiếp qua chỉ mục B-Tree hỗ trợ cả `dir=asc` và `dir=desc` kèm thăm dò `size + 1` độ phức tạp $O(1)$:
+Phân trang `OFFSET` truyền thống có chi phí quét tuyến tính `O(N)` khi đi sâu vào các trang cuối. Vì khóa chính của thực thể dùng **UUIDv7 (RFC 9562)** tăng dần đơn điệu theo dấu thời gian 48-bit, endpoint `/keyset` truy cập trực tiếp qua chỉ mục B-Tree hỗ trợ cả `dir=asc` và `dir=desc` kèm thăm dò `size + 1` độ phức tạp `O(1)`:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

@@ -11,7 +11,7 @@
 1. `entity/`: JPA Entity kế thừa `BaseAuditEntity` (tích hợp UUIDv7 và `@Version` Optimistic Locking), khai báo Bean Validation (`jakarta.validation.constraints.*`), chỉ mục database và các annotation khai báo (`@EntitySecurity`, `@FieldSecurity`, `@StateMachine`, `@AutoCode`, `@AutoSlug`, `@UniqueField`, `@ComputedField`, `@AuditTrail`, `@MultiTenant`).
 2. `controller/`: Marker interface gắn `@AutoRestController` kế thừa `AutoApiController<E>` hoặc các capability interface thành phần như `AutoReadApi<E>` (hỗ trợ cả `@RequestBody`/`@RequestParam`/`@PathVariable` chuẩn Spring).
 
-Mọi nghiệp vụ vượt ra ngoài CRUD chuẩn đều được tách vào `Service` interface + `Helper` (`@Service` / `@Component` của Spring, `public final class`, không có hàm `private` hay hàm `static` trong Helper; `@AutoService` / `@AutoComponent` chỉ quét gói `"io.github.natswarchuan"`, và thêm `@EntityScan` nếu gói Entity nằm ngoài `io.github.natswarchuan`, `com.example`, `io.github`) và gắn kết qua `@CustomEndpoint` hoặc `@ServiceOverride`.
+Mọi nghiệp vụ vượt ra ngoài CRUD chuẩn đều được tách vào `Service` interface + `Helper` (`@Service` / `@Component` của Spring, `public final class`; `@AutoService` / `@AutoComponent` chỉ quét gói `"io.github.natswarchuan"`, và thêm `@EntityScan` nếu gói Entity nằm ngoài `io.github.natswarchuan`, `com.example`, `io.github`) và gắn kết qua `@CustomEndpoint` hoặc `@ServiceOverride`.
 
 ---
 
@@ -29,6 +29,28 @@ Mọi nghiệp vụ vượt ra ngoài CRUD chuẩn đều được tách vào `S
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 Nếu tích hợp trực tiếp từ GitHub qua [JitPack](https://jitpack.io):
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **Mẹo chạy Dev cục bộ:** Nếu chưa export `JWT_SECRET`, hãy đặt `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` và `studio.enabled: true` riêng trong `application-dev.yml` (giữ `application.yml` / `application-prod.yml` luôn fail-closed không fallback).
+
 ---
 
 ## 4. Lọc Endpoint Theo Phạm Vi (`enabledEndpoints` & `disabledEndpoints`)
@@ -93,11 +117,11 @@ app:
 
 ```java
 @AutoRestController(
-    basePath = "/api/v1/commercial-products",
+    basePath = "/api/v1/product-catalogs",
     disabledEndpoints = {"batchChunked", "deleteById", "importCsv"},
     enableNestedSubResources = true
 )
-public interface CommercialProductController extends AutoApiController<CommercialProduct> {
+public interface ProductCatalogController extends AutoApiController<ProductCatalog> {
 }
 ```
 
@@ -108,6 +132,6 @@ public interface CommercialProductController extends AutoApiController<Commercia
 | Ngoại Lệ | Điều Kiện Kiểm Tra | Cách Khắc Phục |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` phát hiện JVM `< 21` | Chạy trên Java 21 LTS trở lên |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` và khóa `jwt-secret` nhỏ hơn `32` byte UTF-8 | Đặt `${JWT_SECRET}` tối thiểu `32` byte |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` hoặc `maxPageSize < 1` | Cấu hình giá trị nguyên dương trong `app.framework.query-guardrails.*` |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` và khóa `jwt-secret` nhỏ hơn `32` byte UTF-8 | Đặt `${JWT_SECRET}` tối thiểu `32` byte |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` hoặc `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | Cấu hình giá trị nguyên dương trong `app.framework.query-guardrails.*` |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` hoặc `ComputedFieldFailFastUtil` phát hiện Entity thiếu `@Id`, thiếu no-arg constructor hoặc cấu hình `@ComputedField` sai | Kế thừa `BaseAuditEntity`, khai báo `@NoArgsConstructor` và đúng tên trường nguồn |

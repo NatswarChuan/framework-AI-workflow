@@ -1,6 +1,6 @@
 # 05. 8개 SPI Customizer 인터페이스, `@CustomEndpoint` 및 `@ServiceOverride` (`0.1.0`)
 
-> **언어**: **한국어** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#spi-customizers)
+> **언어**: **한국어** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼 (EN)](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 `io.github.natswarchuan.customization.customizer` 아래 모든 확장 훅은 `interface` `default` 메서드로 제공되어 프레임워크 내부 수정 없이 원하는 Spring 빈만 선택 재정의할 수 있습니다:
 
-| # | SPI 인터페이스 | Context DTO | 확장 범위 |
+| # | SPI 인터페이스 | 컨텍스트 DTO | 확장 범위 |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | 핵심 빈 컨테이너, `TaskExecutor`, 작업 스케줄링 |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Spring AI `ChatClient` 프롬프트, 벡터 스토어 훅, RAG 파이프라인 |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` 버킷 정책, 사전 서명 URL 및 업로드 한도 |
 
 `7`개 핵심 텔레메트리 그룹(`CustomizerGroupConstant`)에 등록된 활성 빈은 `GET /api/v1/system/customizers`에서 조회할 수 있습니다(`StorageCustomizer`는 `StorageCustomizerRegistryHelper`가 별도 관리).
+
+
+> **런타임 인터셉터 vs. 메타데이터/텔레메트리 훅(`0.1.0`):** `SecurityIdentityCustomizer`는 모든 요청에서 `SecurityFilterChainBridge`와 `SecurityAuthorityDecisionHelper`가 직접 실행합니다. 나머지 `7`개는 `GET /api/v1/system/customizers` 및 `StorageCustomizerRegistryHelper`용 메타데이터·텔레메트리 등록 훅입니다.
 
 ---
 

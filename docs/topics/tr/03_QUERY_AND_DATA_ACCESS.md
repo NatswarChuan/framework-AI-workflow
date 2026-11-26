@@ -1,6 +1,6 @@
 # 03. 13 Dinamik Filtre Operatörü, Query Guardrails, Keyset O(1) ve GraphQL SDL (`0.1.0`)
 
-> **Diller**: **Türkçe** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#query-dsl)
+> **Diller**: **Türkçe** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz (EN)](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@ Tüm filtre sorgu parametreleri `QueryFilterParameterUtil` (`PATTERN_MALICIOUS_S
 
 ## 2. O(1) İmleçli Keyset Sayfalama (`GET /keyset`)
 
-Birincil anahtarlar zamana göre monoton artan **UUIDv7** kullandığından `/keyset`, `dir=asc` ve `dir=desc` yönlerinde `size + 1` yoklamasıyla $O(1)$ sürede doğrudan imleç sınırına atlar:
+Birincil anahtarlar zamana göre monoton artan **UUIDv7** kullandığından `/keyset`, `dir=asc` ve `dir=desc` yönlerinde `size + 1` yoklamasıyla `O(1)` sürede doğrudan imleç sınırına atlar:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

@@ -250,7 +250,7 @@ export const UI_CONTROLS: Record<string, FullLocalizedText> = {
     es: 'Todos (40)',
     fr: 'Tous (40)',
     ar: 'الكل (40)',
-    bn: 'সব (40)',
+    bn: 'সব (৪০)',
     pt: 'Todos (40)',
     ru: 'Все (40)',
     ur: 'سب (40)',
@@ -262,7 +262,7 @@ export const UI_CONTROLS: Record<string, FullLocalizedText> = {
     tr: 'Tümü (40)',
     it: 'Tutti (40)',
     th: 'ทั้งหมด (40)',
-    fa: 'همه (40)',
+    fa: 'همه (۴۰)',
     pl: 'Wszystkie (40)',
   },
   explorerRead: {

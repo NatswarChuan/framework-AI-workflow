@@ -1,20 +1,20 @@
 # 07. کیت جامع پذیرش برای ایجنت‌های هوش مصنوعی (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` و `llms.txt`، `0.1.0`)
 
-> **زبان‌ها**: **فارسی** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#ai-agent-kit)
+> **زبان‌ها**: **فارسی** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل (EN)](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. هدف و معماری کیت (`ai-agent-kit/`)
 
-**Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) تمامی **ایجنت‌های برنامه‌نویسی هوش مصنوعی و مدل‌های LLM موجود در بازار** را به واقعیت‌های ۱:۱ بررسی‌شده با ماشین از کد منبع مجهز می‌کند (`60` حاشیه‌نویسی در `6` پکیج دقیق Java، `133` ویژگی، `40` مسیر خودکار، کلیدهای دقیق `app.framework.*` و قواعد آزمایش‌شده زمان اجرا `0.1.0`) تا ادغام در همان تلاش اول بدون توهم و خطا انجام شود.
+**Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) تمامی **ایجنت‌های برنامه‌نویسی هوش مصنوعی و مدل‌های LLM موجود در بازار** را به واقعیت‌های ۱:۱ بررسی‌شده با ماشین از کد منبع مجهز می‌کند (`60` حاشیه‌نویسی در `6` پکیج دقیق Java، `133` ویژگی، `40` مسیر خودکار، کلیدهای دقیق `app.framework.*` و قواعد آزمایش‌شده زمان اجرا `0.1.0`) تا ادغام در همان تلاش اول بدون توهم و خطا انجام شود.
 
 | فایل / پوشه | نقش |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نمای معماری: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` و JitPack `v0.1.0`، قرارداد ۲ پوشه‌ای (`entity/` + `controller/`)، ۹ اینترفیس ترکیبی، ۶ پکیج حاشیه‌نویسی و ۱۱ زیرسیستم داخلی |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | قواعد سخت‌گیرانه ضدتوهم (`17.2 KB`، کمتر از سقف `24 KB`) شامل همه دام‌های تاییدشده زمان اجرا |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارت مرحله‌ای `spring-nwvmc-adoption` با ۶ گردش‌کار گام‌به‌گام و ماتریس عیب‌یابی ۱۰ علت ریشه‌ای |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | دروازه بررسی ۶ مرحله‌ای پیش از تحویل (پیش‌بررسی -> طراحی -> دام‌های زمان اجرا -> قفل تولید -> کارایی -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | ۵ مرجع عمیق تاییدشده با ماشین (۶۰ حاشیه‌نویسی / ۱۳۳ ویژگی، ۴۰ مسیر + ۱۳ عملگر نقطه‌ای، YAML + چندپایگاه‌داده، دستورالعمل‌های عملی شامل `@MultiTenant` + DB-RBAC چهار موجودیتی + `JwtTokenService`، و جدول دقیق import کلاس‌ها و SPI) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نمای معماری: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` و JitPack `v0.1.0`، قرارداد ۲ پوشه‌ای (`entity/` + `controller/`)، ۹ اینترفیس ترکیبی، ۶ پکیج حاشیه‌نویسی و ۶ زیرسیستم داخلی |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | قواعد سخت‌گیرانه ضدتوهم (`19.0 KB`، کمتر از سقف `24 KB`) شامل همه دام‌های تاییدشده زمان اجرا |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارت مرحله‌ای `spring-nwvmc-adoption` با ۷ گردش‌کار گام‌به‌گام و ماتریس عیب‌یابی ۱۵ علت ریشه‌ای |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | دروازه بررسی ۷ مرحله‌ای پیش از تحویل (پیش‌بررسی ← طراحی ← دام‌های زمان اجرا ← قفل تولید ← کارایی ← `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | ۶ (+ `templates/`) مرجع عمیق تاییدشده با ماشین (۶۰ حاشیه‌نویسی / ۱۳۳ ویژگی، ۴۰ مسیر + ۱۳ عملگر نقطه‌ای، YAML + چندپایگاه‌داده، دستورالعمل‌های عملی شامل `@MultiTenant` + DB-RBAC چهار موجودیتی + `JwtTokenService`، و جدول دقیق import کلاس‌ها و SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | فهرست‌های منطبق با `llmstxt.org` برای خزنده‌ها و ایجنت‌های هوش مصنوعی |
 
 ---
@@ -27,10 +27,10 @@
 
 ```powershell
 # نصب برای همه ایجنت‌های هوش مصنوعی و مدل‌ها در پوشه فعلی (".")
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # یا انتخاب یک ایجنت خاص (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # برای بازنویسی فایل‌های آداپتور موجود در ریشه، -Force را اضافه کنید (به‌صورت پیش‌فرض فایل‌های قبلی حفظ می‌شوند)
 ```
@@ -86,4 +86,4 @@ rm -rf /tmp/nwvmc-docs
 
 - **SDD — توسعه مبتنی بر مشخصات (`specs/<feature>/`):** خط لوله ۶ مرحله‌ای (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): نگارش `spec.md` با معیارهای `REQ-ID` (`Given/When/Then`)، توقف روی `[NEEDS CLARIFICATION]`، ساخت ماتریس ردیابی ۱:۱ در `plan.md` و تطبیق بدون انحراف با `/v3/api-docs`، `/metadata` و `/schema/zod`.
 - **TDD — قرمز ← سبز ← بازآرایی (هرم آزمون ۴ لایه):** ابتدا آزمون شکست‌خورده JUnit 5 / `MockMvc` با `@DisplayName("REQ-XXX: ...")` (و برای هر باگ آزمون رگرسیون) بنویسید، حداقل کد اعلانی را تا سبز شدن پیاده کنید و سپس بازآرایی نمایید. هر ۴ لایه واحد، امنیت/گردش‌کار، انحراف قرارداد و هم‌زمانی `@DistributedLock` + JMeter با خطای `0.0%` پوشش داده می‌شود و `@Disabled` ممنوع است.
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **راهنمای عملی و قالب‌ها:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

@@ -1,13 +1,13 @@
 # 04. امنیت، ذخیره‌سازی چندابری، `@ServiceOverride`، معیارها و بین‌المللی‌سازی ۲۰ زبانه (`0.1.0`)
 
-> **زبان‌ها**: **فارسی** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#security-rbac)
+> **زبان‌ها**: **فارسی** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [هر ۲۰ زبان](../README.md) | [راهنمای کامل (EN)](../../GUIDE_EN.md) | [پورتال تعاملی ۲۰ زبانه](../../index.html#security-rbac)
 
 ---
 
 ## 1. امنیت NIST سطح ۲، RBAC مبتنی بر پایگاه داده، قفل سطوح و دفاع ضداسکنر
 
 - **`@EntitySecurity`، `@FieldSecurity` و `@MultiTenant`**: کنترل دسترسی اعلانی جدول (`readRoles`، `writeRoles`، `deleteRoles`، `permissions` با پشتیبانی از متا-حاشیه‌نویسی)، محافظ مالکیت (`ownerField`)، پنهان‌سازی یا تهی‌سازی ستون‌های حساس (`viewRoles`، `maskPattern`، `nullifyInsteadOfMask`) و جداسازی `@MultiTenant` به شکل fail-closed (`403` در نبود مستأجر، جلوگیری از جعل در ایجاد و بررسی IDOR).
-- **RBAC پویای مبتنی بر پایگاه داده (`DynamicDatabaseRbacProviderHelper`)**: ۴ موجودیت JPA را با `@SecurityRoleEntity`، `@SecurityPermissionEntity`، `@SecurityUserRoleEntity`، `@SecurityPolicyEntity` و نشانگرهای مربوطه مشخص کنید. اولویت صریح `DENY` > `ALLOW`، زمینه `X-Tenant-ID`، باطل‌سازی خودکار کش L1 Caffeine با `DatabaseRbacCacheInvalidationListener`، همزیستی بدون تداخل با `SecurityFilterChain` از طریق `PureJavaSecurityFilterBridge` و توسعه با `SecurityIdentityCustomizer` را فراهم می‌کند (`app.framework.security.dynamic-database-rbac-enabled=true`).
+- **RBAC پویای مبتنی بر پایگاه داده (`DynamicDatabaseRbacProviderHelper`)**: ۴ موجودیت JPA را با `@SecurityRoleEntity`، `@SecurityPermissionEntity`، `@SecurityUserRoleEntity`، `@SecurityPolicyEntity` و نشانگرهای مربوطه مشخص کنید. اولویت صریح `DENY > ALLOW`، زمینه `X-Tenant-ID`، باطل‌سازی خودکار کش L1 Caffeine با `DatabaseRbacCacheInvalidationListener`، همزیستی بدون تداخل با `SecurityFilterChain` از طریق `PureJavaSecurityFilterBridge` و توسعه با `SecurityIdentityCustomizer` را فراهم می‌کند (`app.framework.security.dynamic-database-rbac-enabled=true`).
 - **قفل ایمن پیش‌فرض (`DevStudioProperties` + `SurfaceAccessGuardrailUtil`)**: با `app.framework.studio.enabled=false` (پیش‌فرض)، درخواست‌های احرازهویت‌نشده به `/system/**` با `401` مسدود و سطوح غیرفعال Studio با `404 Not Found` (`403` بدون دسترسی مدیر) رد می‌شوند؛ با `demo-token-endpoint-enabled=false`، مسیر `POST /api/v1/auth/token` کد `404` می‌دهد.
 - **بازکردن و پالایش خطاها**: `ExceptionCauseUnwrapperUtil` علت کامل داخلی را در لاگ سرور ثبت می‌کند و تنها پاسخ ایمن `ApiResponse<Void>` به کلاینت برمی‌گرداند.
 - **CORS برای SPA و یک‌باراجرایی (`SecurityFilterChainBridge`)**: الگوهای مبدا قابل تنظیم (`*`) را همراه با سرآیندهای `Authorization`، `Idempotency-Key`، `X-Idempotency-Key`، `X-Language`، `X-Tenant-ID`، `traceparent` و `X-Request-ID` مجاز می‌کند.
@@ -44,7 +44,7 @@
 ## 4. `/system/studio` ۲۰ زبانه، پشتیبانی RTL و بومی‌سازی میزبان (`i18n/`)
 
 - **۲۰ زبان داخلی (`I18nConstant`)**: `en, zh, hi, es, fr, ar, bn, pt, ru, ur, id, de, ja, vi, ko, tr, it, th, fa, pl` (`ar`، `fa`، `ur` جهت `dir="rtl"` را فعال می‌کنند).
-- **تشخیص قطعی زبان (`LocaleResolutionUtil` و `HeaderLocaleResolver`)**: `?lang=` -> `X-Language` -> کوکی `NWVMC_LANG` -> `Accept-Language` -> `app.framework.i18n.default-locale` (`en`). برچسب‌های ناشناخته به‌طور ایمن به `en` بازمی‌گردند.
+- **تشخیص قطعی زبان (`LocaleResolutionUtil` و `HeaderLocaleResolver`)**: `?lang=` ← `X-Language` ← کوکی `NWVMC_LANG` ← `Accept-Language` ← `app.framework.i18n.default-locale` (`en`). برچسب‌های ناشناخته به‌طور ایمن به `en` بازمی‌گردند.
 - **سفارشی‌سازی برنامه میزبان**: `I18nConfig` منبع پیام UTF-8 (`classpath:i18n/messages`، `cacheSeconds=3600`) را تنظیم می‌کند؛ فعال‌سازی `app.framework.studio.show-i18n-diagnostics=true` نوار عیب‌یابی را در `/system/studio` نشان می‌دهد.
 
 ---
@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. ذخیره‌سازی چندابری فایل (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+`FileStorageController` (`/api/v1/storage/*`) مسیرهای `POST /upload`، `GET /download/{fileId}`، `GET /metadata/{fileId}`، `GET /exists/{fileId}`، `DELETE /{fileId}` و `POST /presigned-url` را با `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`) و `StorageCustomizer` فراهم می‌کند.
+
+> **امنیت محیط تولید:** گزینه `app.framework.security.require-authenticated-api-paths: true` را فعال کرده و مسیر `/api/v1/storage/**` را در `SecurityFilterChain` محافظت کنید.

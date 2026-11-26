@@ -1,20 +1,20 @@
 # 07. Kit Adopsi AI-Agent Universal (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` & `llms.txt`, `0.1.0`)
 
-> **Bahasa**: **Bahasa Indonesia** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#ai-agent-kit)
+> **Bahasa**: **Bahasa Indonesia** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap (EN)](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. Tujuan & Arsitektur Kit (`ai-agent-kit/`)
 
-**Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) membekali **setiap agen pemrograman AI dan LLM di pasaran** dengan fakta terverifikasi mesin 1:1 langsung dari kode sumber (`60` anotasi dalam `6` paket Java persis, `133` atribut, `40` endpoint otomatis, kunci `app.framework.*` dan pagar runtime `0.1.0` yang terbukti), agar tim mengintegrasikan Spring-NWVMC dengan akurat sejak percobaan pertama tanpa halusinasi.
+**Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) membekali **setiap agen pemrograman AI dan LLM di pasaran** dengan fakta terverifikasi mesin 1:1 langsung dari kode sumber (`60` anotasi dalam `6` paket Java persis, `133` atribut, `40` endpoint otomatis, kunci `app.framework.*` dan pagar runtime `0.1.0` yang terbukti), agar tim mengintegrasikan Spring-NWVMC dengan akurat sejak percobaan pertama tanpa halusinasi.
 
 | Berkas / Direktori | Peran |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Orientasi arsitektur: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, kontrak 2 direktori (`entity/` + `controller/`), 9 antarmuka komposabel, 6 paket anotasi, 11 subsistem bawaan |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Pagar ketat anti-halusinasi (`17.2 KB`, di bawah batas `24 KB`) yang merangkum setiap jebakan runtime terverifikasi |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Skill progresif `spring-nwvmc-adoption` berisi 6 alur kerja langkah demi langkah + matriks pemecahan masalah 10 akar penyebab |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Gerbang pemeriksaan 6 tahap sebelum serah terima (Pre-Flight -> Desain -> Jebakan Runtime -> Penguncian Produksi -> Performa -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 referensi mendalam terverifikasi mesin (60 anotasi / 133 atribut, 40 endpoint + 13 operator bertitik, YAML + Multi-Datasource, resep terverifikasi termasuk `@MultiTenant` + DB-RBAC 4 entitas + `JwtTokenService`, dan tabel impor kelas non-anotasi / SPI) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Orientasi arsitektur: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, kontrak 2 direktori (`entity/` + `controller/`), 9 antarmuka komposabel, 6 paket anotasi, 6 subsistem bawaan |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Pagar ketat anti-halusinasi (`19.0 KB`, di bawah batas `24 KB`) yang merangkum setiap jebakan runtime terverifikasi |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Skill progresif `spring-nwvmc-adoption` berisi 7 alur kerja langkah demi langkah + matriks pemecahan masalah 15 akar penyebab |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Gerbang pemeriksaan 7 tahap sebelum serah terima (Pre-Flight -> Desain -> Jebakan Runtime -> Penguncian Produksi -> Performa -> `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) referensi mendalam terverifikasi mesin (60 anotasi / 133 atribut, 40 endpoint + 13 operator bertitik, YAML + Multi-Datasource, resep terverifikasi termasuk `@MultiTenant` + DB-RBAC 4 entitas + `JwtTokenService`, dan tabel impor kelas non-anotasi / SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Titik masuk sesuai `llmstxt.org` untuk crawler dan agen AI otomatis |
 
 ---
@@ -27,10 +27,10 @@ Buka terminal **langsung di direktori root proyek Spring Boot Anda** lalu jalank
 
 ```powershell
 # Pasang untuk SEMUA agen coding AI & model ke direktori saat ini (".")
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Atau targetkan satu agen tertentu (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Tambahkan -Force untuk menimpa file adaptor root yang sudah ada (default mempertahankan file lama secara aman)
 ```
@@ -86,4 +86,4 @@ Setiap adaptor dan alur kerja menegakkan pengiriman Spec-First + Test-First mema
 
 - **SDD — Pengembangan Berbasis Spesifikasi (`specs/<feature>/`):** Alur 6 gerbang (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): susun `spec.md` dengan kriteria `REQ-ID` (`Given/When/Then`), berhenti pada `[NEEDS CLARIFICATION]`, buat matriks ketertelusuran 1:1 di `plan.md`, dan verifikasi nol penyimpangan terhadap `/v3/api-docs`, `/metadata`, serta `/schema/zod`.
 - **TDD — Red → Green → Refactor (Piramida Uji 4 Tingkat):** Tulis uji JUnit 5 / `MockMvc` gagal bertag `@DisplayName("REQ-XXX: ...")` terlebih dahulu (serta uji regresi untuk tiap bug), tulis kode deklaratif minimal hingga GREEN, lalu REFACTOR. Mencakup 4 tingkat: Unit, Integrasi Keamanan/Alur, Penyimpangan Kontrak, dan Konkurensi `@DistributedLock` + JMeter `0.0%`, tanpa `@Disabled`.
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **Playbook & Templat:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

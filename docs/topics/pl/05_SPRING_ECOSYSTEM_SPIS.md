@@ -1,6 +1,6 @@
 # 05. 8 interfejsów SPI Customizer, `@CustomEndpoint` i `@ServiceOverride` (`0.1.0`)
 
-> **Języki**: **Polski** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Wszystkie 20 języków](../README.md) | [Pełny podręcznik](../../GUIDE_EN.md) | [Interaktywny portal (20 języków)](../../index.html#spi-customizers)
+> **Języki**: **Polski** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Wszystkie 20 języków](../README.md) | [Pełny podręcznik (EN)](../../GUIDE_EN.md) | [Interaktywny portal (20 języków)](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Wszystkie punkty rozszerzeń w `io.github.natswarchuan.customization.customizer` udostępniają metody `default` w interfejsach, umożliwiając selektywne nadpisywanie przez Spring Beany bez modyfikowania kodu frameworka:
 
-| # | Interfejs SPI | Context DTO | Zakres rozszerzeń |
+| # | Interfejs SPI | Kontekst DTO | Zakres rozszerzeń |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Główny kontener beanów, `TaskExecutor`, harmonogram zadań |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Prompty Spring AI `ChatClient`, hooki wektorowe, potoki RAG |
@@ -20,6 +20,9 @@ Wszystkie punkty rozszerzeń w `io.github.natswarchuan.customization.customizer`
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Polityki bucketów `LOCAL`/`S3`/`GCS`, podpisane adresy URL i limity przesyłania |
 
 Aktywne beany w `7` głównych grupach telemetrycznych (`CustomizerGroupConstant`) można podejrzeć pod `GET /api/v1/system/customizers` (`StorageCustomizer` jest zarządzany przez `StorageCustomizerRegistryHelper`).
+
+
+> **Aktywny interceptor runtime vs. hooki metadanych/telemetrii (`0.1.0`):** `SecurityIdentityCustomizer` jest aktywnie wywoływany przy każdym żądaniu (`SecurityFilterChainBridge` i `SecurityAuthorityDecisionHelper`); pozostałe `7` rejestruje deskryptory metadanych i telemetrii w `GET /api/v1/system/customizers`.
 
 ---
 

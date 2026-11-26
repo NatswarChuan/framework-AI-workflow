@@ -1,20 +1,20 @@
 # 07. Kit Universel d’Adoption pour Agents IA (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` & `llms.txt`, `0.1.0`)
 
-> **Langues**: **Français** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Les 20 Langues](../README.md) | [Manuel Complet](../../GUIDE_EN.md) | [Portail Interactif (20 Langues)](../../index.html#ai-agent-kit)
+> **Langues**: **Français** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [Les 20 Langues](../README.md) | [Manuel Complet (EN)](../../GUIDE_EN.md) | [Portail Interactif (20 Langues)](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. Objectif et Architecture du Kit (`ai-agent-kit/`)
 
-Le **Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) fournit à **tous les agents de code IA et LLM du marché** des spécifications vérifiées automatiquement 1:1 depuis le code source (`60` annotations dans `6` packages Java exacts, `133` attributs, `40` endpoints automatiques, clés `app.framework.*` et garde-fous runtime vérifiés en `0.1.0`) afin d’intégrer Spring-NWVMC avec justesse dès le premier essai, sans hallucinations.
+Le **Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) fournit à **tous les agents de code IA et LLM du marché** des spécifications vérifiées automatiquement 1:1 depuis le code source (`60` annotations dans `6` packages Java exacts, `133` attributs, `40` endpoints automatiques, clés `app.framework.*` et garde-fous runtime vérifiés en `0.1.0`) afin d’intégrer Spring-NWVMC avec justesse dès le premier essai, sans hallucinations.
 
 | Fichier / Dossier | Rôle |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Vue d’ensemble architecturale : Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, contrat 2 répertoires (`entity/` + `controller/`), 9 interfaces composables, 6 packages d’annotations et 11 sous-systèmes intégrés |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Garde-fous stricts anti-hallucination (`17.2 KB`, sous le plafond `24 KB`) encodant chaque piège d’exécution vérifié |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Skill progressive `spring-nwvmc-adoption` avec 6 workflows étape par étape et matrice de dépannage à 10 causes racines |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Porte de validation en 6 phases avant livraison (Pré-vol -> Conception -> Pièges Runtime -> Verrouillage Production -> Performance -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 5 références approfondies vérifiées par machine (60 annotations / 133 attributs, 40 endpoints + 13 opérateurs à point, YAML + Multi-Datasource, recettes vérifiées incluant `@MultiTenant` + DB-RBAC 4 entités + `JwtTokenService`, et table complète des imports non-annotation / SPI) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Vue d’ensemble architecturale : Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, contrat 2 répertoires (`entity/` + `controller/`), 9 interfaces composables, 6 packages d’annotations et 6 sous-systèmes intégrés |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Garde-fous stricts anti-hallucination (`19.0 KB`, sous le plafond `24 KB`) encodant chaque piège d’exécution vérifié |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Skill progressive `spring-nwvmc-adoption` avec 7 workflows étape par étape et matrice de dépannage à 15 causes racines |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Porte de validation en 7 phases avant livraison (Pré-vol -> Conception -> Pièges Runtime -> Verrouillage Production -> Performance -> `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) références approfondies vérifiées par machine (60 annotations / 133 attributs, 40 endpoints + 13 opérateurs à point, YAML + Multi-Datasource, recettes vérifiées incluant `@MultiTenant` + DB-RBAC 4 entités + `JwtTokenService`, et table complète des imports non-annotation / SPI) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | Index conformes `llmstxt.org` pour robots et agents IA automatisés |
 
 ---
@@ -27,10 +27,10 @@ Ouvrez un terminal **directement à la racine de votre projet Spring Boot** et e
 
 ```powershell
 # Installer pour TOUS les agents IA et modèles dans le répertoire courant (".")
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Ou cibler un seul agent (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic) :
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # Ajoutez -Force pour écraser les adaptateurs racine existants (préservés par défaut)
 ```
@@ -86,4 +86,4 @@ Chaque adaptateur impose une livraison Spec-First + Test-First via `references/0
 
 - **SDD — Développement Piloté par Spécification (`specs/<feature>/`):** Pipeline en 6 jalons (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`) : rédigez `spec.md` avec critères `REQ-ID` (`Given/When/Then`), bloquez sur `[NEEDS CLARIFICATION]`, créez une matrice de traçabilité 1:1 dans `plan.md` et vérifiez zéro dérive face à `/v3/api-docs`, `/metadata` et `/schema/zod`.
 - **TDD — Rouge → Vert → Refactor (Pyramide à 4 Niveaux):** Écrivez d’abord un test JUnit 5 / `MockMvc` en échec (`@DisplayName("REQ-XXX: ...")`, et test de régression pour chaque bug), implémentez le minimum déclaratif jusqu’au VERT puis refactorisez. Couvre 4 niveaux : Unitaire, Sécurité/Workflow, Dérive de Contrat et Concurrence `@DistributedLock` + JMeter `0.0%`, sans `@Disabled`.
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **Playbook et Modèles :** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

@@ -57,3 +57,11 @@ When individual endpoints outgrow dynamic CRUD semantics:
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. Multi-Cloud File Storage (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+Built-in `FileStorageController` (`/api/v1/storage/*`) exposes `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, and `POST /presigned-url` backed by `app.framework.storage.provider` (`LOCAL`, `S3`, or `GCS`) and `StorageCustomizer`.
+
+> **Production Security Lockdown:** Enable `app.framework.security.require-authenticated-api-paths: true` and protect `/api/v1/storage/**` via Spring Security `SecurityFilterChain` (and configure `app.framework.storage.max-file-size-bytes` + allowed MIME/extensions) before exposing storage endpoints to untrusted networks.

@@ -1,6 +1,6 @@
 # 05. 8 SPI-интерфейсов Customizer, `@CustomEndpoint` и `@ServiceOverride` (`0.1.0`)
 
-> **Языки**: **Русский** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Все 20 языков](../README.md) | [Полное руководство](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#spi-customizers)
+> **Языки**: **Русский** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Все 20 языков](../README.md) | [Полное руководство (EN)](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Все точки расширения в `io.github.natswarchuan.customization.customizer` предоставляют `default`-методы интерфейсов для выборочного переопределения через Spring-бины без правки ядра фреймворка:
 
-| # | SPI-интерфейс | Context DTO | Область расширения |
+| # | SPI-интерфейс | DTO контекста | Область расширения |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Контейнер бинов ядра, `TaskExecutor`, планировщик задач |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Промпты Spring AI `ChatClient`, векторные хуки, RAG-конвейеры |
@@ -20,6 +20,9 @@
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Политики бакетов `LOCAL`/`S3`/`GCS`, предподписанные URL и лимиты загрузки |
 
 Активные бины по `7` основным группам телеметрии (`CustomizerGroupConstant`) просматриваются через `GET /api/v1/system/customizers` (`StorageCustomizer` управляется отдельно через `StorageCustomizerRegistryHelper`).
+
+
+> **Активный runtime-перехватчик и хуки метаданных/телеметрии (`0.1.0`):** `SecurityIdentityCustomizer` активно вызывается на каждом запросе (`SecurityFilterChainBridge` и `SecurityAuthorityDecisionHelper`); остальные `7` регистрируют дескрипторы метаданных и телеметрии для `GET /api/v1/system/customizers`.
 
 ---
 

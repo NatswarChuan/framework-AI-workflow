@@ -1,6 +1,6 @@
 # 02. Otomatik Üretilen 40 REST Sözleşmesi ve Platform Denetleyicileri Kataloğu (`0.1.0`)
 
-> **Diller**: **Türkçe** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#endpoints)
+> **Diller**: **Türkçe** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz (EN)](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#endpoints)
 
 ---
 
@@ -77,11 +77,11 @@
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | 20 dilli Developer Studio (RTL `ar`, `fa`, `ur`); `app.framework.studio.enabled=false` iken `401` döner |
 | `GET /system/studio/eject` | `DevEjectionController` | Standart Spring MVC kodu (Controller/Service/Repository) üretir; `SurfaceAccessGuardrailUtil` ile korunur |
 | `POST /api/v1/auth/token` | `AuthController` | Demo HMAC-SHA512 JWT üretir; `demo-token-endpoint-enabled=false` iken `404` döner |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | ISO-8601 UTC zaman damgasında varlık durumunu noktasal olarak yeniden oluşturma |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | `7` çekirdek telemetri `*Customizer` grubundaki aktif SPI bean’lerini listeler (`StorageCustomizer`, `StorageCustomizerRegistryHelper` ile yönetilir; toplam `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Canlı Resilience4j Circuit Breaker sağlık metrikleri |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Canlı Resilience4j Circuit Breaker sağlık metrikleri |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Çoklu veri kaynağı sağlık denetimi |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Aktif MDC bağlamındaki W3C `traceparent` ve UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Tomcat kapsayıcı hatalarını (`400/404/405/413/431/500`) standart `ApiResponse<Void>` biçimine dönüştürür |

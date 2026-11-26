@@ -1,6 +1,6 @@
 # 03. 13 динамических операторов фильтрации, Query Guardrails, Keyset O(1) и GraphQL SDL (`0.1.0`)
 
-> **Языки**: **Русский** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Все 20 языков](../README.md) | [Полное руководство](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#query-dsl)
+> **Языки**: **Русский** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Все 20 языков](../README.md) | [Полное руководство (EN)](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. Курсорная пагинация Keyset O(1) (`GET /keyset`)
 
-Поскольку первичные ключи — это упорядоченные по времени **UUIDv7**, `/keyset` переходит сразу к границе курсора в режимах `dir=asc` и `dir=desc` с пробой `size + 1` за время $O(1)$:
+Поскольку первичные ключи — это упорядоченные по времени **UUIDv7**, `/keyset` переходит сразу к границе курсора в режимах `dir=asc` и `dir=desc` с пробой `size + 1` за время `O(1)`:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

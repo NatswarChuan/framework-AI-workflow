@@ -1,6 +1,6 @@
 # 04. ความปลอดภัย, ที่เก็บไฟล์ Multi-Cloud, `@ServiceOverride`, เมตริก และ i18n 20 ภาษา (`0.1.0`)
 
-> **ภาษา**: **ไทย** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#security-rbac)
+> **ภาษา**: **ไทย** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์ (EN)](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. การจัดเก็บไฟล์หลายคลาวด์ (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+`FileStorageController` (`/api/v1/storage/*`) รองรับ `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` และ `POST /presigned-url` ผ่าน `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`) และ `StorageCustomizer`
+
+> **การล็อกความปลอดภัย Production:** เปิดใช้งาน `app.framework.security.require-authenticated-api-paths: true` และป้องกัน `/api/v1/storage/**` ใน `SecurityFilterChain`

@@ -1,6 +1,6 @@
 # 04. নিরাপত্তা, মাল্টি-ক্লাউড স্টোরেজ, `@ServiceOverride`, মেট্রিক্স ও ২০-ভাষা i18n (`0.1.0`)
 
-> **ভাষাসমূহ**: **বাংলা** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#security-rbac)
+> **ভাষাসমূহ**: **বাংলা** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [সকল ২০টি ভাষা](../README.md) | [সম্পূর্ণ ম্যানুয়াল (EN)](../../GUIDE_EN.md) | [২০-ভাষার ইন্টারঅ্যাক্টিভ পোর্টাল](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. মাল্টি-ক্লাউড ফাইল স্টোরেজ (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+বিল্ট-ইন `FileStorageController` (`/api/v1/storage/*`) `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` ও `POST /presigned-url` সরবরাহ করে (`app.framework.storage.provider`: `LOCAL`/`S3`/`GCS`)।
+
+> **প্রোডাকশন নিরাপত্তা:** `app.framework.security.require-authenticated-api-paths: true` চালু করুন এবং `SecurityFilterChain`-এ `/api/v1/storage/**` সুরক্ষিত করুন।

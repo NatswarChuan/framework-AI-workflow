@@ -1,20 +1,20 @@
 # 07. ชุดเครื่องมือสำหรับ AI-Agent แบบสากล (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` และ `llms.txt`, `0.1.0`)
 
-> **ภาษา**: **ไทย** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#ai-agent-kit)
+> **ภาษา**: **ไทย** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [ครบทั้ง 20 ภาษา](../README.md) | [คู่มือฉบับสมบูรณ์ (EN)](../../GUIDE_EN.md) | [พอร์ทัลเอกสารแบบโต้ตอบ 20 ภาษา](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. เป้าหมายและสถาปัตยกรรมชุดเครื่องมือ (`ai-agent-kit/`)
 
-**Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) มอบข้อเท็จจริงที่ตรวจสอบด้วยเครื่อง 1:1 จากซอร์สโค้ดจริงแก่ **AI Coding Agent และ LLM ทุกรุ่นในตลาด** (`60` แอนโนเทชันใน `6` แพ็กเกจ Java ที่ถูกต้อง, `133` แอตทริบิวต์, `40` Endpoint อัตโนมัติ, คีย์ `app.framework.*` และกฎรันไทม์ `0.1.0` ที่ทดสอบจริง) เพื่อให้ใช้งาน Spring-NWVMC ได้แม่นยำตั้งแต่ครั้งแรกโดยไม่หลอนแอนโนเทชัน
+**Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) มอบข้อเท็จจริงที่ตรวจสอบด้วยเครื่อง 1:1 จากซอร์สโค้ดจริงแก่ **AI Coding Agent และ LLM ทุกรุ่นในตลาด** (`60` แอนโนเทชันใน `6` แพ็กเกจ Java ที่ถูกต้อง, `133` แอตทริบิวต์, `40` Endpoint อัตโนมัติ, คีย์ `app.framework.*` และกฎรันไทม์ `0.1.0` ที่ทดสอบจริง) เพื่อให้ใช้งาน Spring-NWVMC ได้แม่นยำตั้งแต่ครั้งแรกโดยไม่หลอนแอนโนเทชัน
 
 | ไฟล์ / โฟลเดอร์ | บทบาท |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | ภาพรวมสถาปัตยกรรม: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` และ JitPack `v0.1.0`, สัญญา 2 โฟลเดอร์ (`entity/` + `controller/`), 9 อินเทอร์เฟซประกอบได้, 6 แพ็กเกจแอนโนเทชัน, 11 ระบบย่อยในตัว |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | กฎเหล็กป้องกันการหลอน (`17.2 KB`, ต่ำกว่าขีดจำกัด `24 KB`) ที่รวมทุกกับดักรันไทม์ซึ่งผ่านการพิสูจน์แล้ว |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | ทักษะแบบเปิดเผยเป็นขั้น `spring-nwvmc-adoption` พร้อม 6 ขั้นตอนการทำงานและตารางแก้ปัญหา 10 สาเหตุหลัก |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | รายการตรวจสอบ 6 ระยะก่อนส่งมอบ (Pre-Flight -> ออกแบบ -> กับดักรันไทม์ -> ล็อกความปลอดภัย Production -> ประสิทธิภาพ -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | เอกสารอ้างอิงเชิงลึก 5 ฉบับที่ตรวจด้วยเครื่อง (60 แอนโนเทชัน / 133 แอตทริบิวต์, 40 API + 13 ตัวดำเนินการจุด, YAML + หลายฐานข้อมูล, สูตรโค้ดพร้อม `@MultiTenant` + DB-RBAC 4 Entity + `JwtTokenService`, และตาราง import คลาส/SPI นอกแอนโนเทชัน) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | ภาพรวมสถาปัตยกรรม: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` และ JitPack `v0.1.0`, สัญญา 2 โฟลเดอร์ (`entity/` + `controller/`), 9 อินเทอร์เฟซประกอบได้, 6 แพ็กเกจแอนโนเทชัน, 6 ระบบย่อยในตัว |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | กฎเหล็กป้องกันการหลอน (`19.0 KB`, ต่ำกว่าขีดจำกัด `24 KB`) ที่รวมทุกกับดักรันไทม์ซึ่งผ่านการพิสูจน์แล้ว |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | ทักษะแบบเปิดเผยเป็นขั้น `spring-nwvmc-adoption` พร้อม 7 ขั้นตอนการทำงานและตารางแก้ปัญหา 15 สาเหตุหลัก |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | รายการตรวจสอบ 7 ระยะก่อนส่งมอบ (Pre-Flight -> ออกแบบ -> กับดักรันไทม์ -> ล็อกความปลอดภัย Production -> ประสิทธิภาพ -> `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | เอกสารอ้างอิงเชิงลึก 6 (+ `templates/`) ฉบับที่ตรวจด้วยเครื่อง (60 แอนโนเทชัน / 133 แอตทริบิวต์, 40 API + 13 ตัวดำเนินการจุด, YAML + หลายฐานข้อมูล, สูตรโค้ดพร้อม `@MultiTenant` + DB-RBAC 4 Entity + `JwtTokenService`, และตาราง import คลาส/SPI นอกแอนโนเทชัน) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | ดัชนีมาตรฐาน `llmstxt.org` สำหรับบอตและ AI Agent |
 
 ---
@@ -27,10 +27,10 @@
 
 ```powershell
 # ติดตั้งสำหรับ AI Coding Agent และโมเดลทั้งหมดลงในโฟลเดอร์ปัจจุบัน (".")
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # หรือระบุเฉพาะ Agent เดียว (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # เพิ่ม -Force เพื่อเขียนทับไฟล์อะแดปเตอร์เดิมที่รูท (ค่าเริ่มต้นจะเก็บรักษาไฟล์เดิมอย่างปลอดภัย)
 ```
@@ -86,4 +86,4 @@ rm -rf /tmp/nwvmc-docs
 
 - **SDD — การพัฒนาตามข้อกำหนด (`specs/<feature>/`):** กระบวนการ 6 ด่าน (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): เขียน `spec.md` พร้อมเกณฑ์ `REQ-ID` (`Given/When/Then`) หยุดยืนยันทุกจุด `[NEEDS CLARIFICATION]` สร้างตารางเชื่อมโยง 1:1 ใน `plan.md` และตรวจเทียบกับ `/v3/api-docs`, `/metadata`, `/schema/zod`
 - **TDD — Red → Green → Refactor (พีระมิดการทดสอบ 4 ระดับ):** เขียนเทสต์ JUnit 5 / `MockMvc` ที่ล้มเหลวก่อนพร้อม `@DisplayName("REQ-XXX: ...")` (ทุกบั๊กต้องมี regression test ก่อน) เขียนโค้ดเชิงประกาศขั้นต่ำจน GREEN แล้ว REFACTOR ครอบคลุม 4 ระดับ: Unit, Security/Workflow, Contract Drift และ `@DistributedLock` Concurrency + JMeter `0.0%` ห้ามใช้ `@Disabled`
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **คู่มือปฏิบัติและเทมเพลต:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

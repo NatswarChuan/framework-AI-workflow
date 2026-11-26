@@ -1,6 +1,6 @@
 # 06. المواصفات الكاملة لجميع الـ 60 تعليقًا توضيحيًا تصريحيًا (`0.1.0`)
 
-> **اللغات**: **العربية** | [English](../en/06_DECLARATIVE_ANNOTATIONS.md) | [Tiếng Việt](../vi/06_DECLARATIVE_ANNOTATIONS.md) | [日本語](../ja/06_DECLARATIVE_ANNOTATIONS.md) | [中文](../zh/06_DECLARATIVE_ANNOTATIONS.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#annotations)
+> **اللغات**: **العربية** | [English](../en/06_DECLARATIVE_ANNOTATIONS.md) | [Tiếng Việt](../vi/06_DECLARATIVE_ANNOTATIONS.md) | [日本語](../ja/06_DECLARATIVE_ANNOTATIONS.md) | [中文](../zh/06_DECLARATIVE_ANNOTATIONS.md) | [جميع اللغات الـ 20](../README.md) | [الدليل الكامل (EN)](../../GUIDE_EN.md) | [البوابة التفاعلية (20 لغة)](../../index.html#annotations)
 
 مرجع تقني شامل لجميع **الـ 60 تعليقًا توضيحيًا تصريحيًا** في `io.github.natswarchuan:spring-nwvmc:0.1.0` المستخرجة مباشرة من شيفرة Java `@interface`: الحزمة الدقيقة، `@Target`، **كل خاصية**، نوع Java، القيمة الافتراضية، حالة الإلزام/الاختيار، **كيفية الاستخدام**، **متى يُستخدم**، **متى لا يُستخدم والمخاطر الشائعة**، مع أمثلة Java موثقة.
 
@@ -32,29 +32,29 @@
 | [`@HumanPolicy`](#humanpolicy) | `entity` | `Class (TYPE)` | `lifecycle (""), security (""), masking (""), stateField ("")` | يترجم بنود السياسات المقروءة إلى قواعد RBAC والانتقالات والحجب الفعالة. |
 | [`@AuditTrail`](#audittrail) | `entity` | `Class (TYPE)` | `category (""), recordFieldDiffs (true)` | يسجل الفروقات الحقلية عبر التعديلات لدعم إعادة البناء الزمني وفحص /diff. |
 | [`@MultiTenant`](#multitenant) | `entity` | `Class (TYPE)` | `tenantField ("tenantId"), bypassTenantRoles ({"ROLE_SUPER_ADMIN"})` | يعزل استعلامات وتعديلات الصفوف تلقائياً حسب سياق المستأجر النشط ما لم يحمل الدور استثناءً. |
-| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `(Marker annotation — no attributes)` | يتحقق من تفرد الحقل قبل الحفظ عند الإنشاء والتحديث والإدراج-أو-التحديث. |
-| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (REQUIRED)` | يولّد تلقائياً رموز عمل فريدة ببادئة عند الإنشاء أو النسخ إذا تُركت فارغة. |
-| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (REQUIRED)` | ينشئ تلقائياً معرفات روابط ASCII قياسية من حقل sourceField. |
+| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `(تعليق وسم — بدون خصائص)` | يتحقق من تفرد الحقل قبل الحفظ عند الإنشاء والتحديث والإدراج-أو-التحديث. |
+| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (مطلوب)` | يولّد تلقائياً رموز عمل فريدة ببادئة عند الإنشاء أو النسخ إذا تُركت فارغة. |
+| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (مطلوب)` | ينشئ تلقائياً معرفات روابط ASCII قياسية من حقل sourceField. |
 | [`@ComputedField`](#computedfield) | `entity` | `Field (FIELD)` | `operation ("MULTIPLY"), sourceFields ({}), collectionField (""), itemField (""), subtractField (""), addField ("")` | يحسب المجاميع الرقمية المشتقة بدقة قبل حفظ تغييرات الكيان. |
 | [`@CustomQuery`](#customquery) | `entity` | `Method (METHOD)` | `value (""), nativeQuery (true), resultClass (Void.class), sqlProvider (Void.class), providerMethod (""), modifying (false)` | يتيح ربط استعلامات SQL/JPQL مخصصة أو دوال مزوّد بنقاط نهاية المتحكم. |
 | [`@SecurityRoleEntity`](#securityroleentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | يحدد كيان JPA كجدول كتالوج الأدوار النشط لنظام RBAC في قاعدة البيانات. |
-| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يربط عمود رمز الدور الفريد داخل كيان @SecurityRoleEntity. |
-| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يحدد حقل اسم العرض المقروء للدور في @SecurityRoleEntity. |
-| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يحدد الحقل الذي يحتوي على رموز الأذونات الممنوحة (كمجموعة أو نص CSV) في كيان الدور. |
+| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يربط عمود رمز الدور الفريد داخل كيان @SecurityRoleEntity. |
+| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يحدد حقل اسم العرض المقروء للدور في @SecurityRoleEntity. |
+| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يحدد الحقل الذي يحتوي على رموز الأذونات الممنوحة (كمجموعة أو نص CSV) في كيان الدور. |
 | [`@SecurityPermissionEntity`](#securitypermissionentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | يحدد كيان JPA لتخزين أذونات الموارد والإجراءات وقواعد إخفاء الحقول الديناميكية. |
-| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يحدد حقل معرّف الإذن الفريد داخل @SecurityPermissionEntity. |
-| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يربط اسم الكيان الهدف أو مورد API (أو الرمز العام *) داخل @SecurityPermissionEntity. |
-| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يربط فعل العملية المنطقي (CRUD أو مخصص) المحمي بقاعدة @SecurityPermissionEntity. |
-| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يعلن أسماء الحقول المفصولة بفواصل الواجب حجبها ديناميكياً عند تطابق قاعدة الإذن هذه. |
+| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يحدد حقل معرّف الإذن الفريد داخل @SecurityPermissionEntity. |
+| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يربط اسم الكيان الهدف أو مورد API (أو الرمز العام *) داخل @SecurityPermissionEntity. |
+| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يربط فعل العملية المنطقي (CRUD أو مخصص) المحمي بقاعدة @SecurityPermissionEntity. |
+| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يعلن أسماء الحقول المفصولة بفواصل الواجب حجبها ديناميكياً عند تطابق قاعدة الإذن هذه. |
 | [`@SecurityUserRoleEntity`](#securityuserroleentity) | `rbac` | `Entity (TYPE)` | `enabled (true)` | يربط كيان JPA المسؤول عن إسناد أدوار قاعدة البيانات للمستخدمين مع نطاق المستأجر الاختياري. |
-| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يحدد حقل اسم المستخدم أو معرّف الـ Subject في @SecurityUserRoleEntity. |
-| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يربط عمود رمز الدور المسند داخل @SecurityUserRoleEntity. |
-| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يُخصص إسناد الدور في @SecurityUserRoleEntity لمعرّف مستأجر محدد (أو * للجميع). |
+| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يحدد حقل اسم المستخدم أو معرّف الـ Subject في @SecurityUserRoleEntity. |
+| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يربط عمود رمز الدور المسند داخل @SecurityUserRoleEntity. |
+| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يُخصص إسناد الدور في @SecurityUserRoleEntity لمعرّف مستأجر محدد (أو * للجميع). |
 | [`@SecurityPolicyEntity`](#securitypolicyentity) | `rbac` | `Entity (TYPE)` | `priority (100)` | يحدد كيان JPA لتخزين سياسات التفويض الصريحة ALLOW وDENY مرتبة حسب الأولوية priority. |
-| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يربط نمط معرّف المورد الهدف داخل @SecurityPolicyEntity. |
-| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يربط فعل العملية المحمي (READ أو WRITE أو DELETE أو *) داخل @SecurityPolicyEntity. |
-| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يربط قائمة الأدوار (مجموعة أو مفصولة بفواصل) المشمولة بقاعدة @SecurityPolicyEntity. |
-| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | يحدد نتيجة قرار السياسة (ALLOW أو DENY) في قاعدة @SecurityPolicyEntity. |
+| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يربط نمط معرّف المورد الهدف داخل @SecurityPolicyEntity. |
+| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يربط فعل العملية المحمي (READ أو WRITE أو DELETE أو *) داخل @SecurityPolicyEntity. |
+| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يربط قائمة الأدوار (مجموعة أو مفصولة بفواصل) المشمولة بقاعدة @SecurityPolicyEntity. |
+| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `(تعليق وسم — بدون خصائص)` | يحدد نتيجة قرار السياسة (ALLOW أو DENY) في قاعدة @SecurityPolicyEntity. |
 | [`@DistributedLock`](#distributedlock) | `resilience` | `Method (METHOD)` | `key (""), waitTimeMs (3000L), leaseTimeMs (5000L)` | ينسّق الوصول المتزامن لمفاتيح SpEL المخزنة (الافتراضي waitTimeMs=3000L وleaseTimeMs=5000L). |
 | [`@Idempotent`](#idempotent) | `resilience` | `Type / Method (TYPE, METHOD)` | `headerName ("X-Idempotency-Key"), ttlSeconds (300L)` | يمنع عمليات الكتابة المكررة المتزامنة أو المعاد إرسالها ضمن نوافذ TTL قابلة للضبط. |
 | [`@RateLimit`](#ratelimit) | `resilience` | `Type / Method (TYPE, METHOD)` | `requests (60), windowSeconds (60), partitionKey ("IP")` | يفرض تحديد معدل الطلبات بنافذة منزلقة لكل عنوان IP أو مستخدم أو مستأجر. |
@@ -71,7 +71,7 @@
 
 ---
 
-## 1. التوجيه وعقود API الديناميكية وفصل DTO وربط المعاملات (13 تعليقات توضيحية)
+## 1. التوجيه وعقود API الديناميكية وفصل DTO وربط المعاملات (13 تعليقًا توضيحيًا)
 
 ### `@AutoRestController`
 
@@ -88,8 +88,8 @@
 | `basePath` | `String` | `""` | لا (اختياري) | مسار HTTP صالح يبدأ بـ `/` (مثل `/api/v1/product-catalogs`) أو سلسلة فارغة `""` للاشتقاق التلقائي.<br/>`@AutoRestController(basePath = "/api/v1/product-catalogs")` | مسار URI الجذري الصريح (مثل "/api/v1/product-catalogs"). عند تركه فارغاً يُشتق بصيغة الجمع kebab-case.<br/>*تنبيه:* عند الإقلاع يقيّم المسجّل `basePath` قبل `path`. تجنّب تعيين قيم متعارضة لكليهما معاً. |
 | `path` | `String` | `""` | لا (اختياري) | مسار HTTP صالح يبدأ بـ `/` (مثل `/api/v1/orders`) أو سلسلة فارغة `""` للاشتقاق التلقائي.<br/>`@AutoRestController(path = "/api/v1/orders")` | اسم بديل لمسار الجذر. يُفضّل استخدام basePath لأن المُسجّل يقرؤه أولاً.<br/>*تنبيه:* عند الإقلاع يقيّم المسجّل `basePath` قبل `path`. تجنّب تعيين قيم متعارضة لكليهما معاً. |
 | `entityName` | `String` | `""` | لا (اختياري) | سلسلة معرّف غير فارغة (مثل `"ProductCatalog"`)؛ اتركها `""` لتطبيق الاصطلاح الافتراضي.<br/>`@AutoRestController(entityName = "ProductCatalog")` | يتجاوز اسم الكيان المعروض في بيانات OpenAPI وStudio بدلاً من اسم النوع E.<br/>*تنبيه:* يظهر مباشرة في وثائق Swagger / OpenAPI 3.0 وNWVMC Studio؛ استخرج النصوص إلى `OpenApiConstant` لتفادي النصوص الثابتة. |
-| `enabledEndpoints` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"search"`, `"keysetPage"`, `"exportCsv"`, `"importCsv"`.<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | قائمة بيضاء لأسماء دوال العقد المسموح بها (مثل "getPage" و"create"). الفراغ يعني تفعيل الكل.<br/>*تنبيه:* يعمل كقائمة بيضاء صارمة: عند عدم فراغها، تُستبعد كل دالة غير مذكورة من Spring MVC وSwagger UI. |
-| `disabledEndpoints` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `"deleteById"`, `"batchDelete"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`.<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "batchDelete", "importCsv"})` | قائمة سوداء لتعطيل دوال محددة من AutoApiController قبل تسجيل المسارات.<br/>*تنبيه:* يُقيّم بعد `enabledEndpoints`؛ مناسب لتعطيل مسارات الحذف أو الاستيراد الجماعي مع إبقاء بقية العقود الأربعين. |
+| `enabledEndpoints` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"getKeysetPage"`, `"count"`, `"exportCsv"`, `"importCsv"`.<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | قائمة بيضاء لأسماء دوال العقد المسموح بها (مثل "getPage" و"create"). الفراغ يعني تفعيل الكل.<br/>*تنبيه:* يعمل كقائمة بيضاء صارمة: عند عدم فراغها، تُستبعد كل دالة غير مذكورة من Spring MVC وSwagger UI. |
+| `disabledEndpoints` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `"deleteById"`, `"updateBatchByFilter"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`.<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "updateBatchByFilter", "importCsv"})` | قائمة سوداء لتعطيل دوال محددة من AutoApiController قبل تسجيل المسارات.<br/>*تنبيه:* يُقيّم بعد `enabledEndpoints`؛ مناسب لتعطيل مسارات الحذف أو الاستيراد الجماعي مع إبقاء بقية العقود الأربعين. |
 | `enableNestedSubResources` | `boolean` | `false` | لا (اختياري) | `true` (مفعّل) أو `false` (معطّل).<br/>`@AutoRestController(basePath = "/api/v1/orders", enableNestedSubResources = true)` | يفعّل التنقل المتداخل GET /{id}/**. القيمة الافتراضية false لمنع تضخم المسارات.<br/>*تنبيه:* أبقه `false` ما لم تحتج للتنقل المتداخل `GET /{id}/items/...`؛ وعند التفعيل قيّد العلاقات عبر `@EnableNestedSubResource`. |
 | `readDto` | `Class<?>` | `Void.class` | لا (اختياري) | أي فئة Java فعلية (مثل `ProductReadDto.class`) أو `Void.class` لتعطيل تحويل DTO.<br/>`@AutoRestController(readDto = ProductReadDto.class)` | كائن DTO اختياري للقراءة يخفي الحقول الداخلية للكيان؛ عند Void.class يُرجع الكيان نفسه.<br/>*تنبيه:* يُطبّق فقط على مسار القراءة (GET)؛ تتطلب فئة DTO بانياً افتراضياً وخصائص قياسية وتدعم `@Valid` و`@FieldSecurity`. |
 | `createDto` | `Class<?>` | `Void.class` | لا (اختياري) | أي فئة Java فعلية (مثل `ProductCreateDto.class`) أو `Void.class` لتعطيل تحويل DTO.<br/>`@AutoRestController(createDto = ProductCreateDto.class)` | كائن DTO اختياري للإنشاء يتم التحقق منه عبر Jakarta Validation قبل التحويل إلى الكيان في POST.<br/>*تنبيه:* يُطبّق فقط على مسار الإنشاء (POST)؛ تتطلب فئة DTO بانياً افتراضياً وخصائص قياسية وتدعم `@Valid` و`@FieldSecurity`. |
@@ -116,10 +116,10 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 
 | الخاصية | نوع Java | القيمة الافتراضية | مطلوب | القيم المقبولة والمثال | الوصف وملاحظات التشغيل |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `targetBean` | `Class<?>` | `Void.class` | لا (اختياري) | أي فئة Java فعلية (مثل `OrderCustomService.class`) أو `Void.class` لتعطيل تحويل DTO.<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | فئة Spring Bean المستهدفة (لها الأولوية على beanName).<br/>*تنبيه:* عند الإقلاع يقيّم المسجّل `targetBean` قبل `beanName`. تجنّب تعيين قيم متعارضة لكليهما معاً. |
+| `targetBean` | `Class<?>` | `Void.class` | لا (اختياري) | فئة Spring Bean فعلية مثل `@Service`/`@Component` (مثل `OrderCustomService.class`)، أو `Void.class` للبحث عبر `beanName`.<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | فئة Spring Bean المستهدفة (لها الأولوية على beanName).<br/>*تنبيه:* عند الإقلاع يقيّم المسجّل `targetBean` قبل `beanName`. تجنّب تعيين قيم متعارضة لكليهما معاً. |
 | `beanName` | `String` | `""` | لا (اختياري) | الاسم الدقيق للـ Bean المسجل في ApplicationContext (مثل `"orderCustomService"`) أو `""` للحل التلقائي.<br/>`@ServiceOverride(beanName = "orderCustomService", methodName = "createOrder")` | اسم Bean الصريح في حاوية Spring عند ترك targetBean كـ Void.class.<br/>*تنبيه:* عند الإقلاع يقيّم المسجّل `targetBean` قبل `beanName`. تجنّب تعيين قيم متعارضة لكليهما معاً. |
 | `methodName` | `String` | `""` | لا (اختياري) | سلسلة معرّف غير فارغة (مثل `"createOrder"`)؛ اتركها `""` لتطبيق الاصطلاح الافتراضي.<br/>`@ServiceOverride(targetBean = OrderService.class, methodName = "createOrder")` | اسم الدالة على الـ Bean الهدف؛ وإذا كان فارغاً يطابق اسم الدالة على واجهة المتحكم.<br/>*تنبيه:* يجب مطابقة اسم الدالة أو الحقل بدقة مع حساسية الأحرف (مثل `"createOrder"`)؛ عدم التطابق يسبب خطأً تشغيلياً. |
-| `bypassAutoDispatch` | `boolean` | `true` | لا (اختياري) | `true` (تجاوز الوكيل الافتراضي واستدعاء الـ Bean مباشرة) أو `false` (تشغيل بالتكامل مع التوجيه الافتراضي).<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | عند true يتجاوز التوجيه التلقائي لـ CRUD وينفذ دالة الـ Bean عبر MethodHandleCacheUtil.<br/>*تنبيه:* عند `true` يُتجاوز معالج CRUD الافتراضي كلياً ويتولى الـ Bean المعاملة. استخدم `false` فقط للخطافات التكميلية. |
+| `bypassAutoDispatch` | `boolean` | `true` | لا (اختياري) | `true` (افتراضي — تفعيل التجاوز واستدعاء الـ Bean الهدف) أو `false` (تعطيل التجاوز والعودة إلى CRUD الافتراضي).<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | عند true يتجاوز التوجيه التلقائي لـ CRUD وينفذ دالة الـ Bean عبر MethodHandleCacheUtil.<br/>*تنبيه:* عند `true` ينفذ `EscapeHatchDispatchHelper` الـ Bean الخاص بك؛ أما `false` فيعطّل `@ServiceOverride` تمامًا لتشغيل CRUD الافتراضي (وليس خطافًا قبل/بعد). |
 
 ```java
 @ServiceOverride(targetBean = TagEscapeHatchHelper.class, methodName = "buildTaxonomyStats")
@@ -463,7 +463,7 @@ public class TenantSecurityCustomizer implements SecurityIdentityCustomizer {}
 
 ---
 
-## 3. أمان الكيانات وآلة الحالة وسلامة البيانات والمولدات التلقائية والاستعلامات (11 تعليقات توضيحية)
+## 3. أمان الكيانات وآلة الحالة وسلامة البيانات والمولدات التلقائية والاستعلامات (11 تعليقًا توضيحيًا)
 
 ### `@EntitySecurity`
 
@@ -528,8 +528,8 @@ private String nationalId;
 | الخاصية | نوع Java | القيمة الافتراضية | مطلوب | القيم المقبولة والمثال | الوصف وملاحظات التشغيل |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `initial` | `String` | `"ACTIVE"` | لا (اختياري) | سلسلة معرّف غير فارغة (مثل `"CREATED"`)؛ اتركها `""` لتطبيق الاصطلاح الافتراضي.<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | الحالة الابتدائية المُعيّنة تلقائياً عند الإنشاء ("ACTIVE").<br/>*تنبيه:* يُضبط تلقائياً عند الإنشاء عبر `POST` إذا كان الحقل فارغاً؛ ويجب أن يطابق الحالة قبل `:` في `transitions`. |
-| `transitions` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`).<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | قواعد الانتقال المسموحة بصيغة "FROM:TO_1,TO_2".<br/>*تنبيه:* يفرض صيغة النقطتين الدقيقة `"FROM:TO1,TO2"` مع فصل الحالات الهدف بفاصلة؛ أي انتقال غير معلن يُرفض بحالة HTTP `400`/`409`. |
-| `deletableStates` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `{"CREATED", "CANCELLED"}` (state names where DELETE is allowed).<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | الحالات المسموح فيها بالحذف (بقية الحالات ترفض بـ HTTP 422).<br/>*تنبيه:* عند عدم فراغه، يفشل الحذف بحالة HTTP `409 Conflict` إذا كان الكيان في أي حالة أخرى مثل `"PAID"`. |
+| `transitions` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`).<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | قواعد الانتقال المسموحة بصيغة "FROM:TO_1,TO_2".<br/>*تنبيه:* يفرض صيغة النقطتين الدقيقة `"FROM:TO1,TO2"` مع فصل الحالات الهدف بفاصلة؛ أي انتقال غير معلن يُرفض بحالة HTTP `422`. |
+| `deletableStates` | `String[]` | `{}` | لا (اختياري) | مصفوفة تضم صفراً أو أكثر من القيم الصالحة: `{"CREATED", "CANCELLED"}` (state names where DELETE is allowed).<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | الحالات المسموح فيها بالحذف (بقية الحالات ترفض بـ HTTP 422).<br/>*تنبيه:* عند عدم فراغه، يفشل الحذف بحالة HTTP `422 Unprocessable Entity` إذا كان الكيان في أي حالة أخرى مثل `"PAID"`. |
 
 ```java
 @StateMachine(
@@ -631,7 +631,7 @@ private String code;
 
 | الخاصية | نوع Java | القيمة الافتراضية | مطلوب | القيم المقبولة والمثال | الوصف وملاحظات التشغيل |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `prefix` | `String` | `Required (no default)` | **نعم (إلزامي)** | سلسلة معرّف غير فارغة (مثل `"ORD"`)؛ اتركها `""` لتطبيق الاصطلاح الافتراضي.<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | بادئة رمز إلزامية تُضاف قبل رمز UUIDv7 من 8 أحرف كبيرة (مثل "PRD-").<br/>*تنبيه:* سمة إلزامية؛ تولّد رمزاً مثل `INV-2026-0001` فقط عند فراغ الحقل أثناء الإنشاء. |
+| `prefix` | `String` | `مطلوب (بلا قيمة افتراضية)` | **نعم (إلزامي)** | بادئة نصية إلزامية غير فارغة (مثل `"PRD-"` أو `"INV-"`) — يفشل التصريف إذا حُذفت.<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | بادئة رمز إلزامية تُضاف قبل رمز UUIDv7 من 8 أحرف كبيرة (مثل "PRD-").<br/>*تنبيه:* سمة إلزامية؛ تضيف رمز UUIDv7 من 8 أحرف كبيرة (مثل `INV-0194E1A0`) فقط عند فراغ الحقل أثناء الإنشاء أو النسخ، مع الحفاظ على القيمة الممرّرة إن وُجدت. |
 
 ```java
 @AutoCode(prefix = "PRD-")
@@ -650,7 +650,7 @@ private String code;
 
 | الخاصية | نوع Java | القيمة الافتراضية | مطلوب | القيم المقبولة والمثال | الوصف وملاحظات التشغيل |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `sourceField` | `String` | `Required (no default)` | **نعم (إلزامي)** | الاسم الدقيق لخاصية Java في الكيان المطابقة لحقل نصي (مثل `"title"`).<br/>`@AutoSlug(sourceField = "productName") private String slug;` | اسم الحقل المصدر الإلزامي الذي يُحوّل إلى slug نصي مناسب للروابط.<br/>*تنبيه:* إلزامي؛ يحوّل النص إلى صيغة رابط kebab-case آمنة. ادمجه مع `@UniqueField` لضمان التفرد. |
+| `sourceField` | `String` | `مطلوب (بلا قيمة افتراضية)` | **نعم (إلزامي)** | الاسم الدقيق لخاصية Java في الكيان المطابقة لحقل نصي (مثل `"title"`).<br/>`@AutoSlug(sourceField = "productName") private String slug;` | اسم الحقل المصدر الإلزامي الذي يُحوّل إلى slug نصي مناسب للروابط.<br/>*تنبيه:* إلزامي؛ يحوّل النص إلى صيغة رابط kebab-case آمنة. ادمجه مع `@UniqueField` لضمان التفرد. |
 
 ```java
 @AutoSlug(sourceField = "name")
@@ -696,7 +696,7 @@ private BigDecimal lineTotal;
 | `value` | `String` | `""` | لا (اختياري) | إحدى القيم المدعومة التالية: Parameterized SQL or JPQL statement using positional `?1`/`?2` or named `:param` placeholders.<br/>`@CustomQuery(value = "SELECT * FROM orders WHERE tenant_id = :tenantId AND total >= :minTotal", nativeQuery = true)` | نص استعلام SQL أو JPQL يدعم معاملات `:param` المسماة.<br/>*تنبيه:* استخدم دوماً معاملات `:param` أو `?1` لمنع حقن SQL؛ اتركها `""` عند استخدام `sqlProvider`. |
 | `nativeQuery` | `boolean` | `true` | لا (اختياري) | `true` (تنفيذ SQL أصلي لقاعدة البيانات) أو `false` (تنفيذ JPQL محمول عبر JPA).<br/>`@CustomQuery(value = "SELECT o FROM OrderEntity o WHERE o.status = :status", nativeQuery = false)` | true لتنفيذ SQL أصلي؛ false لتنفيذ JPQL.<br/>*تنبيه:* SQL الأصلي (`true`) يدعم CTE ودوال النوافذ؛ اختر `false` (JPQL) لسهولة النقل بين H2 وPostgreSQL وMySQL. |
 | `resultClass` | `Class<?>` | `Void.class` | لا (اختياري) | أي فئة Java فعلية (مثل `MonthlyRevenueDto.class`) أو `Void.class` لتعطيل تحويل DTO.<br/>`@CustomQuery(value = "SELECT currency, SUM(total) FROM invoices GROUP BY currency", resultClass = MonthlyRevenueDto.class)` | فئة الهدف الاختيارية لتحويل صفوف النتيجة.<br/>*تنبيه:* حدّد دوماً فئة DTO للاستعلامات التجميعية لتجنب `SELECT *` وضمان سلامة الأنواع. |
-| `sqlProvider` | `Class<?>` | `Void.class` | لا (اختياري) | أي فئة Java فعلية (مثل `OrderAnalyticsSqlProvider.class`) أو `Void.class` لتعطيل تحويل DTO.<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | فئة Java اختيارية توفر نصوص SQL برمجياً ويتم التحقق منها عند الإقلاع.<br/>*تنبيه:* يُتحقق منه فور الإقلاع؛ الأخطاء الإملائية أو قيم `sqlProvider` غير الصالحة تفشل سريعاً قبل استقبال الطلبات. |
+| `sqlProvider` | `Class<?>` | `Void.class` | لا (اختياري) | فئة Java موفرة لاستعلام SQL (مثل `OrderAnalyticsSqlProvider.class`)، أو `Void.class` عند كتابة الاستعلام مباشرة في `value`.<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | فئة Java اختيارية توفر نصوص SQL برمجياً ويتم التحقق منها عند الإقلاع.<br/>*تنبيه:* يُتحقق منه فور الإقلاع؛ الأخطاء الإملائية أو قيم `sqlProvider` غير الصالحة تفشل سريعاً قبل استقبال الطلبات. |
 | `providerMethod` | `String` | `""` | لا (اختياري) | سلسلة معرّف غير فارغة (مثل `"buildRevenueSql"`)؛ اتركها `""` لتطبيق الاصطلاح الافتراضي.<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | اسم الدالة داخل `sqlProvider` التي تعيد نص SQL.<br/>*تنبيه:* يجب مطابقة اسم الدالة أو الحقل بدقة مع حساسية الأحرف (مثل `"buildRevenueSql"`)؛ عدم التطابق يسبب خطأً تشغيلياً. |
 | `modifying` | `boolean` | `false` | لا (اختياري) | `true` (تنفيذ DML للتحديث أو الحذف داخل معاملة كتابة) أو `false` (استعلام SELECT للقراءة فقط).<br/>`@CustomQuery(value = "UPDATE orders SET status = :status WHERE id = :id", modifying = true)` | يجب ضبطه على `true` لاستعلامات INSERT وUPDATE وDELETE.<br/>*تنبيه:* إلزامي (`true`) لأي عبارة `UPDATE`/`DELETE`؛ يغلف التنفيذ بمعاملة كتابة آمنة. |
 
@@ -706,7 +706,7 @@ private BigDecimal lineTotal;
 
 ---
 
-## 4. نظام RBAC الديناميكي المعتمد على قاعدة البيانات وإخفاء الحقول (18 تعليقات توضيحية)
+## 4. نظام RBAC الديناميكي المعتمد على قاعدة البيانات وإخفاء الحقول (18 تعليقًا توضيحيًا)
 
 ### `@SecurityRoleEntity`
 
@@ -1066,7 +1066,7 @@ private String effect; // ALLOW or DENY
 
 ---
 
-## 5. القفل الموزع وعدم التكرار والتخزين المؤقت وتعدد قواعد البيانات وأحداث السحابة (13 تعليقات توضيحية)
+## 5. القفل الموزع وعدم التكرار والتخزين المؤقت وتعدد قواعد البيانات وأحداث السحابة (13 تعليقًا توضيحيًا)
 
 ### `@DistributedLock`
 
@@ -1284,7 +1284,7 @@ private String effect; // ALLOW or DENY
 | `source` | `String` | `""` | لا (اختياري) | مسار HTTP صالح يبدأ بـ `/` (مثل `/services/order-api`) أو سلسلة فارغة `""` للاشتقاق التلقائي.<br/>`@PublishCloudEvent(source = "/services/order-api")` | معرف المصدر URI لسياق CloudEvents المرسِل.<br/>*تنبيه:* يملأ حقل URI `source` وفق معيار CNCF CloudEvents لتتبع مصدر الأحداث. |
 | `publishOnCreate` | `boolean` | `true` | لا (اختياري) | `true` (مفعّل) أو `false` (معطّل).<br/>`@PublishCloudEvent(publishOnCreate = true, publishOnUpdate = false, publishOnDelete = false)` | يصُدر CloudEvent بعد تأكيد الإنشاء (true).<br/>*تنبيه:* يُنشر فقط بعد تأكيد المعاملة (`AFTER_COMMIT`) عبر جسر الأحداث أو Kafka. |
 | `publishOnUpdate` | `boolean` | `true` | لا (اختياري) | `true` (مفعّل) أو `false` (معطّل).<br/>`@PublishCloudEvent(publishOnUpdate = true)` | يصُدر CloudEvent بعد التحديث (true).<br/>*تنبيه:* عطّله (`false`) في الكيانات عالية التحديث لتجنب إغراق وسيط الرسائل. |
-| `publishOnDelete` | `boolean` | `true` | لا (اختياري) | `true` (مفعّل) أو `false` (معطّل).<br/>`@PublishCloudEvent(publishOnDelete = true)` | يصُدر CloudEvent بعد الحذف (true).<br/>*تنبيه:* ينطلق عند الحذف الفعلي والناعم `@SoftDelete` لإبقاء نماذج القراءة متزامنة. |
+| `publishOnDelete` | `boolean` | `true` | لا (اختياري) | `true` (مفعّل) أو `false` (معطّل).<br/>`@PublishCloudEvent(publishOnDelete = true)` | يصُدر CloudEvent بعد الحذف (true).<br/>*تنبيه:* ينطلق عند الحذف الفعلي والناعم `BaseAuditEntity.deleted` لإبقاء نماذج القراءة متزامنة. |
 
 ```java
 @PublishCloudEvent(eventType = "com.example.order.created", source = "/orders")

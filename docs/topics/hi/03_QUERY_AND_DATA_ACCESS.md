@@ -1,6 +1,6 @@
 # 03. 13 डायनामिक फ़िल्टर ऑपरेटर, Query Guardrails, Keyset O(1) और GraphQL SDL (`0.1.0`)
 
-> **भाषाएँ**: **हिन्दी** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#query-dsl)
+> **भाषाएँ**: **हिन्दी** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [सभी 20 भाषाएँ](../README.md) | [संपूर्ण मैनुअल (EN)](../../GUIDE_EN.md) | [20-भाषा इंटरैक्टिव पोर्टल](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@
 
 ## 2. O(1) कर्सर Keyset पेजिनेशन (`GET /keyset`)
 
-चूँकि प्राइमरी की समय-क्रमित **UUIDv7** का उपयोग करती हैं, `/keyset` `dir=asc` और `dir=desc` दोनों दिशाओं में `size + 1` जांच के साथ $O(1)$ समय में सीधे कर्सर सीमा पर पहुँचता है:
+चूँकि प्राइमरी की समय-क्रमित **UUIDv7** का उपयोग करती हैं, `/keyset` `dir=asc` और `dir=desc` दोनों दिशाओं में `size + 1` जांच के साथ `O(1)` समय में सीधे कर्सर सीमा पर पहुँचता है:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

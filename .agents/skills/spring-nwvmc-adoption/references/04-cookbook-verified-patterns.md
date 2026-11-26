@@ -1,6 +1,6 @@
-# Spring-NWVMC (`v0.1.0`) — Verified Copy-Paste Cookbook
+# Spring-NWVMC (`0.1.0`) — Verified Copy-Paste Cookbook
 
-> Every single recipe below is extracted directly from `controller-to-api-implementation/` and empirically verified against public JitPack `com.github.NatswarChuan:Spring-NWVMC:v0.1.0` (`173` passing tests + `2,000`-request JMeter `0.0%` error rate).
+> Every pattern below is grounded in `controller-to-api-framework/` (`586/586` unit tests) and verified against Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` via the clean-room **NovaMart Multi-Merchant E-Commerce** reference (`controller-to-api-implementation/`, `23/23` tests + `1,003`-request JMeter `0.0%` err).
 
 ---
 
@@ -73,13 +73,15 @@ public class ProductCatalog extends BaseAuditEntity {
 ```
 
 ### `controller/PublicCatalogController.java` + Automatic ETag Cache (`0.1.0` Verified!)
-> **Spring-NWVMC `0.1.0` Native Support:** Declare `ResponseEntity<ApiResponse<PublicProductCardDto>>` on `@HttpCacheable` methods! Spring-NWVMC `0.1.0` automatically hashes `ApiResponse.getData()` deterministically (ignoring per-request `traceId`), emits `ETag` + `Cache-Control`, returns `304 Not Modified` on `If-None-Match`, and keeps `@EntityRetry` immune to 4xx `BaseBusinessException`.
+> **Spring-NWVMC `0.1.0` Native Support:** Declare `ResponseEntity<ApiResponse<PublicProductCardDto>>` on `@HttpCacheable` methods! `0.1.0` automatically hashes `ApiResponse.getData()` deterministically (ignoring per-request `traceId`), emits `ETag` + `Cache-Control`, returns `304 Not Modified` on `If-None-Match`, and keeps `@EntityRetry` immune to 4xx `BaseBusinessException`.
+>
+> **Important Fail-Closed Security Note:** Custom `@ServiceOverride` method names not in `SecurityConstant.READ_OPERATIONS` (like `getCachedProductById`) default to `writeRoles` on `@EntitySecurity`-protected entities! Either override `getById` directly, allowlist `getCachedProductById` via `@SecurityPolicyEntity` / `SecurityIdentityCustomizer`, or use `@EntitySecurity(permitAll = true)` strictly when the entity is exposed ONLY via `AutoReadApi`.
 
 ```java
 package com.example.app.controller;
 
 import com.example.app.dto.PublicProductCardDto;
-import com.example.app.entity.StorefrontProduct;
+import com.example.app.entity.ProductCatalog;
 import com.example.app.helper.PublicCatalogCacheHelper;
 import io.github.natswarchuan.common.response.ApiResponse;
 import io.github.natswarchuan.core.annotation.AutoGet;
@@ -98,7 +100,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RateLimit(requests = 120, windowSeconds = 60, partitionKey = "IP")
 @EntityCircuitBreaker(name = "publicCatalog", failureRateThreshold = 50.0f, slidingWindowSize = 20, waitDurationInOpenStateSeconds = 10)
 @EntityRetry(name = "publicCatalog", maxAttempts = 3, waitDurationMs = 200L)
-public interface PublicCatalogController extends AutoReadApi<StorefrontProduct> {
+public interface PublicCatalogController extends AutoReadApi<ProductCatalog> {
 
   @AutoGet("/cached/{id}")
   @HttpCacheable(maxAgeSeconds = 60, isPrivate = true, mustRevalidate = true, generateETag = true)
@@ -106,9 +108,11 @@ public interface PublicCatalogController extends AutoReadApi<StorefrontProduct> 
   ResponseEntity<ApiResponse<PublicProductCardDto>> getCachedProductById(@PathVariable("id") UUID id);
 }
 
-// helper/PublicCatalogCacheHelper.java (public final class — NEVER put @Transactional on final Helpers!)
+// helper/PublicCatalogCacheHelper.java (NEVER put @Transactional on final Helpers!)
 package com.example.app.helper;
 
+import com.example.app.dto.PublicProductCardDto;
+import com.example.app.entity.ProductCatalog;
 import io.github.natswarchuan.common.response.ApiResponse;
 import jakarta.persistence.EntityManager;
 import java.util.UUID;
@@ -122,7 +126,7 @@ public final class PublicCatalogCacheHelper {
   private final EntityManager entityManager;
 
   public ApiResponse<PublicProductCardDto> getCachedProductById(final UUID productId) {
-    final StorefrontProduct product = entityManager.find(StorefrontProduct.class, productId);
+    final ProductCatalog product = entityManager.find(ProductCatalog.class, productId);
     // Validate product exists & not soft-deleted (throw custom BaseBusinessException 404 otherwise)
     return ApiResponse.success(PublicProductCardDto.fromEntity(product));
   }
@@ -327,10 +331,12 @@ public final class AppDataSourceClusterListener implements ApplicationListener<A
 
 ## Recipe 5 — `@Idempotent` Payment Deduplication (`201 Created` → `409 Conflict`)
 
+> **CRITICAL Header Constant:** Use `HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY` (or `AopConstant.HEADER_IDEMPOTENCY_KEY` = `"X-Idempotency-Key"`). NEVER pass `HttpHeaderConstant.HEADER_IDEMPOTENCY_KEY` (`"Idempotency-Key"`) if clients send `"X-Idempotency-Key"` — a mismatched or missing header silently skips deduplication! For multi-pod Kubernetes, plug a Redis/JDBC `IdempotencyStoreProvider` (`io.github.natswarchuan.module.idempotent.provider.IdempotencyStoreProvider`).
+
 ```java
 @AutoRestController
 @Idempotent(
-    headerName = HttpHeaderConstant.HEADER_IDEMPOTENCY_KEY,
+    headerName = HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY,
     ttlSeconds = AopConstant.SECONDS_PER_DAY)
 public interface PaymentTransactionController extends AutoApiController<PaymentTransaction> {}
 ```
@@ -338,6 +344,8 @@ public interface PaymentTransactionController extends AutoApiController<PaymentT
 ---
 
 ## Recipe 6 — `@EntityWebhook` + `@PublishCloudEvent` + `OutboxEventDispatcherProvider`
+
+> **Production Delivery Note (`0.1.0`):** `WebhookDispatcherHelper` signs HMAC-SHA256 payloads and records delivery receipts (simulated HTTP in `0.1.0`). Implement `OutboxEventDispatcherProvider` below for real post-commit delivery to Kafka, RabbitMQ, SQS, or outbound HTTP receivers.
 
 ```java
 @Entity
@@ -349,7 +357,7 @@ public class ElectronicInvoice extends BaseAuditEntity { /* ... */ }
 public final class MarketplaceOutboxEventDispatcherProvider implements OutboxEventDispatcherProvider {
 
   @Override
-  public boolean dispatch(final OutboxEvent event, final Map<String, String> headers) {
+  public boolean dispatch(final OutboxEvent event, final Map<String, String> headers) throws Exception {
     if (Objects.isNull(event)) {
       return false;
     }
@@ -433,11 +441,15 @@ public class MerchantListing extends BaseAuditEntity {
   private String title;
 }
 // Every call MUST pass header `X-Tenant-ID: TENANT_A` (missing header -> 403; reading TENANT_B ID -> 403).
+// CRITICAL AppSec Note: X-Tenant-ID is client-supplied; in production ALWAYS implement SecurityIdentityCustomizer
+// (or an upstream filter) to verify the caller's signed JWT tenantId claim / DB tenant membership matches X-Tenant-ID!
 ```
 
 ---
 
 ## Recipe 9 — 4-Entity Dynamic Database RBAC (`ALLOW` & `DENY > ALLOW`)
+
+> **CRITICAL Security Rule:** ALWAYS annotate **ALL FOUR** DB-RBAC entities with `@EntitySecurity(readRoles = {"ROLE_ADMIN", "ROLE_SUPER_ADMIN"}, writeRoles = {"ROLE_SUPER_ADMIN"}, deleteRoles = {"ROLE_SUPER_ADMIN"})`! Omitting `@EntitySecurity` on `NovaUserRole` or `NovaAccessPolicy` allows privilege escalation if `default-deny-unannotated-entities` is `false`.
 
 Declare all 4 entities (with `@AutoRestController` interfaces extending `AutoApiController<E>`) to manage roles, permissions, user-role assignments, and `DENY > ALLOW` policies dynamically at runtime with automatic cache invalidation:
 
@@ -453,6 +465,7 @@ public class NovaRole extends BaseAuditEntity {
 
 // 2. Permission catalog (@SecurityPermissionEntity + @PermissionCode, @PermissionResource, @PermissionAction, @PermissionFieldMask)
 @Entity @SecurityPermissionEntity(cacheTtlSeconds = 60L)
+@EntitySecurity(readRoles = {"ROLE_ADMIN", "ROLE_SUPER_ADMIN"}, writeRoles = {"ROLE_SUPER_ADMIN"}, deleteRoles = {"ROLE_SUPER_ADMIN"})
 public class NovaPermission extends BaseAuditEntity {
   @PermissionCode @UniqueField @NotBlank private String permissionCode;
   @PermissionResource @NotBlank private String resourceName;   // e.g. "StoreCategory"
@@ -462,6 +475,7 @@ public class NovaPermission extends BaseAuditEntity {
 
 // 3. Subject-to-role binding (@SecurityUserRoleEntity + @UserRoleSubject, @UserRoleCode, @UserRoleTenantId)
 @Entity @SecurityUserRoleEntity(enabled = true)
+@EntitySecurity(readRoles = {"ROLE_ADMIN", "ROLE_SUPER_ADMIN"}, writeRoles = {"ROLE_SUPER_ADMIN"}, deleteRoles = {"ROLE_SUPER_ADMIN"})
 public class NovaUserRole extends BaseAuditEntity {
   @UserRoleSubject @NotBlank private String username;          // matches JWT `sub` (username!)
   @UserRoleCode @NotBlank private String roleCode;
@@ -470,6 +484,7 @@ public class NovaUserRole extends BaseAuditEntity {
 
 // 4. Dynamic ALLOW / DENY policy (@SecurityPolicyEntity + @PolicyResource, @PolicyAction, @PolicyAllowedRoles, @PolicyEffect)
 @Entity @SecurityPolicyEntity(priority = 100)
+@EntitySecurity(readRoles = {"ROLE_ADMIN", "ROLE_SUPER_ADMIN"}, writeRoles = {"ROLE_SUPER_ADMIN"}, deleteRoles = {"ROLE_SUPER_ADMIN"})
 public class NovaAccessPolicy extends BaseAuditEntity {
   @PolicyResource @NotBlank private String resourcePattern;    // e.g. "StoreCategory"
   @PolicyAction @NotBlank private String actionPattern;        // e.g. "READ"

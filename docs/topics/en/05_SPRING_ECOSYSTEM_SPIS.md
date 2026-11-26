@@ -1,6 +1,6 @@
 # 05. 8 SPI Customizer Interfaces, `@CustomEndpoint` & `@ServiceOverride` (`0.1.0`)
 
-> **Languages**: **English** | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#spi-customizers)
+> **Languages**: **English** | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [All 20 Languages](../README.md) | [Complete Manual](../../GUIDE_EN.md) | [20-Language Interactive Portal](../../index.html#customizers)
 
 ---
 
@@ -20,6 +20,9 @@ All extension hooks under `io.github.natswarchuan.customization.customizer` expo
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | `LOCAL`/`S3`/`GCS` bucket policies, pre-signed URLs & upload limits |
 
 Active registered beans across the `7` core telemetry groups (`CustomizerGroupConstant`) inspect cleanly via `GET /api/v1/system/customizers` (`StorageCustomizer` is managed separately via `StorageCustomizerRegistryHelper`).
+
+
+> **Active Runtime Interceptor vs. Metadata/Telemetry Hooks (`0.1.0`):** `SecurityIdentityCustomizer` is actively invoked on every request by `SecurityFilterChainBridge` and `SecurityAuthorityDecisionHelper` (custom JWT/ABAC authority augmentation & voting). The other `7` `*Customizer` SPIs register context metadata & telemetry descriptors exposed via `GET /api/v1/system/customizers` and `StorageCustomizerRegistryHelper`.
 
 ---
 

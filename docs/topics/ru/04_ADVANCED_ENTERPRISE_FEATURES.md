@@ -1,6 +1,6 @@
 # 04. Безопасность, мультиоблачное хранилище, `@ServiceOverride`, метрики и i18n на 20 языках (`0.1.0`)
 
-> **Языки**: **Русский** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Все 20 языков](../README.md) | [Полное руководство](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#security-rbac)
+> **Языки**: **Русский** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Все 20 языков](../README.md) | [Полное руководство (EN)](../../GUIDE_EN.md) | [Интерактивный портал (20 языков)](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. Мультиоблачное хранилище (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+Встроенный `FileStorageController` (`/api/v1/storage/*`) предоставляет `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` и `POST /presigned-url` с провайдером `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`).
+
+> **Защита в Production:** Включите `app.framework.security.require-authenticated-api-paths: true` и защитите `/api/v1/storage/**` в `SecurityFilterChain`.

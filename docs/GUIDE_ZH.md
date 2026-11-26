@@ -3,17 +3,17 @@
 > **制品坐标**: `io.github.natswarchuan:spring-nwvmc:0.1.0` | JitPack: `com.github.NatswarChuan:Spring-NWVMC:v0.1.0`  
 > **运行基线**: Java 21 LTS (Virtual Threads) · Spring Boot `3.2.5` / `3.3.5` / `3.4.0` · GraalVM AOT `RuntimeHints`  
 > **专题文档（支持全部20种语言）**: [快速上手](topics/zh/01_GETTING_STARTED.md) · [40 项端点契约](topics/zh/02_REST_API_CATALOG.md) · [查询与 GraphQL](topics/zh/03_QUERY_AND_DATA_ACCESS.md) · [安全、指标与 i18n](topics/zh/04_ADVANCED_ENTERPRISE_FEATURES.md) · [8 个 SPI 扩展点](topics/zh/05_SPRING_ECOSYSTEM_SPIS.md) · [60 个声明式注解完整规范](topics/zh/06_DECLARATIVE_ANNOTATIONS.md) · [AI-Agent 集成工具包](topics/zh/07_AI_AGENT_ADOPTION_KIT.md) · [全部20种语言索引](topics/README.md)  
-> **语言切换**: [English](GUIDE_EN.md) | [Tiếng Việt](GUIDE_VI.md) | [日本語](GUIDE_JA.md) | 中文 | [20语言文档门户](index.html#annotations)
+> **语言切换**: [English](GUIDE_EN.md) | [Tiếng Việt](GUIDE_VI.md) | [日本語](GUIDE_JA.md) | 中文 | [20语言文档门户](index.html)
 
 ---
 
 ## 1. 架构设计与核心机制
 
-`controller-to-api-framework` 包含 `591` 个主源码 Java 文件（测试文件 `251` 个、`569` 项单元测试）、`60` 个声明式注解（含 `18` 个数据库驱动动态 RBAC 注解）、`9` 个可组合能力接口（`AutoReadApi`..`AutoAiApi`）、`16` 个 `@AutoConfigurationBean` / `@ConfigurationProperties` 类（对应 `META-INF/spring-configuration-metadata.json` 中 `18` 个配置组与 `20` 个 `*Properties` 类）、`21` 个多语言资源包（`classpath:i18n/messages*.properties`）以及通过 `NwvmcRuntimeHintsRegistrar`（`META-INF/spring/aot.factories`）注册的 GraalVM Native Image AOT 提示。
+`controller-to-api-framework` 包含 `593` 个主源码 Java 文件（测试文件 `257` 个、`586` 项单元测试）、`60` 个声明式注解（含 `18` 个数据库驱动动态 RBAC 注解）、`9` 个可组合能力接口（`AutoReadApi`..`AutoAiApi`）、`16` 个 `@AutoConfigurationBean` / `@ConfigurationProperties` 类（对应 `META-INF/spring-configuration-metadata.json` 中 `18` 个配置组与 `20` 个 `*Properties` 类）、`21` 个多语言资源包（`classpath:i18n/messages*.properties`）以及通过 `NwvmcRuntimeHintsRegistrar`（`META-INF/spring/aot.factories`）注册的 GraalVM Native Image AOT 提示。
 
 - **双目录极简业务模型（`entity/` 与 `controller/`）**: 应用层仅需继承 `BaseAuditEntity`（内置 `@Version` 乐观锁冲突返回 `409 Conflict` 及 `JpaAssociationReferenceUtil` 外键引用解析）声明 JPA 实体，以及继承 `AutoApiController<E>` 或只读/按需组合接口（如 `AutoReadApi<E>`）声明控制器接口（支持 `@AutoRestController(readDto, createDto, updateDto)` 及标准 Spring MVC 的 `@RequestBody`/`@RequestParam`/`@PathVariable`）。整个框架仅在 AOT（`autoconfigure/`、`common/constant/AotConstant`、`common/util/AotRuntimeHintsUtil`）与配置元数据（`config/properties/`）中保留 `10` 行静态 Spring 导入。
 - **`MethodHandle` 热路径调用**: `MethodHandleCacheUtil` 与 `LambdaAccessorUtil` 消除动态代理热路径的反射 `Method.invoke` 开销。
-- **UUIDv7 主键（`UuidUtil.generateUuidV7`）**: 基于时间单调递增的 RFC 9562 主键兼顾 B-Tree 顺序写入局部性与 $O(1)$ `/keyset` 游标分页。
+- **UUIDv7 主键（`UuidUtil.generateUuidV7`）**: 基于时间单调递增的 RFC 9562 主键兼顾 B-Tree 顺序写入局部性与 `O(1)` `/keyset` 游标分页。
 - **安全与容错边界**: `GlobalExceptionHandlerHelper`、`CustomContainerErrorController`（`/error`）与 `ExceptionCauseUnwrapperUtil` 在服务端记录完整堆栈的同时向调用方返回脱敏 `ApiResponse<Void>` 及 `X-Request-ID` / W3C `traceparent` 响应头。
 
 ---
@@ -32,11 +32,26 @@
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 ```
 
 ```kotlin
 dependencies {
   implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+  options.compilerArgs.add("-parameters")
 }
 ```
 
@@ -196,16 +211,18 @@ mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyc
 
 ---
 
-## 10. 通用 AI-Agent 集成工具包（`ai-agent-kit/` 与 `llms.txt`）
+## 9. 通用 AI-Agent 集成工具包（`ai-agent-kit/` 与 `llms.txt`）
 
 > 交互式门户：[`docs/index.html#ai-agent-kit`](index.html#ai-agent-kit) · 中文专题文档：[07. AI-Agent 集成工具包](topics/zh/07_AI_AGENT_ADOPTION_KIT.md) · LLM 索引：[`llms.txt`](../llms.txt)
 
 通过内置的 **SDD + TDD 通用 AI-Agent Adoption Kit**（`INTRO.md`、`RULES.md`、`SKILL.md`、`CHECKLIST.md`、6 份机器校验 `references/01..06` 含 **SDD 与 TDD 实战手册**、`templates/{spec,plan,tasks}.template.md` 模板及 8 套即插 `adapters/`），可让 **所有主流 AI 编程代理与大模型**（Antigravity/Gemini、Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf、Cline/Roo Code、ChatGPT、DeepSeek、Qwen、Grok 等）按规范驱动与测试驱动零幻觉精准交付 Spring-NWVMC `0.1.0`：
 
-```bash
+```powershell
 # Windows（PowerShell — 在您的 Spring Boot 项目根目录直接运行，无需提前克隆仓库）
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+$ErrorActionPreference='Stop'; $s=Join-Path $env:TEMP ("nwvmc-install-" + [guid]::NewGuid().ToString("N") + ".ps1"); try { [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
+```
 
+```bash
 # macOS / Linux / Git Bash（在项目根目录直接运行，无需提前克隆仓库）
-curl -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
+curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.sh | bash -s -- --target . --agent all
 ```

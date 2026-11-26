@@ -1,6 +1,6 @@
 # 01. Hızlı Başlangıç, İki Dizin Sözleşmesi ve Fail-Fast Başlatma Tanıları (`0.1.0`)
 
-> **Diller**: **Türkçe** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#quickstart)
+> **Diller**: **Türkçe** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [Tüm 20 Dil](../README.md) | [Tam Kılavuz (EN)](../../GUIDE_EN.md) | [20 Dilli Etkileşimli Portal](../../index.html#quickstart)
 
 ---
 
@@ -29,6 +29,28 @@ Standart CRUD ötesindeki iş akışları `Service` arayüzleri ile bağımsız 
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 [JitPack](https://jitpack.io) üzerinden doğrudan GitHub derlemeleri için:
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **Yerel Geliştirme İpucu:** `JWT_SECRET` henüz tanımlı değilse `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` değerini yalnızca `application-dev.yml` içine koyun (`application.yml`/`application-prod.yml` fail-closed kalsın).
+
 ---
 
 ## 4. Ayrıntılı Uç Nokta Filtreleme (`enabledEndpoints` ve `disabledEndpoints`)
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | İstisna | Tetikleme Koşulu | Çözüm |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` JVM `< 21` algılar | Java 21 LTS veya daha yeni sürümde çalıştırın |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` ve özel `jwt-secret` `< 32` UTF-8 bayt | `${JWT_SECRET}` değerini en az 32 bayt yapın |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` veya `maxPageSize < 1` | `app.framework.query-guardrails.*` altında pozitif tam sayılar tanımlayın |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` ve özel `jwt-secret` `< 32` UTF-8 bayt | `${JWT_SECRET}` değerini en az 32 bayt yapın |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1` veya `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | `app.framework.query-guardrails.*` altında pozitif tam sayılar tanımlayın |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` veya `ComputedFieldFailFastUtil` eksik `@Id`, eksik parametresiz yapıcı veya geçersiz `@ComputedField` alanı algılar | `BaseAuditEntity` genişletin, `@NoArgsConstructor` koruyun ve tam alan adlarını eşleştirin |

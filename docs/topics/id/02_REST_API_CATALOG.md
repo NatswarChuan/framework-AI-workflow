@@ -1,6 +1,6 @@
 # 02. Katalog 40 Kontrak REST Otomatis & Controller Platform Bawaan (`0.1.0`)
 
-> **Bahasa**: **Bahasa Indonesia** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#endpoints)
+> **Bahasa**: **Bahasa Indonesia** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap (EN)](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#endpoints)
 
 ---
 
@@ -12,7 +12,7 @@ Memperluas `AutoApiController<E>` (atau menggabungkan `AutoReadApi`, `AutoKeyset
 
 | # | HTTP | Sub-Jalur | Metode | Perilaku |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | `GET` | `""` | `getPage` | Paginasi offset dengan 13 operator filter, pengurutan multi-kolom, eager-fetch include, dan pemilihan kolom fields. |
+| 1 | `GET` | `""` | `getPage` | Paginasi offset dengan 13 operator filter, pengurutan multi-kolom, eager-fetch `?expand=`, dan pemilihan kolom fields. |
 | 2 | `GET` | `/keyset` | `getKeysetPage` | Paginasi kursor UUIDv7 berkecepatan O(1) tanpa degradasi pemindaian SQL OFFSET pada tabel besar. |
 | 3 | `GET` | `/all` | `getAll` | Mengembalikan seluruh rekaman yang cocok dengan filter dinamis untuk dropdown dan tabel referensi. |
 | 4 | `GET` | `/count` | `count` | Menjalankan SQL COUNT(*) yang sesuai dengan predikat filter dinamis. |
@@ -77,11 +77,11 @@ Memperluas `AutoApiController<E>` (atau menggabungkan `AutoReadApi`, `AutoKeyset
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | Developer Studio 20 bahasa (RTL `ar`, `fa`, `ur`); mengembalikan `401` saat `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | Mengekspor kode Spring MVC standar (Controller/Service/Repository); dilindungi `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | Menerbitkan JWT HMAC-SHA512 demo; mengembalikan `404` saat `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Rekonstruksi entitas pada titik waktu ISO-8601 UTC (Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Memeriksa bean SPI aktif pada `7` grup telemetri `*Customizer` (`StorageCustomizer` dikelola `StorageCustomizerRegistryHelper`, total `8` SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Metrik kesehatan langsung Resilience4j Circuit Breaker |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Metrik kesehatan langsung Resilience4j Circuit Breaker |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Inspeksi kesehatan multi-sumber data |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Konteks MDC aktif W3C `traceparent` dan UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Mengonversi galat kontainer Tomcat `400/404/405/413/431/500` menjadi `ApiResponse<Void>` |

@@ -1,6 +1,6 @@
 # 03. 13 Operatori Dinamici di Filtro, Query Guardrails, Keyset O(1) e GraphQL SDL (`0.1.0`)
 
-> **Lingue**: **Italiano** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Tutte le 20 Lingue](../README.md) | [Manuale Completo](../../GUIDE_EN.md) | [Portale Interattivo (20 Lingue)](../../index.html#query-dsl)
+> **Lingue**: **Italiano** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Tutte le 20 Lingue](../README.md) | [Manuale Completo (EN)](../../GUIDE_EN.md) | [Portale Interattivo (20 Lingue)](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@ Tutti i parametri di filtro vengono compilati in query JPA Criteria parametrizza
 
 ## 2. Paginazione a Cursore Keyset O(1) (`GET /keyset`)
 
-Poiché le chiavi primarie sono **UUIDv7** ordinati cronologicamente, `/keyset` raggiunge subito il confine del cursore in `dir=asc` e `dir=desc` con sonda `size + 1` in tempo $O(1)$:
+Poiché le chiavi primarie sono **UUIDv7** ordinati cronologicamente, `/keyset` raggiunge subito il confine del cursore in `dir=asc` e `dir=desc` con sonda `size + 1` in tempo `O(1)`:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

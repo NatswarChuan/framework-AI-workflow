@@ -32,29 +32,29 @@
 | [`@HumanPolicy`](#humanpolicy) | `entity` | `Class (TYPE)` | `lifecycle (""), security (""), masking (""), stateField ("")` | 将自然可读的策略条款直接编译为生效中的 RBAC 权限、状态机流转及字段脱敏规则。 |
 | [`@AuditTrail`](#audittrail) | `entity` | `Class (TYPE)` | `category (""), recordFieldDiffs (true)` | 记录跨变更的字段级差异，为时光机状态重建与 /diff 差异审计提供底层历史账本。 |
 | [`@MultiTenant`](#multitenant) | `entity` | `Class (TYPE)` | `tenantField ("tenantId"), bypassTenantRoles ({"ROLE_SUPER_ADMIN"})` | 除非调用方具备绕过角色，否则自动按当前租户上下文隔离行级查询与写入。 |
-| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `(Marker annotation — no attributes)` | 在新增、更新与 Upsert 持久化前自动校验字段唯一性冲突。 |
-| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (REQUIRED)` | 当字段为空时，在创建或克隆实体时自动生成带前缀的唯一业务编码。 |
-| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (REQUIRED)` | 从 sourceField 自动标准化并生成适合 URL 的 ASCII Slug 短链标识。 |
+| [`@UniqueField`](#uniquefield) | `entity` | `Field (FIELD)` | `（标记注解 — 无属性）` | 在新增、更新与 Upsert 持久化前自动校验字段唯一性冲突。 |
+| [`@AutoCode`](#autocode) | `entity` | `Field (FIELD)` | `prefix (必填)` | 当字段为空时，在创建或克隆实体时自动生成带前缀的唯一业务编码。 |
+| [`@AutoSlug`](#autoslug) | `entity` | `Field (FIELD)` | `sourceField (必填)` | 从 sourceField 自动标准化并生成适合 URL 的 ASCII Slug 短链标识。 |
 | [`@ComputedField`](#computedfield) | `entity` | `Field (FIELD)` | `operation ("MULTIPLY"), sourceFields ({}), collectionField (""), itemField (""), subtractField (""), addField ("")` | 在保存实体变更前自动计算衍生汇总数值（乘积、加减或子集合求和）。 |
 | [`@CustomQuery`](#customquery) | `entity` | `Method (METHOD)` | `value (""), nativeQuery (true), resultClass (Void.class), sqlProvider (Void.class), providerMethod (""), modifying (false)` | 支持将自定义原生 SQL、JPQL 或 SQL Provider Helper 方法绑定到控制器端点。 |
 | [`@SecurityRoleEntity`](#securityroleentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | 将 JPA 实体声明为数据库驱动 RBAC 角色目录主表。 |
-| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 映射 @SecurityRoleEntity 中唯一的权限/角色编码字段。 |
-| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 标识 @SecurityRoleEntity 中用于展示的可读角色名称字段。 |
-| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 标记角色实体上存储已授予权限码集合或逗号分隔字符串的字段。 |
+| [`@RoleCode`](#rolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 映射 @SecurityRoleEntity 中唯一的权限/角色编码字段。 |
+| [`@RoleName`](#rolename) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 标识 @SecurityRoleEntity 中用于展示的可读角色名称字段。 |
+| [`@RolePermissions`](#rolepermissions) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 标记角色实体上存储已授予权限码集合或逗号分隔字符串的字段。 |
 | [`@SecurityPermissionEntity`](#securitypermissionentity) | `rbac` | `Entity (TYPE)` | `cacheTtlSeconds (60L)` | 将 JPA 实体标记为存储资源-操作权限与动态字段脱敏规则的数据库权限表。 |
-| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 指定 @SecurityPermissionEntity 中的唯一权限代码字段。 |
-| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 映射 @SecurityPermissionEntity 中的目标实体名或 API 资源名（支持通配符 *）。 |
-| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 映射受 @SecurityPermissionEntity 规则保护的逻辑 CRUD 或自定义操作动作动词。 |
-| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 声明当此数据库权限规则命中时需要动态脱敏遮盖的逗号分隔实体字段名列表。 |
+| [`@PermissionCode`](#permissioncode) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 指定 @SecurityPermissionEntity 中的唯一权限代码字段。 |
+| [`@PermissionResource`](#permissionresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 映射 @SecurityPermissionEntity 中的目标实体名或 API 资源名（支持通配符 *）。 |
+| [`@PermissionAction`](#permissionaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 映射受 @SecurityPermissionEntity 规则保护的逻辑 CRUD 或自定义操作动作动词。 |
+| [`@PermissionFieldMask`](#permissionfieldmask) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 声明当此数据库权限规则命中时需要动态脱敏遮盖的逗号分隔实体字段名列表。 |
 | [`@SecurityUserRoleEntity`](#securityuserroleentity) | `rbac` | `Entity (TYPE)` | `enabled (true)` | 将 JPA 实体标记为关联用户主体、数据库角色与可选租户范围的动态授权映射表。 |
-| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 标识 @SecurityUserRoleEntity 中的主体标识符（Authentication.getName() / JWT sub）字段。 |
-| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 绑定 @SecurityUserRoleEntity 中分配给用户的角色编码字段。 |
-| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 将 @SecurityUserRoleEntity 角色授权限定到指定租户 ID（或用 * 表示全局有效）。 |
+| [`@UserRoleSubject`](#userrolesubject) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 标识 @SecurityUserRoleEntity 中的主体标识符（Authentication.getName() / JWT sub）字段。 |
+| [`@UserRoleCode`](#userrolecode) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 绑定 @SecurityUserRoleEntity 中分配给用户的角色编码字段。 |
+| [`@UserRoleTenantId`](#userroletenantid) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 将 @SecurityUserRoleEntity 角色授权限定到指定租户 ID（或用 * 表示全局有效）。 |
 | [`@SecurityPolicyEntity`](#securitypolicyentity) | `rbac` | `Entity (TYPE)` | `priority (100)` | 将 JPA 实体标记为支持按 priority 排序的显式 ALLOW / DENY 动态授权策略表。 |
-| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 映射 @SecurityPolicyEntity 中的目标资源匹配模式字段。 |
-| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 映射 @SecurityPolicyEntity 中受控操作动作动词（READ、WRITE、DELETE 或 *）。 |
-| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 映射 @SecurityPolicyEntity 策略规则所适用的角色集合或逗号分隔角色串字段。 |
-| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `(Marker annotation — no attributes)` | 指定 @SecurityPolicyEntity 规则匹配时的授权决策结果（ALLOW 或 DENY）。 |
+| [`@PolicyResource`](#policyresource) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 映射 @SecurityPolicyEntity 中的目标资源匹配模式字段。 |
+| [`@PolicyAction`](#policyaction) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 映射 @SecurityPolicyEntity 中受控操作动作动词（READ、WRITE、DELETE 或 *）。 |
+| [`@PolicyAllowedRoles`](#policyallowedroles) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 映射 @SecurityPolicyEntity 策略规则所适用的角色集合或逗号分隔角色串字段。 |
+| [`@PolicyEffect`](#policyeffect) | `rbac` | `Field / Method (FIELD, METHOD)` | `（标记注解 — 无属性）` | 指定 @SecurityPolicyEntity 规则匹配时的授权决策结果（ALLOW 或 DENY）。 |
 | [`@DistributedLock`](#distributedlock) | `resilience` | `Method (METHOD)` | `key (""), waitTimeMs (3000L), leaseTimeMs (5000L)` | 基于 AST 缓存（上限 1024）解析 SpEL 锁键串行化并发访问（默认 waitTimeMs=3000L, leaseTimeMs=5000L）。 |
 | [`@Idempotent`](#idempotent) | `resilience` | `Type / Method (TYPE, METHOD)` | `headerName ("X-Idempotency-Key"), ttlSeconds (300L)` | 在可配置 TTL 窗口内防并发重复提交与请求重放。 |
 | [`@RateLimit`](#ratelimit) | `resilience` | `Type / Method (TYPE, METHOD)` | `requests (60), windowSeconds (60), partitionKey ("IP")` | 按 IP、User 或 Tenant 维度实施滑动窗口请求限流。 |
@@ -88,8 +88,8 @@
 | `basePath` | `String` | `""` | 否（可选） | 以 `/` 开头的合法 HTTP 路径（例如 `/api/v1/product-catalogs`），或空字符串 `""` 表示自动推导。<br/>`@AutoRestController(basePath = "/api/v1/product-catalogs")` | 显式根路径 URI（例如 "/api/v1/product-catalogs"）。留空时自动按控制器接口名称生成 kebab-case 复数路径。<br/>*注意:* 启动时代理注册器会优先解析 `basePath`，其次才是 `path`。请勿同时为两个属性设置冲突值。 |
 | `path` | `String` | `""` | 否（可选） | 以 `/` 开头的合法 HTTP 路径（例如 `/api/v1/orders`），或空字符串 `""` 表示自动推导。<br/>`@AutoRestController(path = "/api/v1/orders")` | 基础路径兼容别名属性。建议优先使用 basePath，因为 DynamicControllerProxyRegistrarHelper 优先读取 extractCustomBasePath()。<br/>*注意:* 启动时代理注册器会优先解析 `basePath`，其次才是 `path`。请勿同时为两个属性设置冲突值。 |
 | `entityName` | `String` | `""` | 否（可选） | 非空标识字符串（例如 `"ProductCatalog"`）；留空 `""` 则采用框架默认命名约定。<br/>`@AutoRestController(entityName = "ProductCatalog")` | 覆盖 OpenAPI/Studio 元数据中展示的实体名称，默认使用泛型 E 的类名。<br/>*注意:* 直接展示在生成的 Swagger / OpenAPI 3.0 文档和 NWVMC Studio 中；请将文案提取至 `OpenApiConstant` 以遵循零硬编码规范。 |
-| `enabledEndpoints` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"search"`, `"keysetPage"`, `"exportCsv"`, `"importCsv"`。<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | 精确允许暴露的契约方法名白名单（如 "getPage"、"create"）。为空数组时默认启用所继承接口的全部契约。<br/>*注意:* 作为严格白名单生效：非空时，未列入的 AutoApiController 方法均不会注册到 Spring MVC 与 Swagger UI。公开只读 API 建议优先使用。 |
-| `disabledEndpoints` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`"deleteById"`, `"batchDelete"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`。<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "batchDelete", "importCsv"})` | 在 MVC 映射前禁用的方法名黑名单（例如 "deleteById"、"batchChunked"、"importCsv"）。<br/>*注意:* 在 `enabledEndpoints` 之后生效；适合保留其余 40 个契约的同时，精准封禁删除或批量导入等高风险端点。 |
+| `enabledEndpoints` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`"getPage"`, `"getById"`, `"create"`, `"update"`, `"patch"`, `"deleteById"`, `"getKeysetPage"`, `"count"`, `"exportCsv"`, `"importCsv"`。<br/>`@AutoRestController(enabledEndpoints = {"getPage", "getById", "create"})` | 精确允许暴露的契约方法名白名单（如 "getPage"、"create"）。为空数组时默认启用所继承接口的全部契约。<br/>*注意:* 作为严格白名单生效：非空时，未列入的 AutoApiController 方法均不会注册到 Spring MVC 与 Swagger UI。公开只读 API 建议优先使用。 |
+| `disabledEndpoints` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`"deleteById"`, `"updateBatchByFilter"`, `"batchChunked"`, `"importCsv"`, `"streamEvents"`。<br/>`@AutoRestController(disabledEndpoints = {"deleteById", "updateBatchByFilter", "importCsv"})` | 在 MVC 映射前禁用的方法名黑名单（例如 "deleteById"、"batchChunked"、"importCsv"）。<br/>*注意:* 在 `enabledEndpoints` 之后生效；适合保留其余 40 个契约的同时，精准封禁删除或批量导入等高风险端点。 |
 | `enableNestedSubResources` | `boolean` | `false` | 否（可选） | `true`（启用）或 `false`（禁用）。<br/>`@AutoRestController(basePath = "/api/v1/orders", enableNestedSubResources = true)` | 开启递归子资源导航 GET /{id}/**。默认 false 以防止大型数据库模式产生过多冗余路由。<br/>*注意:* 除非明确需要 `GET /{id}/items/...` 级联子资源查询，否则保持 `false`；开启时建议配合 `@EnableNestedSubResource` 白名单防止路由膨胀与越权遍历。 |
 | `readDto` | `Class<?>` | `Void.class` | 否（可选） | 任意具体 Java DTO 类字面量（例如 `ProductReadDto.class`），或 `Void.class` 表示不启用 DTO 映射。<br/>`@AutoRestController(readDto = ProductReadDto.class)` | 可选读取投影 DTO，在序列化时剥离内部实体字段；默认值 Void.class 时直接返回实体。<br/>*注意:* 仅作用于 读取 (GET) 流水线；DTO 类需提供无参构造/访问器（或 Lombok `@Builder`），并自动兼容 Jakarta `@Valid` 与 `@FieldSecurity`。 |
 | `createDto` | `Class<?>` | `Void.class` | 否（可选） | 任意具体 Java DTO 类字面量（例如 `ProductCreateDto.class`），或 `Void.class` 表示不启用 DTO 映射。<br/>`@AutoRestController(createDto = ProductCreateDto.class)` | 可选创建入参 DTO，在 POST 写入前执行 Jakarta Validation 校验并映射为实体 E。<br/>*注意:* 仅作用于 创建 (POST) 流水线；DTO 类需提供无参构造/访问器（或 Lombok `@Builder`），并自动兼容 Jakarta `@Valid` 与 `@FieldSecurity`。 |
@@ -116,10 +116,10 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 
 | 属性名 | Java 类型 | 默认值 | 是否必填 | 有效值与示例 | 说明与运行时注意 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `targetBean` | `Class<?>` | `Void.class` | 否（可选） | 任意具体 Java DTO 类字面量（例如 `OrderCustomService.class`），或 `Void.class` 表示不启用 DTO 映射。<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | 目标 Spring Bean 类（优先级高于 beanName）。若存在多个实现类请配合 beanName 使用。<br/>*注意:* 启动时代理注册器会优先解析 `targetBean`，其次才是 `beanName`。请勿同时为两个属性设置冲突值。 |
+| `targetBean` | `Class<?>` | `Void.class` | 否（可选） | 具体 Spring `@Service`/`@Component` Bean 类（例如 `OrderCustomService.class`），或填 `Void.class` 改按 `beanName` 查找。<br/>`@ServiceOverride(targetBean = OrderCustomService.class, methodName = "createOrder")` | 目标 Spring Bean 类（优先级高于 beanName）。若存在多个实现类请配合 beanName 使用。<br/>*注意:* 启动时代理注册器会优先解析 `targetBean`，其次才是 `beanName`。请勿同时为两个属性设置冲突值。 |
 | `beanName` | `String` | `""` | 否（可选） | ApplicationContext 中已注册的精确 Bean 名称（例如 `"orderCustomService"`），或 `""` 自动解析。<br/>`@ServiceOverride(beanName = "orderCustomService", methodName = "createOrder")` | 当 targetBean 为 Void.class 时按 Spring 容器中的 Bean 名称查找目标实例。<br/>*注意:* 启动时代理注册器会优先解析 `targetBean`，其次才是 `beanName`。请勿同时为两个属性设置冲突值。 |
 | `methodName` | `String` | `""` | 否（可选） | 非空标识字符串（例如 `"createOrder"`）；留空 `""` 则采用框架默认命名约定。<br/>`@ServiceOverride(targetBean = OrderService.class, methodName = "createOrder")` | 目标 Bean 上的方法名；为空时默认匹配当前控制器接口的同名方法。<br/>*注意:* 必须与 Java 方法/字段名严格区分大小写匹配（例如 `"createOrder"`）；名称不匹配会导致跳过规则或运行时查找异常。 |
-| `bypassAutoDispatch` | `boolean` | `true` | 否（可选） | `true`（绕过默认代理并直接调用目标 Bean）或 `false`（与默认调度协同执行）。<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | 为 true 时完全绕过默认 CRUD 分发，通过 MethodHandleCacheUtil 直接调用自定义 Bean。<br/>*注意:* 默认 `true` 会完全跳过内置 CRUD 处理器，由目标 Bean 接管事务与持久化；仅在需要环绕默认逻辑的钩子时设为 `false`。 |
+| `bypassAutoDispatch` | `boolean` | `true` | 否（可选） | `true`（默认：启用覆盖并调用目标 Bean）或 `false`（关闭覆盖，回退执行默认 CRUD 调度）。<br/>`@ServiceOverride(targetBean = OrderService.class, bypassAutoDispatch = true)` | 为 true 时完全绕过默认 CRUD 分发，通过 MethodHandleCacheUtil 直接调用自定义 Bean。<br/>*注意:* 默认 `true` 时由 `EscapeHatchDispatchHelper` 接管并调用目标 Bean；设为 `false` 会完全禁用 `@ServiceOverride` 并回退至默认 CRUD（并非环绕钩子）。 |
 
 ```java
 @ServiceOverride(targetBean = TagEscapeHatchHelper.class, methodName = "buildTaxonomyStats")
@@ -168,7 +168,7 @@ ApiResponse<Map<String, String>> getTaxonomyEscapeHatchStats();
 
 | 属性名 | Java 类型 | 默认值 | 是否必填 | 有效值与示例 | 说明与运行时注意 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `value` | `String` | `""` | 否（可选） | 相对子路径，支持 `{pathVar}` 路径模板（例如 `/{id}/summary`）；留空 `""` 绑定控制器根路径。<br/>`@AutoGet("/{id}/summary")` | GET 路由模板相对路径（如 "/metrics"）。为空时直接映射到控制器的根路徑 basePath。<br/>*注意:* 在应用启动阶段即刻校验；拼写错误或非法的 `value` 配置会在接收流量前快速失败。 |
+| `value` | `String` | `""` | 否（可选） | 相对子路径，支持 `{pathVar}` 路径模板（例如 `/{id}/summary`）；留空 `""` 绑定控制器根路径。<br/>`@AutoGet("/{id}/summary")` | GET 路由模板相对路径（如 "/metrics"）。为空时直接映射到控制器的根路径 basePath。<br/>*注意:* 在应用启动阶段即刻校验；拼写错误或非法的 `value` 配置会在接收流量前快速失败。 |
 | `produces` | `String[]` | `{}` | 否（可选） | MIME 媒体类型数组（例如 `{"application/json", "text/csv"}`）；空数组 `{}` 默认使用 `application/json`。<br/>`@AutoGet(value = "/export", produces = {"text/csv"})` | 声明响应产出的 MIME 媒体类型数组（如 "text/event-stream"、"text/csv"）。<br/>*注意:* 由 Spring MVC 基于 HTTP `Accept` 执行内容协商；客户端头不匹配将返回 `406` 或 `415` 错误。 |
 
 ```java
@@ -450,7 +450,7 @@ public class QueryGuardrailProperties {}
 - **运行时行为**: 数值越小优先级越高越早执行（默认为 Integer.MAX_VALUE）。
 - **使用方法**: 标注在需要按优先顺序排列的 Pure Java 拦截器、Customizer 或框架 Bean 上，如 `@OrderPriority(1)`。
 - **适用场景**: 需要确保多个框架 Bean 或 SPI Customizer 按确定性先后顺序生效时使用。
-- **何时不适用及注意事项**: 不要与 Spring Security 过滤器链顺序或数据库 `?sort=` 排序混淆；两者分别由 `SecurityExposureCustomizer` 與 URL 参数控制。
+- **何时不适用及注意事项**: 不要与 Spring Security 过滤器链顺序或数据库 `?sort=` 排序混淆；两者分别由 `SecurityFilterChain` Bean 的 `@Order` 与 URL 参数控制。
 
 | 属性名 | Java 类型 | 默认值 | 是否必填 | 有效值与示例 | 说明与运行时注意 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -528,8 +528,8 @@ private String nationalId;
 | 属性名 | Java 类型 | 默认值 | 是否必填 | 有效值与示例 | 说明与运行时注意 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `initial` | `String` | `"ACTIVE"` | 否（可选） | 非空标识字符串（例如 `"CREATED"`）；留空 `""` 则采用框架默认命名约定。<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 创建实体且该字段为空时自动填入的初始状态（默认 "ACTIVE"）。<br/>*注意:* 在 `POST` 创建且状态为空时自动填充此初始态；必须与 `transitions` 中至少一条规则冒号 `:` 左侧的起点名称一致。 |
-| `transitions` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`)。<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 允许的状态跃迁规则，必须使用冒号格式 "FROM:TO_1,TO_2"（例如 "CREATED:PAID,CANCELLED"）。<br/>*注意:* 严格校验冒号语法 `"FROM:TO1,TO2"`（区分大小写，多个目标态用逗号分隔）。任何跳转到未声明目标态的请求均会被拒绝（HTTP `400`/`409`）。 |
-| `deletableStates` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`{"CREATED", "CANCELLED"}` (state names where DELETE is allowed)。<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | 允许删除记录的状态白名单（不在此列表中的状态执行 DELETE 将拦截并返回 HTTP 422）。<br/>*注意:* 非空时，若实体处于其他状态（如 `"PAID"`、`"SHIPPED"`），调用 `DELETE` 或批量删除将直接返回 HTTP `409 Conflict`。 |
+| `transitions` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`"FROM:TO1,TO2"` colon-separated rules (e.g., `{"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"}`)。<br/>`@StateMachine(initial = "CREATED", transitions = {"CREATED:PENDING_PAYMENT,CANCELLED", "PENDING_PAYMENT:CONFIRMED,CANCELLED"})` | 允许的状态跃迁规则，必须使用冒号格式 "FROM:TO_1,TO_2"（例如 "CREATED:PAID,CANCELLED"）。<br/>*注意:* 严格校验冒号语法 `"FROM:TO1,TO2"`（区分大小写，多个目标态用逗号分隔）。任何跳转到未声明目标态的请求均会被拒绝（HTTP `422`）。 |
+| `deletableStates` | `String[]` | `{}` | 否（可选） | 包含零个或多个以下有效标识的数组：`{"CREATED", "CANCELLED"}` (state names where DELETE is allowed)。<br/>`@StateMachine(initial = "CREATED", deletableStates = {"CREATED", "CANCELLED"})` | 允许删除记录的状态白名单（不在此列表中的状态执行 DELETE 将拦截并返回 HTTP 422）。<br/>*注意:* 非空时，若实体处于其他状态（如 `"PAID"`、`"SHIPPED"`），调用 `DELETE` 将直接返回 HTTP `422 Unprocessable Entity`。 |
 
 ```java
 @StateMachine(
@@ -571,7 +571,7 @@ private String nationalId;
 - **核心用途**: 记录跨变更的字段级差异，为时光机状态重建与 /diff 差异审计提供底层历史账本。
 - **运行时行为**: 在创建、更新、局部修补、状态流转与恢复时自动捕获 oldValue 与 newValue 变更明细。
 - **使用方法**: 在继承 `BaseAuditEntity` 的实体类上添加 `@AuditTrail(recordFieldDiffs = true)`，框架在所有写删动作中通过 `AuditTrailService` 自动留痕。
-- **适用场景**: 用于订单、支付、病历、银行账户及 RBAC 策略等高合规实体，支撑 `GET /{id}/revisions` 时间旅行与审计追溯。
+- **适用场景**: 用于订单、支付、病历、银行账户及 RBAC 策略等高合规实体，支撑 `GET /api/v1/system/time-travel/{entityName}/{id}` 时间旅行与审计追溯。
 - **何时不适用及注意事项**: 超高频写入的遥测、日志流或临时表请勿开启 `@AuditTrail(recordFieldDiffs = true)`，以免产生不必要的写放大。
 
 | 属性名 | Java 类型 | 默认值 | 是否必填 | 有效值与示例 | 说明与运行时注意 |
@@ -631,7 +631,7 @@ private String code;
 
 | 属性名 | Java 类型 | 默认值 | 是否必填 | 有效值与示例 | 说明与运行时注意 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `prefix` | `String` | `Required (no default)` | **是（必填）** | 非空标识字符串（例如 `"ORD"`）；留空 `""` 则采用框架默认命名约定。<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | 必填编码前缀，拼接在 8 位大写 UUIDv7 哈希之前（例如 "PRD-"、"ORD-"）。<br/>*注意:* 必填属性；仅在新建且字段为空时自动生成如 `INV-2026-0001` 的编码，若调用方已显式传入则保留原值。 |
+| `prefix` | `String` | `必填（无默认值）` | **是（必填）** | 必填非空前缀字符串（例如 `"PRD-"`、`"ORD-"`、`"INV-"`），缺省将无法通过编译。<br/>`@AutoCode(prefix = "INV") private String invoiceCode;` | 必填编码前缀，拼接在 8 位大写 UUIDv7 哈希之前（例如 "PRD-"、"ORD-"）。<br/>*注意:* 必填属性；仅在新建或克隆且字段为空时自动拼接 8 位大写 UUIDv7 哈希（如 `INV-0194E1A0`），调用方已传入值则原样保留。 |
 
 ```java
 @AutoCode(prefix = "PRD-")
@@ -650,7 +650,7 @@ private String code;
 
 | 属性名 | Java 类型 | 默认值 | 是否必填 | 有效值与示例 | 说明与运行时注意 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `sourceField` | `String` | `Required (no default)` | **是（必填）** | 实体类中与 字符串 字段精确匹配的 Java 属性名（例如 `"title"`）。<br/>`@AutoSlug(sourceField = "productName") private String slug;` | 必填来源属性名（支持多语言重音字符及越南语 đ/Đ），框架将其规范化为小写连字符 ASCII slug。<br/>*注意:* 必填属性；自动将 Unicode 字符规范为小写 URL 安全的 kebab-case 别名。建议配合 `@UniqueField` 确保唯一性。 |
+| `sourceField` | `String` | `必填（无默认值）` | **是（必填）** | 实体类中与 字符串 字段精确匹配的 Java 属性名（例如 `"title"`）。<br/>`@AutoSlug(sourceField = "productName") private String slug;` | 必填来源属性名（支持多语言重音字符及越南语 đ/Đ），框架将其规范化为小写连字符 ASCII slug。<br/>*注意:* 必填属性；自动将 Unicode 字符规范为小写 URL 安全的 kebab-case 别名。建议配合 `@UniqueField` 确保唯一性。 |
 
 ```java
 @AutoSlug(sourceField = "name")
@@ -696,7 +696,7 @@ private BigDecimal lineTotal;
 | `value` | `String` | `""` | 否（可选） | 支持以下固定取值之一：Parameterized SQL or JPQL statement using positional `?1`/`?2` or named `:param` placeholders。<br/>`@CustomQuery(value = "SELECT * FROM orders WHERE tenant_id = :tenantId AND total >= :minTotal", nativeQuery = true)` | 支持命名参数 `:param` 的内联 SQL 或 JPQL 查询语句（若使用 sqlProvider 则留空）。<br/>*注意:* 务必使用 `:param` 或 `?1` 绑定参数，严禁拼接用户输入防 SQL 注入；当通过 `sqlProvider` 动态生成 SQL 时可留空 `""`。 |
 | `nativeQuery` | `boolean` | `true` | 否（可选） | `true`（执行底层数据库原生 SQL）或 `false`（执行跨库可移植 JPQL）。<br/>`@CustomQuery(value = "SELECT o FROM OrderEntity o WHERE o.status = :status", nativeQuery = false)` | true 执行原生 SQL 查询；false 执行 JPQL 面向对象查询。<br/>*注意:* 原生 SQL（默认 `true`）可使用 CTE、窗口函数与数据库专属 JSON 算子；如需在 H2/PostgreSQL/MySQL 间无痛迁移请改为 `false`（JPQL）。 |
 | `resultClass` | `Class<?>` | `Void.class` | 否（可选） | 任意具体 Java DTO 类字面量（例如 `MonthlyRevenueDto.class`），或 `Void.class` 表示不启用 DTO 映射。<br/>`@CustomQuery(value = "SELECT currency, SUM(total) FROM invoices GROUP BY currency", resultClass = MonthlyRevenueDto.class)` | 可选结果映射目标类（实体或标量类型）；默认 Void.class 返回原始结果。<br/>*注意:* 聚合与报表查询务必指定 DTO 投影类，消除 `SELECT *` 开销并确保强类型映射而非裸 `Object[]`。 |
-| `sqlProvider` | `Class<?>` | `Void.class` | 否（可选） | 任意具体 Java DTO 类字面量（例如 `OrderAnalyticsSqlProvider.class`），或 `Void.class` 表示不启用 DTO 映射。<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | 可选的动态 SQL 提供类，会在启动时由 EntityFailFastValidatorUtil 校验并防止运行时签名错误。<br/>*注意:* 在应用启动阶段即刻校验；拼写错误或非法的 `sqlProvider` 配置会在接收流量前快速失败。 |
+| `sqlProvider` | `Class<?>` | `Void.class` | 否（可选） | 具体 Pure Java SQL 提供类（例如 `OrderAnalyticsSqlProvider.class`），使用内联 `value` 时填 `Void.class`。<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | 可选的动态 SQL 提供类，会在启动时由 EntityFailFastValidatorUtil 校验并防止运行时签名错误。<br/>*注意:* 在应用启动阶段即刻校验；拼写错误或非法的 `sqlProvider` 配置会在接收流量前快速失败。 |
 | `providerMethod` | `String` | `""` | 否（可选） | 非空标识字符串（例如 `"buildRevenueSql"`）；留空 `""` 则采用框架默认命名约定。<br/>`@CustomQuery(sqlProvider = OrderAnalyticsSqlProvider.class, providerMethod = "buildRevenueSql")` | sqlProvider 类中返回 String SQL 语句的方法名。<br/>*注意:* 必须与 Java 方法/字段名严格区分大小写匹配（例如 `"buildRevenueSql"`）；名称不匹配会导致跳过规则或运行时查找异常。 |
 | `modifying` | `boolean` | `false` | 否（可选） | `true`（在写事务内执行 UPDATE/DELETE DML 语句）或 `false`（只读 SELECT 查询返回实体或 DTO）。<br/>`@CustomQuery(value = "UPDATE orders SET status = :status WHERE id = :id", modifying = true)` | 执行 INSERT/UPDATE/DELETE 修改语句时必须设为 true（触发 executeUpdate）。<br/>*注意:* 执行 `UPDATE`/`DELETE` 语句时必须设为 `true`；自动开启可写事务并清理 JPA 一级缓存避免脏读。 |
 
@@ -1284,7 +1284,7 @@ private String effect; // ALLOW or DENY
 | `source` | `String` | `""` | 否（可选） | 以 `/` 开头的合法 HTTP 路径（例如 `/services/order-api`），或空字符串 `""` 表示自动推导。<br/>`@PublishCloudEvent(source = "/services/order-api")` | 标识事件来源微服务上下文的 CloudEvents `source` URI。<br/>*注意:* 填充 CNCF CloudEvents 标准 `source` URI 字段，便于跨微服务事件血缘追踪。 |
 | `publishOnCreate` | `boolean` | `true` | 否（可选） | `true`（启用）或 `false`（禁用）。<br/>`@PublishCloudEvent(publishOnCreate = true, publishOnUpdate = false, publishOnDelete = false)` | POST 创建提交后是否发布 CloudEvent（默认 true）。<br/>*注意:* 仅在事务提交后（`AFTER_COMMIT`）通过 Spring 事件总线 / Kafka / RabbitMQ 桥接发布。 |
 | `publishOnUpdate` | `boolean` | `true` | 否（可选） | `true`（启用）或 `false`（禁用）。<br/>`@PublishCloudEvent(publishOnUpdate = true)` | PUT/PATCH 更新提交后是否发布 CloudEvent（默认 true）。<br/>*注意:* 对高频更新字段（如浏览计数）建议设为 `false`，避免下游消息队列被无关变更淹没。 |
-| `publishOnDelete` | `boolean` | `true` | 否（可选） | `true`（启用）或 `false`（禁用）。<br/>`@PublishCloudEvent(publishOnDelete = true)` | DELETE 删除提交后是否发布 CloudEvent（默认 true）。<br/>*注意:* 同时覆盖物理删除与 `@SoftDelete` 软删除，保障下游只读视图与搜索索引保持同步。 |
+| `publishOnDelete` | `boolean` | `true` | 否（可选） | `true`（启用）或 `false`（禁用）。<br/>`@PublishCloudEvent(publishOnDelete = true)` | DELETE 删除提交后是否发布 CloudEvent（默认 true）。<br/>*注意:* 同时覆盖物理删除与 `BaseAuditEntity.deleted` 软删除，保障下游只读视图与搜索索引保持同步。 |
 
 ```java
 @PublishCloudEvent(eventType = "com.example.order.created", source = "/orders")

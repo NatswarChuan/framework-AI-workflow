@@ -1,6 +1,6 @@
 # 01. Memulai Cepat, Kontrak Dua Direktori & Diagnostik Fail-Fast (`0.1.0`)
 
-> **Bahasa**: **Bahasa Indonesia** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#quickstart)
+> **Bahasa**: **Bahasa Indonesia** | [English](../en/01_GETTING_STARTED.md) | [Tiếng Việt](../vi/01_GETTING_STARTED.md) | [日本語](../ja/01_GETTING_STARTED.md) | [中文](../zh/01_GETTING_STARTED.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap (EN)](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#quickstart)
 
 ---
 
@@ -29,6 +29,28 @@ Alur domain di luar CRUD standar ditempatkan pada antarmuka `Service` serta bean
     <version>0.1.0</version>
   </dependency>
 </dependencies>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <parameters>true</parameters>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+```kotlin
+// Gradle (Kotlin DSL — build.gradle.kts)
+dependencies {
+    implementation("io.github.natswarchuan:spring-nwvmc:0.1.0")
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
 ```
 
 Untuk build langsung dari GitHub melalui [JitPack](https://jitpack.io):
@@ -85,6 +107,8 @@ app:
       show-i18n-diagnostics: false
 ```
 
+> **Tip Dev Lokal:** Jika `JWT_SECRET` belum diekspor, tambahkan `jwt-secret: ${JWT_SECRET:dev-only-change-me-at-least-32-bytes-long!}` hanya di `application-dev.yml` (jaga `application.yml`/`application-prod.yml` tetap fail-closed).
+
 ---
 
 ## 4. Penyaringan Endpoint Granular (`enabledEndpoints` & `disabledEndpoints`)
@@ -108,6 +132,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
 | Pengecualian | Kondisi Pemicu | Solusi |
 | :--- | :--- | :--- |
 | `UnsupportedJavaVersionException` | `JavaVersionGuardUtil.enforceJava21OrHigher()` mendeteksi JVM `< 21` | Jalankan pada Java 21 LTS atau lebih baru |
-| `InvalidConfigurationException` (`error.configuration.jwt`) | `fail-fast-weak-jwt-secret=true` dan `jwt-secret` khusus `< 32` byte UTF-8 | Atur `${JWT_SECRET}` minimal 32 byte |
-| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1`, atau `maxPageSize < 1` | Atur bilangan bulat positif di bawah `app.framework.query-guardrails.*` |
+| `InvalidConfigurationException` (`error.configuration.invalid`) | `fail-fast-weak-jwt-secret=true` dan `jwt-secret` khusus `< 32` byte UTF-8 | Atur `${JWT_SECRET}` minimal 32 byte |
+| `InvalidConfigurationException` (`ERR_INVALID_GUARDRAIL_LIMIT`) | `maxJoinDepth < 1`, `maxFilterCriteria < 1`, atau `maxPageSize < 1` / `maxUnpagedFetchLimit < 1` | Atur bilangan bulat positif di bawah `app.framework.query-guardrails.*` |
 | `InvalidConfigurationException` (`error.configuration.entity`) | `EntityFailFastValidatorUtil` atau `ComputedFieldFailFastUtil` menemukan `@Id` hilang, konstruktor tanpa argumen hilang, atau field `@ComputedField` tidak valid | Perluas `BaseAuditEntity`, pertahankan `@NoArgsConstructor`, dan cocokkan nama field persis |

@@ -1,6 +1,6 @@
 # 02. 자동 생성 40개 REST 계약 및 플랫폼 컨트롤러 카탈로그 (`0.1.0`)
 
-> **언어**: **한국어** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#endpoints)
+> **언어**: **한국어** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [전체 20개 언어](../README.md) | [전체 매뉴얼 (EN)](../../GUIDE_EN.md) | [20개 언어 인터랙티브 포털](../../index.html#endpoints)
 
 ---
 
@@ -77,11 +77,11 @@
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | 20개 언어 Developer Studio(RTL `ar`, `fa`, `ur`); `app.framework.studio.enabled=false` 시 `401` 반환 |
 | `GET /system/studio/eject` | `DevEjectionController` | 표준 Spring MVC Controller/Service/Repository 소스 코드 내보내기; `SurfaceAccessGuardrailUtil` 보호 |
 | `POST /api/v1/auth/token` | `AuthController` | 개발용 HMAC-SHA512 JWT 발급; `demo-token-endpoint-enabled=false` 시 `404` 반환 |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | 지정 ISO-8601 UTC 시점의 엔티티 상태 복원(Time-Travel) |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | `7`개 핵심 텔레메트리 `*Customizer` 그룹의 활성 SPI 빈 조회(`StorageCustomizer`는 `StorageCustomizerRegistryHelper` 관리, 총 `8`개 SPI) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | 실시간 Resilience4j 서킷 브레이커 상태 메트릭 |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | 실시간 Resilience4j 서킷 브레이커 상태 메트릭 |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | 다중 데이터소스 상태 점검 |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | 활성 MDC 컨텍스트의 W3C `traceparent` 및 UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Tomcat 컨테이너 오류(`400/404/405/413/431/500`)를 표준 `ApiResponse<Void>`로 변환 |

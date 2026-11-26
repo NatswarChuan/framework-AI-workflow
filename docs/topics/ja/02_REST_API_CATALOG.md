@@ -81,7 +81,7 @@
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`、`POST ""`、`GET /explorer`（`@Hidden`） |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | 指定した ISO-8601 UTC 時刻におけるエンティティ状態のポイントインタイム復元 |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | `7` コアテレメトリ `*Customizer` グループの有効な SPI Bean 一覧（`StorageCustomizer` は `StorageCustomizerRegistryHelper` 管理、計 `8` SPI） |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j サーキットブレーカーのリアルタイム稼働メトリクス |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Resilience4j サーキットブレーカーのリアルタイム稼働メトリクス |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | マルチデータソースのヘルスチェック診断 |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | 現在の MDC コンテキスト上の W3C `traceparent` と UUIDv7 `X-Request-ID` |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Tomcat の `400/404/405/413/431/500` コンテナエラーを統一形式 `ApiResponse<Void>` へ変換 |

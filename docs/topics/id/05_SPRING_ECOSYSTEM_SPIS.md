@@ -1,6 +1,6 @@
 # 05. 8 Antarmuka SPI Customizer, `@CustomEndpoint` & `@ServiceOverride` (`0.1.0`)
 
-> **Bahasa**: **Bahasa Indonesia** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#spi-customizers)
+> **Bahasa**: **Bahasa Indonesia** | [English](../en/05_SPRING_ECOSYSTEM_SPIS.md) | [Tiếng Việt](../vi/05_SPRING_ECOSYSTEM_SPIS.md) | [日本語](../ja/05_SPRING_ECOSYSTEM_SPIS.md) | [中文](../zh/05_SPRING_ECOSYSTEM_SPIS.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap (EN)](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#customizers)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Seluruh titik ekstensi di bawah `io.github.natswarchuan.customization.customizer` menyediakan metode `default` antarmuka sehingga Spring Bean dapat menimpa perilaku secara selektif tanpa menyentuh kode inti framework:
 
-| # | Antarmuka SPI | Context DTO | Cakupan Ekstensi |
+| # | Antarmuka SPI | DTO Konteks | Cakupan Ekstensi |
 | :-: | :--- | :--- | :--- |
 | 1 | `SpringCoreCustomizer` | `CoreCustomizerContextDto` | Kontainer bean inti, `TaskExecutor`, penjadwalan tugas |
 | 2 | `PlatformAiCustomizer` | `PlatformAiCustomizerContextDto` | Prompt Spring AI `ChatClient`, kait vektor, pipeline RAG |
@@ -20,6 +20,9 @@ Seluruh titik ekstensi di bawah `io.github.natswarchuan.customization.customizer
 | 8 | `StorageCustomizer` | `StorageCustomizerContextDto` | Kebijakan bucket `LOCAL`/`S3`/`GCS`, pre-signed URL & batas unggahan |
 
 Bean aktif pada `7` grup telemetri utama (`CustomizerGroupConstant`) dapat diperiksa melalui `GET /api/v1/system/customizers` (`StorageCustomizer` dikelola terpisah oleh `StorageCustomizerRegistryHelper`).
+
+
+> **Interceptor Runtime Aktif vs. Hook Metadata/Telemetri (`0.1.0`):** `SecurityIdentityCustomizer` dipanggil aktif pada setiap permintaan (`SecurityFilterChainBridge` & `SecurityAuthorityDecisionHelper`); `7` customizer lainnya mendaftarkan deskriptor metadata & telemetri pada `GET /api/v1/system/customizers`.
 
 ---
 

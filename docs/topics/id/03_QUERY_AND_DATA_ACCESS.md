@@ -1,6 +1,6 @@
 # 03. 13 Operator Filter Dinamis, Query Guardrails, Keyset O(1) & GraphQL SDL (`0.1.0`)
 
-> **Bahasa**: **Bahasa Indonesia** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#query-dsl)
+> **Bahasa**: **Bahasa Indonesia** | [English](../en/03_QUERY_AND_DATA_ACCESS.md) | [Tiếng Việt](../vi/03_QUERY_AND_DATA_ACCESS.md) | [日本語](../ja/03_QUERY_AND_DATA_ACCESS.md) | [中文](../zh/03_QUERY_AND_DATA_ACCESS.md) | [Semua 20 Bahasa](../README.md) | [Panduan Lengkap (EN)](../../GUIDE_EN.md) | [Portal Interaktif 20 Bahasa](../../index.html#query-operators)
 
 ---
 
@@ -39,7 +39,7 @@ Semua parameter filter dikompilasi menjadi kueri JPA Criteria berparameter yang 
 
 ## 2. Paginasi Kursor Keyset O(1) (`GET /keyset`)
 
-Karena kunci primer memakai **UUIDv7** berurutan waktu, `/keyset` melompat langsung ke batas kursor pada arah `dir=asc` maupun `dir=desc` dengan probe `size + 1` dalam waktu $O(1)$:
+Karena kunci primer memakai **UUIDv7** berurutan waktu, `/keyset` melompat langsung ke batas kursor pada arah `dir=asc` maupun `dir=desc` dengan probe `size + 1` dalam waktu `O(1)`:
 
 ```bash
 curl "http://localhost:8080/api/v1/product-catalogs/keyset?afterId=019a0b12-3456-7000-8000-000000000001&dir=desc&size=20&fields=id,skuCode,productName,retailPrice" \

@@ -1,6 +1,6 @@
-# AGENTS.md — Spring-NWVMC (`v0.1.0`) Consumer Agent Directives
+# AGENTS.md — Spring-NWVMC (`0.1.0`) Consumer Agent Directives
 
-> Drop this file at the root of any Java 21 + Spring Boot 3.x project using **Spring-NWVMC (`com.github.NatswarChuan:Spring-NWVMC:v0.1.0`)**.
+> Drop this file at the root of any Java 21 + Spring Boot 3.x project using **Spring-NWVMC (`io.github.natswarchuan:spring-nwvmc:0.1.0` on Maven Central; optional JitPack mirror `v0.1.0`)**.
 > Compatible with **OpenAI Codex**, **Google Antigravity**, **OpenCode**, **Zed**, **Amp**, **Jules**, and any agent supporting the open `AGENTS.md` standard.
 
 ## 1. Progressive Disclosure Knowledge Base
@@ -22,7 +22,7 @@ Before inventing annotations, endpoints, or YAML keys, load the installed skill 
 
 ## 1.5 Mandatory SDD (Spec-Driven) & TDD (Test-Driven) Protocol
 
-1. **SDD Before Code:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, entity schema, API surface, security/RBAC/tenant rules, NFRs). Stop and confirm any `[NEEDS CLARIFICATION]` item with the user BEFORE writing `plan.md`, `tasks.md`, or Java code. Keep `spec.md` synced with live `/v3/api-docs`, `/metadata`, and `/schema/zod` (zero drift).
+1. **SDD Before Code:** Draft `specs/<feature>/spec.md` (`REQ-ID` Given/When/Then criteria, entity schema, API surface, security/RBAC/tenant rules, NFRs). Stop and confirm any `[NEEDS CLARIFICATION]` item with the user BEFORE writing `plan.md`, `tasks.md`, or Java code. Keep `spec.md` synced with live `/v3/api-docs`, `/metadata`, and `/schema/zod` (zero drift). *(Small tweaks/prototypes: lightweight mini-spec + 1 `MockMvc`/regression test.)*
 2. **TDD Red → Green → Refactor:** For every `REQ-ID` (and every bug fix!), write a failing JUnit 5 / `MockMvc` test tagged `@DisplayName("REQ-XXX: ...")` **first** (`RED`), run `mvn test -Dtest=...` to verify the expected failure, implement minimal declarative Spring-NWVMC code (`GREEN`), then refactor cleanly (`REFACTOR`). NEVER delete, weaken, or `@Disabled` a failing test.
 3. **4-Tier Test Coverage:** Tier 1 pure unit tests (Helpers/Exceptions/Guards), Tier 2 real `@SpringBootTest` + `MockMvc` security/masking/state-machine/idempotency/lockdown tests, Tier 3 OpenAPI/`/schema/zod` contract-drift tests, Tier 4 `@DistributedLock` concurrency & JMeter `0.0%` error SLA.
 
@@ -36,7 +36,7 @@ Before inventing annotations, endpoints, or YAML keys, load the installed skill 
    - `maven-compiler-plugin` MUST configure `<parameters>true</parameters>`.
 2. **2-Directory Contract First:**
    - Put JPA entities extending `BaseAuditEntity` in `entity/`. NEVER use `@Data` on JPA entities (`@Getter @Setter @NoArgsConstructor @AllArgsConstructor @SuperBuilder @EqualsAndHashCode(callSuper = true)`). NEVER invent `@SoftDelete` (soft-delete + UUIDv7 + `@Version` live on `BaseAuditEntity`).
-   - Put `@AutoRestController` interfaces in `controller/` extending `AutoApiController<E>` (full 40 endpoints) or narrow composable interfaces (`AutoReadApi<E>`, `AutoWriteApi<E>`, `AutoBatchApi<E>`, `AutoAuditApi<E>`, `AutoAnalyticsApi<E>`, `AutoStateApi<E>`, `AutoExportImportApi<E>`, `AutoSchemaApi<E>`, `AutoAiApi<E>`).
+   - Put `@AutoRestController` interfaces in `controller/` extending `AutoApiController<E>` (full 40 endpoints) or narrow composable interfaces (`AutoReadApi<E>`, `AutoKeysetApi<E>`, `AutoAnalyticsApi<E>`, `AutoSchemaApi<E>`, `AutoWriteApi<E>`, `AutoBatchApi<E>`, `AutoExportImportApi<E>`, `AutoWorkflowApi<E>`, `AutoAiApi<E>`).
    - NEVER write manual boilerplate `Repository` / `Service` / `@RestController` CRUD classes for entities already managed by `@AutoRestController`.
 3. **Exact 6 Annotation Packages Only (Zero Invented Annotations):**
    - `io.github.natswarchuan.core.annotation.*` (54 annotations)
@@ -51,7 +51,7 @@ Before inventing annotations, endpoints, or YAML keys, load the installed skill 
    - **Filter operators use DOT syntax** (`retailPrice.gte=1000&productName.like=MacBook`), NEVER `__gte`.
    - **Auto base path splits camelCase strictly:** `ECommerceOrder` → `/api/v1/e-commerce-orders`. Set `@AutoRestController(basePath = "...")` if you need a custom path.
    - **Inject framework `@AutoComponent` helpers via `ObjectProvider<T>`** inside consumer `@Component` / `@Service` beans (`DynamicEntityAiMetadataProviderHelper`, `AiNaturalLanguageQueryParserHelper`, `ThirdPartyRestClientHelper`, `WebhookDispatcherHelper`) and call `.getObject()` at runtime.
-   - **AOP-intercepted consumer `@Service` classes** (`@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, `@TargetDataSource`) MUST be **non-final** and **`@Lazy`** (class + method `@TargetDataSource` for `REPLICA` on `v0.1.0`), AND any `@Component` injecting them MUST ALSO use **`ObjectProvider<MyService>`** or **`@Lazy`**. NEVER place `@Transactional` on `public final class` Helpers.
+   - **AOP-intercepted consumer `@Service` classes** (`@DistributedLock`, `@AutoCacheable`, `@AutoCacheEvict`, `@TargetDataSource`) MUST be **non-final** and **`@Lazy`**, AND any `@Component` injecting them MUST ALSO use **`ObjectProvider<MyService>`** or **`@Lazy`** (`0.1.0` supports method-level and class-level `@TargetDataSource` natively). NEVER place `@Transactional` on `public final class` Helpers. Use `HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY` (or `AopConstant.HEADER_IDEMPOTENCY_KEY`) for `"X-Idempotency-Key"`.
    - **Dev JWT & Testing:** Dev token endpoint is **`POST /api/v1/auth/token?username=admin&role=ROLE_ADMIN`** (NOT `GET /system/studio/demo-token`); `JwtTokenService.generateToken(username, userId, roles)` takes **`username` FIRST**.
    - **`readDto` projection scope:** Every route on a controller with `readDto = X.class` projects responses through `X`. Mount endpoints returning other DTO shapes on a separate controller without `readDto`.
    - **`@ServiceOverride` fail-closed RBAC:** Custom `@AutoGet` + `@ServiceOverride` method names not in `SecurityConstant.READ_OPERATIONS` default to `writeRoles` unless explicitly opened via `@SecurityPolicyEntity` or `SecurityIdentityCustomizer`.

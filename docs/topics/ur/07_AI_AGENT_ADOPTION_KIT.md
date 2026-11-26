@@ -1,20 +1,20 @@
 # 07. یونیورسل AI-Agent ایڈاپشن کٹ (`SKILL` · `RULES` · `INTRO` · `CHECKLIST` اور `llms.txt`، `0.1.0`)
 
-> **زبانیں**: **اردو** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#ai-agent-kit)
+> **زبانیں**: **اردو** | [English](../en/07_AI_AGENT_ADOPTION_KIT.md) | [Tiếng Việt](../vi/07_AI_AGENT_ADOPTION_KIT.md) | [日本語](../ja/07_AI_AGENT_ADOPTION_KIT.md) | [中文](../zh/07_AI_AGENT_ADOPTION_KIT.md) | [تمام 20 زبانیں](../README.md) | [مکمل دستی کتابچہ (EN)](../../GUIDE_EN.md) | [20-زبان انٹرایکٹو پورٹل](../../index.html#ai-agent-kit)
 
 ---
 
 ## 1. مقصد اور کٹ آرکیٹیکچر (`ai-agent-kit/`)
 
-**Spring-NWVMC AI-Agent Adoption Kit** (`../../../ai-agent-kit/`) مارکیٹ کے **ہر AI کوڈنگ ایجنٹ اور LLM** کو سورس کوڈ سے ۱:۱ مشین-تصدیق شدہ حقائق (`6` درست Java پیکجز میں `60` اینوٹیشنز، `133` ایٹری بیوٹس، `40` خودکار اینڈپوائنٹس، درست `app.framework.*` کلیدیں اور آزمائے ہوئے `0.1.0` رن ٹائم اصول) فراہم کرتا ہے تاکہ بغیر کسی غلط فہمی یا رن ٹائم خرابی کے پہلی کوشش میں درست انضمام ہو۔
+**Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-kit/)) مارکیٹ کے **ہر AI کوڈنگ ایجنٹ اور LLM** کو سورس کوڈ سے ۱:۱ مشین-تصدیق شدہ حقائق (`6` درست Java پیکجز میں `60` اینوٹیشنز، `133` ایٹری بیوٹس، `40` خودکار اینڈپوائنٹس، درست `app.framework.*` کلیدیں اور آزمائے ہوئے `0.1.0` رن ٹائم اصول) فراہم کرتا ہے تاکہ بغیر کسی غلط فہمی یا رن ٹائم خرابی کے پہلی کوشش میں درست انضمام ہو۔
 
 | فائل / ڈائریکٹری | کردار |
 | :--- | :--- |
-| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | آرکیٹیکچر تعارف: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` اور JitPack `v0.1.0`، دو ڈائریکٹری معاہدہ (`entity/` + `controller/`)، 9 قابلِ ترکیب انٹرفیس، 6 اینوٹیشن پیکجز، 11 بلٹ ان سب سسٹمز |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | سخت اینٹی ہیلوسینیشن گارڈ ریلز (`17.2 KB`، `24 KB` حد کے اندر) جن میں ہر تصدیق شدہ رن ٹائم احتیاط شامل ہے |
-| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | تدریجی `spring-nwvmc-adoption` اسکل مع 6 مرحلہ وار ورک فلوز اور 10 بنیادی وجوہات کی ٹربل شوٹنگ جدول |
-| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | حوالگی سے قبل 6 مرحلوں کی جانچ (Pre-Flight -> ڈیزائن -> رن ٹائم احتیاطیں -> پروڈکشن لاک ڈاؤن -> کارکردگی -> `mvn clean verify`) |
-| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | مشین سے تصدیق شدہ 5 گہرے حوالہ جات (60 اینوٹیشنز / 133 ایٹری بیوٹس، 40 اینڈپوائنٹس + 13 ڈاٹ آپریٹرز، YAML + ملٹی ڈیٹاسورس، `@MultiTenant` + 4-اینٹیٹی DB-RBAC + `JwtTokenService` ترکیبیں، اور درست نان-اینوٹیشن کلاس/SPI امپورٹس) |
+| [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | آرکیٹیکچر تعارف: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` اور JitPack `v0.1.0`، دو ڈائریکٹری معاہدہ (`entity/` + `controller/`)، 9 قابلِ ترکیب انٹرفیس، 6 اینوٹیشن پیکجز، 6 بلٹ ان سب سسٹمز |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | سخت اینٹی ہیلوسینیشن گارڈ ریلز (`19.0 KB`، `24 KB` حد کے اندر) جن میں ہر تصدیق شدہ رن ٹائم احتیاط شامل ہے |
+| [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | تدریجی `spring-nwvmc-adoption` اسکل مع 7 مرحلہ وار ورک فلوز اور 15 بنیادی وجوہات کی ٹربل شوٹنگ جدول |
+| [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | حوالگی سے قبل 7 مرحلوں کی جانچ (Pre-Flight ← ڈیزائن ← رن ٹائم احتیاطیں ← پروڈکشن لاک ڈاؤن ← کارکردگی ← `mvn clean verify`) |
+| [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | مشین سے تصدیق شدہ 6 (+ `templates/`) گہرے حوالہ جات (60 اینوٹیشنز / 133 ایٹری بیوٹس، 40 اینڈپوائنٹس + 13 ڈاٹ آپریٹرز، YAML + ملٹی ڈیٹاسورس، `@MultiTenant` + 4-اینٹیٹی DB-RBAC + `JwtTokenService` ترکیبیں، اور درست نان-اینوٹیشن کلاس/SPI امپورٹس) |
 | [`llms.txt`](../../../llms.txt) & [`docs/llms.txt`](../../llms.txt) | خودکار AI کرالرز اور ایجنٹس کے لیے `llmstxt.org` معیاری فہرستیں |
 
 ---
@@ -27,10 +27,10 @@
 
 ```powershell
 # موجودہ ڈائریکٹری (".") میں تمام AI کوڈنگ ایجنٹس اور ماڈلز کے لیے انسٹال کریں
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent all } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # یا کسی ایک ایجنٹ کا انتخاب کریں (all | antigravity | claude | codex | cursor | copilot | windsurf | cline | generic):
-$s="$env:TEMP\install-nwvmc-kit.ps1"; irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude; Remove-Item $s -Force
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $s=Join-Path $env:TEMP "nwvmc-$([guid]::NewGuid()).ps1"; try { irm "https://raw.githubusercontent.com/NatswarChuan/Spring-NWVMC-document/main/ai-agent-kit/install.ps1" -OutFile $s; powershell -ExecutionPolicy Bypass -File $s -Target "." -Agent claude } finally { Remove-Item $s -Force -ErrorAction SilentlyContinue }
 
 # موجودہ روٹ ایڈاپٹر فائلوں کو اوور رائٹ کرنے کے لیے -Force شامل کریں (ڈیفالٹ پرانی فائلیں محفوظ رکھتا ہے)
 ```
@@ -85,5 +85,5 @@ rm -rf /tmp/nwvmc-docs
 ہر ایڈاپٹر اور ورک فلو `references/06-sdd-and-tdd-playbook.md` اور `templates/{spec,plan,tasks}.template.md` کے ذریعے اسپیک-فرسٹ اور ٹیسٹ-فرسٹ ترسیل نافذ کرتا ہے تاکہ خاموش مفروضے اور کنٹریکٹ ڈرفٹ ختم ہوں۔
 
 - **SDD — تفصیل پر مبنی ترقی (`specs/<feature>/`):** 6 مراحل پر مشتمل پائپ لائن (`Specify → Clarify → Plan → Tasks → Implement → Contract-Sync`): `REQ-ID` (`Given/When/Then`) کے ساتھ `spec.md` لکھیں، `[NEEDS CLARIFICATION]` پر رک کر تصدیق لیں، `plan.md` میں 1:1 ٹریسیبلٹی میٹرکس بنائیں اور لائیو `/v3/api-docs`، `/metadata`، `/schema/zod` سے مطابقت جانچیں۔
-- **TDD — ریڈ → گرین → ریفیکٹر (4-سطحی ٹیسٹ پیرامڈ):** پہلے `@DisplayName("REQ-XXX: ...")` کے ساتھ ناکام JUnit 5 / `MockMvc` ٹیسٹ (اور ہر بگ کے لیے ریگریشن ٹیسٹ) لکھیں، کم از کم ڈیکلیریٹو کوڈ سے GREEN کریں، پھر REFACTOR کریں۔ چاروں سطحیں (یونٹ، سیکیورٹی/ورک فلو، کنٹریکٹ ڈرفٹ، `@DistributedLock` کونکرنسی + JMeter `0.0%`) لازم ہیں، `@Disabled` ممنوع ہے۔
-- **Playbook & Templates:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)
+- **TDD — ریڈ ← گرین ← ریفیکٹر (4-سطحی ٹیسٹ پیرامڈ):** پہلے `@DisplayName("REQ-XXX: ...")` کے ساتھ ناکام JUnit 5 / `MockMvc` ٹیسٹ (اور ہر بگ کے لیے ریگریشن ٹیسٹ) لکھیں، کم از کم ڈیکلیریٹو کوڈ سے GREEN کریں، پھر REFACTOR کریں۔ چاروں سطحیں (یونٹ، سیکیورٹی/ورک فلو، کنٹریکٹ ڈرفٹ، `@DistributedLock` کونکرنسی + JMeter `0.0%`) لازم ہیں، `@Disabled` ممنوع ہے۔
+- **پلے بک اور ٹیمپلیٹس:** [`06-sdd-and-tdd-playbook.md`](../../../ai-agent-kit/references/06-sdd-and-tdd-playbook.md) · [`spec.template.md`](../../../ai-agent-kit/templates/spec.template.md) · [`plan.template.md`](../../../ai-agent-kit/templates/plan.template.md) · [`tasks.template.md`](../../../ai-agent-kit/templates/tasks.template.md)

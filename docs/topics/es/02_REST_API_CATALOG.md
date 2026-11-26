@@ -1,6 +1,6 @@
 # 02. Catálogo de 40 Contratos REST Autogenerados y Controladores de Plataforma (`0.1.0`)
 
-> **Idiomas**: **Español** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Los 20 Idiomas](../README.md) | [Manual Completo](../../GUIDE_EN.md) | [Portal Interactivo (20 Idiomas)](../../index.html#endpoints)
+> **Idiomas**: **Español** | [English](../en/02_REST_API_CATALOG.md) | [Tiếng Việt](../vi/02_REST_API_CATALOG.md) | [日本語](../ja/02_REST_API_CATALOG.md) | [中文](../zh/02_REST_API_CATALOG.md) | [Los 20 Idiomas](../README.md) | [Manual Completo (EN)](../../GUIDE_EN.md) | [Portal Interactivo (20 Idiomas)](../../index.html#endpoints)
 
 ---
 
@@ -77,11 +77,11 @@ Extender `AutoApiController<E>` (o combinar selectivamente `AutoReadApi`, `AutoK
 | `GET /system/studio` (`@Hidden`) | `DevStudioController` | Developer Studio en 20 idiomas (RTL `ar`, `fa`, `ur`); devuelve `401` cuando `app.framework.studio.enabled=false` |
 | `GET /system/studio/eject` | `DevEjectionController` | Exporta código Spring MVC estándar (Controller/Service/Repository); protegido por `SurfaceAccessGuardrailUtil` |
 | `POST /api/v1/auth/token` | `AuthController` | Emite JWT HMAC-SHA512 de demostración; devuelve `404` cuando `demo-token-endpoint-enabled=false` |
-| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
+| `/api/v1/storage/*` | `FileStorageController` | `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}`, `POST /presigned-url` (`LOCAL` / `S3` / `GCS`) |
 | `/api/v1/graphql*` | `GraphQLDynamicApiController` | `GET /schema`, `POST ""`, `GET /explorer` (`@Hidden`) |
 | `GET /api/v1/system/time-travel/{entityName}/{id}` | `TimeTravelDynamicApiController` | Reconstrucción histórica de entidades en un instante ISO-8601 UTC |
 | `GET /api/v1/system/customizers` | `CustomizerTelemetryApiController` | Inspecciona beans SPI activos de los `7` grupos de telemetría `*Customizer` (`StorageCustomizer` gestionado por `StorageCustomizerRegistryHelper`, `8` SPI en total) |
-| `GET /api/v1/system/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Métricas en vivo de los Circuit Breakers de Resilience4j |
+| `GET /api/v1/system/resilience/circuit-breakers` | `CircuitBreakerTelemetryApiController` | Métricas en vivo de los Circuit Breakers de Resilience4j |
 | `GET /api/v1/system/databases/health` | `MultiDatabaseHealthCheckController` | Inspección de salud de múltiples fuentes de datos |
 | `GET /api/v1/system/trace-context` | `TraceContextSystemApiController` | Contexto activo W3C `traceparent` y UUIDv7 `X-Request-ID` en MDC |
 | `GET/POST /error` (`@Hidden`) | `CustomContainerErrorController` | Convierte errores del contenedor Tomcat `400/404/405/413/431/500` a `ApiResponse<Void>` |

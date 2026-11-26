@@ -1,6 +1,6 @@
 # 04. Sicherheit, Multi-Cloud-Storage, `@ServiceOverride`, Metriken & 20-Sprachen-i18n (`0.1.0`)
 
-> **Sprachen**: **Deutsch** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Alle 20 Sprachen](../README.md) | [Vollständiges Handbuch](../../GUIDE_EN.md) | [Interaktives Portal (20 Sprachen)](../../index.html#security-rbac)
+> **Sprachen**: **Deutsch** | [English](../en/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Tiếng Việt](../vi/04_ADVANCED_ENTERPRISE_FEATURES.md) | [日本語](../ja/04_ADVANCED_ENTERPRISE_FEATURES.md) | [中文](../zh/04_ADVANCED_ENTERPRISE_FEATURES.md) | [Alle 20 Sprachen](../README.md) | [Vollständiges Handbuch (EN)](../../GUIDE_EN.md) | [Interaktives Portal (20 Sprachen)](../../index.html#security-rbac)
 
 ---
 
@@ -57,3 +57,11 @@ Wenn einzelne Endpunkte über dynamisches CRUD hinauswachsen:
 | `measureCachedMethodHandleDispatch` | `182.914 ops/ms` |
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
+
+---
+
+## 6. Multi-Cloud-Dateispeicher (`FileStorageController` — `LOCAL` / `S3` / `GCS`)
+
+`FileStorageController` (`/api/v1/storage/*`) stellt `POST /upload`, `GET /download/{fileId}`, `GET /metadata/{fileId}`, `GET /exists/{fileId}`, `DELETE /{fileId}` und `POST /presigned-url` über `app.framework.storage.provider` (`LOCAL`/`S3`/`GCS`) und `StorageCustomizer` bereit.
+
+> **Produktionsabsicherung:** Aktivieren Sie `app.framework.security.require-authenticated-api-paths: true` und schützen Sie `/api/v1/storage/**` in der `SecurityFilterChain`.

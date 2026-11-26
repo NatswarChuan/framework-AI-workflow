@@ -2,10 +2,9 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE2_CONTENT } from '../data/pages/stage2Content';
 
 interface PageProps {
@@ -28,11 +27,10 @@ export const DynamicProxyPage: React.FC<PageProps> = ({ currentLang, theme }) =>
       <DocPageHeader
         topicId="dynamic-proxy"
         currentLang={currentLang}
-        badges={[
-          { label: 'MethodHandleCacheUtil', tone: 'emerald' },
-          { label: 'LambdaAccessorUtil', tone: 'blue' },
-          { label: pickText(STAGE2_CONTENT.dpBadgeAot, currentLang), tone: 'purple' },
-        ]}
+        guardrailTip={{
+          type: 'tip',
+          content: <RichDocText text={STAGE2_CONTENT.dpCalloutTip} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="proxy-goal" className="section-heading">
@@ -80,14 +78,6 @@ final Object result = handle.bindTo(beanInstance).invokeWithArguments(args);
 final Function<Object, Object> getter = LambdaAccessorUtil.resolveLambdaGetter(entityClass, "status");
 final Object statusValue = getter.apply(entity);`}
       />
-
-      <h2 id="proxy-notes" className="section-heading">
-        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="tip" currentLang={currentLang}>
-        <RichDocText text={STAGE2_CONTENT.dpCalloutTip} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

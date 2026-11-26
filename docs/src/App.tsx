@@ -246,6 +246,7 @@ export const App: React.FC = () => {
         return (
           <AnnotationsPage
             currentLang={currentLang}
+            initialAnnotationName={selectedAnnotationName}
             onNavigateTopic={navigateWithAnnotation}
           />
         );
@@ -393,6 +394,8 @@ export const App: React.FC = () => {
     }
   };
 
+  const isWideWorkbench = activeTopicId === 'annotations' || activeTopicId.startsWith('annotations-');
+
   return (
     <div className="portal-root">
       <div className="cyber-ambient-layer" aria-hidden="true" />
@@ -410,7 +413,7 @@ export const App: React.FC = () => {
         onSelectTopic={(topicId) => navigateToTopic(topicId)}
       />
 
-      <div className="portal-shell">
+      <div className={`portal-shell ${isWideWorkbench ? 'portal-shell-wide' : ''}`}>
         <Sidebar
           activeTopicId={activeTopicId}
           onSelectTopic={(topicId) => navigateToTopic(topicId)}
@@ -420,7 +423,7 @@ export const App: React.FC = () => {
         />
 
         <main className="doc-main">
-          <div id="doc-reading-canvas" className="doc-canvas">
+          <div id="doc-reading-canvas" className={`doc-canvas ${isWideWorkbench ? 'doc-canvas-wide' : ''}`}>
             {renderActivePage()}
           </div>
 
@@ -431,7 +434,9 @@ export const App: React.FC = () => {
           />
         </main>
 
-        <TableOfContents activeTopicId={activeTopicId} currentLang={currentLang} />
+        {!isWideWorkbench && (
+          <TableOfContents activeTopicId={activeTopicId} currentLang={currentLang} />
+        )}
       </div>
 
       <SearchModal

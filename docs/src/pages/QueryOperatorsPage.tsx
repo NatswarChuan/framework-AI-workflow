@@ -3,7 +3,6 @@ import { SupportedLanguage } from '../types/docs';
 import { OPERATORS_DATA } from '../data/operatorsData';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { UI_CONTROLS } from '../data/uiControls';
@@ -19,11 +18,10 @@ export const QueryOperatorsPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="query-operators"
         currentLang={currentLang}
-        badges={[
-          { label: pickText(STAGE3_CONTENT.qoBadgeOps, currentLang), tone: 'emerald' },
-          { label: 'QueryGuardrailProperties', tone: 'rose' },
-          { label: pickText(STAGE3_CONTENT.qoBadgeKeyset, currentLang), tone: 'blue' },
-        ]}
+        guardrailTip={{
+          type: 'security',
+          content: <RichDocText text={STAGE3_CONTENT.qoCalloutSecurity} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="query-goal" className="section-heading">
@@ -100,14 +98,6 @@ curl -s "http://localhost:8080/api/v1/product-catalogs/keyset?dir=desc&size=5&fi
 curl -s "http://localhost:8080/api/v1/customer-orders?expand=customer&page=0&size=10" \\
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq`}
       />
-
-      <h2 id="query-notes" className="section-heading">
-        {pickText(UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="security" currentLang={currentLang}>
-        <RichDocText text={STAGE3_CONTENT.qoCalloutSecurity} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

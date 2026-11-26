@@ -2,7 +2,6 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { UI_CONTROLS } from '../data/uiControls';
@@ -18,11 +17,10 @@ export const VirtualThreadsPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="virtual-threads"
         currentLang={currentLang}
-        badges={[
-          { label: pickText(STAGE6_CONTENT.vtBadgeVt, currentLang), tone: 'emerald' },
-          { label: '@RateLimit · @EntityCircuitBreaker', tone: 'amber' },
-          { label: 'TransactionalOutboxHelper', tone: 'blue' },
-        ]}
+        guardrailTip={{
+          type: 'warning',
+          content: <RichDocText text={STAGE6_CONTENT.vtCalloutWarn} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="vt-goal" className="section-heading">
@@ -188,14 +186,6 @@ curl -i "http://localhost:8080/api/v1/readonly/product-catalogs/cached/$PRODUCT_
           </tbody>
         </table>
       </div>
-
-      <h2 id="vt-notes" className="section-heading">
-        {pickText(UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="warning" currentLang={currentLang}>
-        <RichDocText text={STAGE6_CONTENT.vtCalloutWarn} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

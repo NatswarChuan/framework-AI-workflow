@@ -2,10 +2,9 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE5_CONTENT } from '../data/pages/stage5Content';
 
 interface PageProps {
@@ -33,11 +32,10 @@ export const IdempotencyPage: React.FC<PageProps> = ({ currentLang, theme = 'dar
       <DocPageHeader
         topicId="idempotency"
         currentLang={currentLang}
-        badges={[
-          { label: '@Idempotent', tone: 'emerald' },
-          { label: 'X-Idempotency-Key', tone: 'blue' },
-          { label: pickText(STAGE5_CONTENT.idBadgeSha, currentLang), tone: 'amber' },
-        ]}
+        guardrailTip={{
+          type: 'warning',
+          content: <RichDocText text={STAGE5_CONTENT.idCalloutWarn} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="idempotency-goal" className="section-heading">
@@ -179,14 +177,6 @@ curl -i -X POST "http://localhost:8080/api/v1/payment-transactions" \\
           },
         ]}
       />
-
-      <h2 id="idempotency-notes" className="section-heading">
-        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="warning" currentLang={currentLang}>
-        <RichDocText text={STAGE5_CONTENT.idCalloutWarn} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

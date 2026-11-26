@@ -2,7 +2,6 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE1_CONTENT } from '../data/pages/stage1Content';
@@ -17,11 +16,10 @@ export const QuickstartPage: React.FC<QuickstartPageProps> = ({ currentLang }) =
       <DocPageHeader
         topicId="quickstart"
         currentLang={currentLang}
-        badges={[
-          { label: 'Maven / Gradle / JitPack', tone: 'blue' },
-          { label: pickText(STAGE1_CONTENT.qsBadgeModels, currentLang), tone: 'purple' },
-          { label: pickText(STAGE1_CONTENT.qsBadgeFailFast, currentLang), tone: 'rose' },
-        ]}
+        guardrailTip={{
+          type: 'tip',
+          content: <RichDocText text={STAGE1_CONTENT.qsCalloutTip} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="quickstart-goal" className="section-heading">
@@ -295,7 +293,7 @@ mvn -Pjmeter jmeter:configure jmeter:jmeter jmeter:results`,
       />
 
       <h2 id="quickstart-failfast" className="section-heading">
-        {pickText(UI_LABELS.stepNotes, currentLang)}
+        {pickText(STAGE1_CONTENT.qsBadgeFailFast, currentLang)}
       </h2>
 
       <div className="table-scroll">
@@ -331,10 +329,6 @@ mvn -Pjmeter jmeter:configure jmeter:jmeter jmeter:results`,
           </tbody>
         </table>
       </div>
-
-      <Callout type="tip" currentLang={currentLang}>
-        <RichDocText text={STAGE1_CONTENT.qsCalloutTip} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

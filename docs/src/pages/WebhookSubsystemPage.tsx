@@ -2,8 +2,7 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
-import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { UI_LABELS, pickText } from '../data/locales';
 import { RichDocText } from '../components/RichDocText';
 import { STAGE7_CONTENT } from '../data/pages/stage7Content';
 
@@ -17,11 +16,10 @@ export const WebhookSubsystemPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="webhook-subsystem"
         currentLang={currentLang}
-        badges={[
-          { label: '@EntityWebhook', tone: 'purple' },
-          { label: pickText(STAGE7_CONTENT.whBadgeHmac, currentLang), tone: 'rose' },
-          { label: 'WebhookDispatcherHelper', tone: 'emerald' },
-        ]}
+        guardrailTip={{
+          type: 'security',
+          content: <RichDocText text={STAGE7_CONTENT.whCalloutSec} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="webhook-goal" className="section-heading">
@@ -141,14 +139,6 @@ curl -s -X POST "http://localhost:8080/api/v1/electronic-invoices" \\
           },
         ]}
       />
-
-      <h2 id="webhook-notes" className="section-heading">
-        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="security" currentLang={currentLang}>
-        <RichDocText text={STAGE7_CONTENT.whCalloutSec} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

@@ -2,7 +2,6 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
@@ -31,11 +30,10 @@ export const MultiDatabasePage: React.FC<PageProps> = ({ currentLang, theme = 'd
       <DocPageHeader
         topicId="multi-database"
         currentLang={currentLang}
-        badges={[
-          { label: '@TargetDataSource', tone: 'emerald' },
-          { label: '@TargetDatabasePlatform', tone: 'blue' },
-          { label: 'DynamicRoutingDataSource', tone: 'purple' },
-        ]}
+        guardrailTip={{
+          type: 'warning',
+          content: <RichDocText text={STAGE4_CONTENT.mdbCalloutWarn} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="multidb-goal" className="section-heading">
@@ -197,14 +195,6 @@ curl -s "http://localhost:8080/api/v1/product-catalogs/analytics/ELECTRONICS" \\
 curl -s "http://localhost:8080/api/v1/system/databases/health" \\
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq`}
       />
-
-      <h2 id="multidb-notes" className="section-heading">
-        {pickText(UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="warning" currentLang={currentLang}>
-        <RichDocText text={STAGE4_CONTENT.mdbCalloutWarn} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

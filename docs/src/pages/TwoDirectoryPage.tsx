@@ -2,9 +2,8 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE1_CONTENT } from '../data/pages/stage1Content';
 
 interface PageProps {
@@ -17,11 +16,10 @@ export const TwoDirectoryPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="two-directory"
         currentLang={currentLang}
-        badges={[
-          { label: 'entity/', tone: 'emerald' },
-          { label: 'controller/', tone: 'blue' },
-          { label: pickText(STAGE1_CONTENT.tdBadgeHelpers, currentLang), tone: 'purple' },
-        ]}
+        guardrailTip={{
+          type: 'warning',
+          content: <RichDocText text={STAGE1_CONTENT.tdCalloutWarn} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="two-dir-goal" className="section-heading">
@@ -98,14 +96,6 @@ public final class OrderSummaryHelper {
   }
 }`}
       />
-
-      <h2 id="two-dir-rules" className="section-heading">
-        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="warning" currentLang={currentLang}>
-        <RichDocText text={STAGE1_CONTENT.tdCalloutWarn} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

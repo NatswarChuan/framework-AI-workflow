@@ -2,8 +2,7 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
-import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { UI_LABELS, pickText } from '../data/locales';
 import { RichDocText } from '../components/RichDocText';
 import { STAGE8_CONTENT } from '../data/pages/stage8Content';
 
@@ -17,11 +16,10 @@ export const SpringAiPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="spring-ai"
         currentLang={currentLang}
-        badges={[
-          { label: 'AiNaturalLanguageQueryParserHelper', tone: 'purple' },
-          { label: 'DynamicEntityAiMetadataProviderHelper', tone: 'blue' },
-          { label: 'POST /ai/query', tone: 'emerald' },
-        ]}
+        guardrailTip={{
+          type: 'security',
+          content: <RichDocText text={STAGE8_CONTENT.aiCalloutSec} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="ai-goal" className="section-heading">
@@ -113,14 +111,6 @@ curl -s -X POST "http://localhost:8080/api/v1/product-catalogs/ai/query" \\
           },
         ]}
       />
-
-      <h2 id="ai-notes" className="section-heading">
-        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="security" currentLang={currentLang}>
-        <RichDocText text={STAGE8_CONTENT.aiCalloutSec} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

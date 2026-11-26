@@ -2,7 +2,6 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
 import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE2_CONTENT } from '../data/pages/stage2Content';
@@ -17,11 +16,10 @@ export const EscapeHatchPage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="escape-hatch"
         currentLang={currentLang}
-        badges={[
-          { label: '@ServiceOverride', tone: 'purple' },
-          { label: 'EscapeHatchDispatchHelper', tone: 'blue' },
-          { label: 'GET /system/studio/eject', tone: 'emerald' },
-        ]}
+        guardrailTip={{
+          type: 'security',
+          content: <RichDocText text={STAGE2_CONTENT.ehCalloutSecurity} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="escape-goal" className="section-heading">
@@ -193,14 +191,6 @@ curl -s "http://localhost:8080/system/studio/eject?target=ProductCatalog" \\
       <p style={{ color: 'var(--text-secondary)' }}>
         <RichDocText text={STAGE2_CONTENT.ehVerifyBody} currentLang={currentLang} />
       </p>
-
-      <h2 id="escape-security" className="section-heading">
-        {pickText(UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="security" currentLang={currentLang}>
-        <RichDocText text={STAGE2_CONTENT.ehCalloutSecurity} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

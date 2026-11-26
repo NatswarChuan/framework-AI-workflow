@@ -1,8 +1,8 @@
 import React from 'react';
 import { ArrowRight, Terminal } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
-import { Callout } from '../components/Callout';
 import { CodeBlock } from '../components/CodeBlock';
+import { GuardrailHintIcon } from '../components/GuardrailHintIcon';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
 import { StoryBanner } from '../components/StoryBanner';
@@ -38,9 +38,14 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
       <section className="cyber-hero-panel">
         <div className="cyber-hero-grid">
           <div className="cyber-hero-copy">
-            <h1 className="page-title hero-title">
-              {overviewItem ? pickText(overviewItem.label, currentLang) : UI_LABELS.brandName}
-            </h1>
+            <div className="page-title-row hero-title-row">
+              <h1 className="page-title hero-title">
+                {overviewItem ? pickText(overviewItem.label, currentLang) : UI_LABELS.brandName}
+              </h1>
+              <GuardrailHintIcon type="security" currentLang={currentLang}>
+                <RichDocText text={STAGE1_CONTENT.ovCalloutSecurity} currentLang={currentLang} />
+              </GuardrailHintIcon>
+            </div>
 
             <p className="hero-subtitle">
               {overviewItem ? pickText(overviewItem.summary, currentLang) : ''}
@@ -325,14 +330,6 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
           </tbody>
         </table>
       </div>
-
-      <h2 id="production-guardrails" className="section-heading">
-        {pickText(UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="security" currentLang={currentLang}>
-        <RichDocText text={STAGE1_CONTENT.ovCalloutSecurity} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

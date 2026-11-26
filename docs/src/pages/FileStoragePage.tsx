@@ -2,9 +2,8 @@ import React from 'react';
 import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
-import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
+import { UI_LABELS, pickText } from '../data/locales';
 import { STAGE4_CONTENT } from '../data/pages/stage4Content';
 
 interface PageProps {
@@ -17,11 +16,10 @@ export const FileStoragePage: React.FC<PageProps> = ({ currentLang }) => {
       <DocPageHeader
         topicId="file-storage"
         currentLang={currentLang}
-        badges={[
-          { label: 'FileStorageController', tone: 'emerald' },
-          { label: pickText(STAGE4_CONTENT.fsBadgeProviders, currentLang), tone: 'blue' },
-          { label: pickText(STAGE4_CONTENT.fsBadgeSpi, currentLang), tone: 'purple' },
-        ]}
+        guardrailTip={{
+          type: 'tip',
+          content: <RichDocText text={STAGE4_CONTENT.fsCalloutTip} currentLang={currentLang} />,
+        }}
       />
 
       <h2 id="storage-goal" className="section-heading">
@@ -139,14 +137,6 @@ curl -s -X DELETE "http://localhost:8080/api/v1/storage/$FILE_ID" -H "Authorizat
           </tbody>
         </table>
       </div>
-
-      <h2 id="storage-notes" className="section-heading">
-        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
-      </h2>
-
-      <Callout type="tip" currentLang={currentLang}>
-        <RichDocText text={STAGE4_CONTENT.fsCalloutTip} currentLang={currentLang} />
-      </Callout>
     </article>
   );
 };

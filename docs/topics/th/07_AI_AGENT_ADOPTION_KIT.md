@@ -11,7 +11,7 @@
 | ไฟล์ / โฟลเดอร์ | บทบาท |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | ภาพรวมสถาปัตยกรรม: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` และ JitPack `v0.1.0`, สัญญา 2 โฟลเดอร์ (`entity/` + `controller/`), 9 อินเทอร์เฟซประกอบได้, 6 แพ็กเกจแอนโนเทชัน, 6 ระบบย่อยในตัว |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | กฎเหล็กป้องกันการหลอน (`19.0 KB`, ต่ำกว่าขีดจำกัด `24 KB`) ที่รวมทุกกับดักรันไทม์ซึ่งผ่านการพิสูจน์แล้ว |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | กฎเหล็กป้องกันการหลอน ที่รวมทุกกับดักรันไทม์ซึ่งผ่านการพิสูจน์แล้ว |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | ทักษะแบบเปิดเผยเป็นขั้น `spring-nwvmc-adoption` พร้อม 7 ขั้นตอนการทำงานและตารางแก้ปัญหา 15 สาเหตุหลัก |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | รายการตรวจสอบ 7 ระยะก่อนส่งมอบ (Pre-Flight -> ออกแบบ -> กับดักรันไทม์ -> ล็อกความปลอดภัย Production -> ประสิทธิภาพ -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | เอกสารอ้างอิงเชิงลึก 6 (+ `templates/`) ฉบับที่ตรวจด้วยเครื่อง (60 แอนโนเทชัน / 133 แอตทริบิวต์, 40 API + 13 ตัวดำเนินการจุด, YAML + หลายฐานข้อมูล, สูตรโค้ดพร้อม `@MultiTenant` + DB-RBAC 4 Entity + `JwtTokenService`, และตาราง import คลาส/SPI นอกแอนโนเทชัน) |

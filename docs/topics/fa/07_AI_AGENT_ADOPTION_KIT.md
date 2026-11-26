@@ -11,7 +11,7 @@
 | فایل / پوشه | نقش |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نمای معماری: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` و JitPack `v0.1.0`، قرارداد ۲ پوشه‌ای (`entity/` + `controller/`)، ۹ اینترفیس ترکیبی، ۶ پکیج حاشیه‌نویسی و ۶ زیرسیستم داخلی |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | قواعد سخت‌گیرانه ضدتوهم (`19.0 KB`، کمتر از سقف `24 KB`) شامل همه دام‌های تاییدشده زمان اجرا |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | قواعد سخت‌گیرانه ضدتوهم شامل همه دام‌های تاییدشده زمان اجرا |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارت مرحله‌ای `spring-nwvmc-adoption` با ۷ گردش‌کار گام‌به‌گام و ماتریس عیب‌یابی ۱۵ علت ریشه‌ای |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | دروازه بررسی ۷ مرحله‌ای پیش از تحویل (پیش‌بررسی ← طراحی ← دام‌های زمان اجرا ← قفل تولید ← کارایی ← `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | ۶ (+ `templates/`) مرجع عمیق تاییدشده با ماشین (۶۰ حاشیه‌نویسی / ۱۳۳ ویژگی، ۴۰ مسیر + ۱۳ عملگر نقطه‌ای، YAML + چندپایگاه‌داده، دستورالعمل‌های عملی شامل `@MultiTenant` + DB-RBAC چهار موجودیتی + `JwtTokenService`، و جدول دقیق import کلاس‌ها و SPI) |

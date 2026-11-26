@@ -11,7 +11,7 @@
 | Tệp / Thư mục | Vai Trò |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Định hướng kiến trúc: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, Hợp đồng 2 thư mục (`entity/` + `controller/`), 9 capability interfaces (`AutoReadApi`..`AutoAiApi`), 6 package annotation, 6 subsystem |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Luật sắt chống ảo giác (`19.0 KB`, dưới ngưỡng giới hạn `24 KB`) khóa chặt toàn bộ bẫy runtime thực chiến |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Luật sắt chống ảo giác khóa chặt toàn bộ bẫy runtime thực chiến |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Kỹ năng `spring-nwvmc-adoption` gồm 7 workflow thực thi từng bước + bảng chẩn đoán nguyên nhân gốc cho 15 lỗi phổ biến |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Cổng soát xét 7 giai đoạn (Pre-Flight -> Thiết kế -> Bẫy Runtime -> Khóa Bảo Mật Production -> Hiệu năng -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) tài liệu tham chiếu sâu theo cơ chế Progressive Disclosure (60 annotation / 133 thuộc tính, 40 API + 13 toán tử dấu chấm, YAML + Multi-Datasource, cookbook gồm `@MultiTenant` + DB-RBAC 4 thực thể + `JwtTokenService`, và bảng import/chữ ký lớp ngoài annotation không cần `javap`) |
@@ -21,7 +21,7 @@
 
 ## 2. Cài Đặt Trong 1 Lệnh — Không Cần Clone Repo Trước
 
-Mở terminal **ngay trong thư mục gốc dự án Spring Boot của bạn** và dán 1 trong 2 lệnh sau (script tự tải toàn bộ 34 tệp từ `https://github.com/NatswarChuan/Spring-NWVMC-document` mà không yêu cầu file local sẵn có):
+Mở terminal **ngay trong thư mục gốc dự án Spring Boot của bạn** và dán 1 trong 2 lệnh sau (script tự tải toàn bộ tệp từ `https://github.com/NatswarChuan/Spring-NWVMC-document` mà không yêu cầu file local sẵn có):
 
 ### Windows (PowerShell)
 

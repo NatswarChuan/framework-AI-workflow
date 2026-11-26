@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { NAVIGATION_STAGES } from '../data/navigation';
-import { UI_CONTROLS, UI_LABELS, pickText } from '../data/locales';
+import { UI_CONTROLS, pickText } from '../data/locales';
 
 interface SidebarProps {
   activeTopicId: string;
@@ -50,14 +50,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         className={`doc-sidebar ${open ? 'open' : ''}`}
         aria-label={pickText(UI_CONTROLS.sidebarNavLabel, currentLang)}
       >
-        <div className="sidebar-version-card" dir="ltr">
-          <span className="sidebar-version-left">
-            <span className="sidebar-status-dot" aria-hidden="true" />
-            <span className="sidebar-version-code">v{UI_LABELS.versionText}</span>
-          </span>
-          <span className="sidebar-version-pill">Maven Central</span>
-        </div>
-
         {NAVIGATION_STAGES.map((stage) => {
           const isCollapsed = Boolean(collapsedStages[stage.id]);
           return (

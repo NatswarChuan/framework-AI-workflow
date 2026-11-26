@@ -38,15 +38,6 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
       <section className="cyber-hero-panel">
         <div className="cyber-hero-grid">
           <div className="cyber-hero-copy">
-            <div className="cyber-hero-tags" dir="ltr">
-              <span className="hero-tag-primary">
-                <span className="hero-live-dot" aria-hidden="true" />
-                <span>SYS.0.1.0 // JAVA 21 LTS</span>
-              </span>
-              <span className="hero-tag-muted">APACHE 2.0</span>
-              <span className="hero-tag-cyan">SPRING BOOT 3.x</span>
-            </div>
-
             <h1 className="page-title hero-title">
               {overviewItem ? pickText(overviewItem.label, currentLang) : UI_LABELS.brandName}
             </h1>
@@ -73,10 +64,6 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
                 <span>{pickText(UI_CONTROLS.heroKitCta, currentLang)}</span>
               </button>
             </div>
-
-            <div className="hero-telemetry-strip">
-              <span>{pickText(STAGE1_CONTENT.ovBadgeCounts, currentLang)}</span>
-            </div>
           </div>
 
           <div className="cyber-hero-visual">
@@ -86,14 +73,6 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
               <span className="hud-corner hud-bl" aria-hidden="true" />
               <span className="hud-corner hud-br" aria-hidden="true" />
 
-              <div className="hero-hud-topbar">
-                <span className="hero-hud-id">
-                  <span className="hero-hud-sq" aria-hidden="true" />
-                  <span>NWVMC // CORE</span>
-                </span>
-                <span className="hero-hud-status">ONLINE</span>
-              </div>
-
               <div className="hero-logo-stage">
                 <img
                   src="./logo.jpeg"
@@ -102,11 +81,6 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
                   width={220}
                   height={220}
                 />
-              </div>
-
-              <div className="hero-hud-footbar">
-                <span>MAVEN CENTRAL</span>
-                <span>0.1.0</span>
               </div>
             </div>
           </div>
@@ -304,7 +278,7 @@ import io.github.natswarchuan.core.controller.AutoApiController;
 
 @AutoRestController
 public interface ProductCatalogController extends AutoApiController<ProductCatalog> {
-  // Automatically mounts 40 REST/Batch/Keyset/Schema/AI contracts (38 visible in Swagger UI) at /api/v1/product-catalogs
+  // Automatically mounts full CRUD, search, keyset, batch, workflow, schema & AI routes at /api/v1/product-catalogs
 }`,
           },
         ]}

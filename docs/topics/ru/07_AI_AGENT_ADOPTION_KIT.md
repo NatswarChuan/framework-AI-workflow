@@ -11,7 +11,7 @@
 | Файл / Каталог | Назначение |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Обзор архитектуры: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` и JitPack `v0.1.0`, контракт 2 каталогов (`entity/` + `controller/`), 9 составных интерфейсов, 6 пакетов аннотаций и 6 встроенных подсистем |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Строгие защитные правила от галлюцинаций (`19.0 KB`, строго в пределах `24 KB`) с каждой подтверждённой ловушкой runtime |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Строгие защитные правила от галлюцинаций с каждой подтверждённой ловушкой runtime |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Поэтапный навык `spring-nwvmc-adoption` с 7 рабочими сценариями и матрицей диагностики 15 типовых сбоев |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7-этапный чек-лист приёмки перед релизом (Pre-Flight -> Проектирование -> Ловушки Runtime -> Блокировка продакшена -> Производительность -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) глубоких справочников с машинной проверкой (60 аннотаций / 133 атрибута, 40 эндпоинтов + 13 точечных операторов, YAML + мульти-БД, рецепты с `@MultiTenant` + DB-RBAC из 4 сущностей + `JwtTokenService`, и точные импорты классов/SPI) |

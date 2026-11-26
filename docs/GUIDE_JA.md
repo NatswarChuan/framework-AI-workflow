@@ -9,7 +9,7 @@
 
 ## 1. アーキテクチャと中核設計
 
-`controller-to-api-framework` は `593` 個のメイン Java ファイル（テスト `257` 件、`586` テスト）、`60` 種類の宣言的アノテーション（DB 駆動 RBAC アノテーション `18` 種を含む）、`9` 個の組み合わせ可能な機能インターフェース（`AutoReadApi`..`AutoAiApi`）、`20` 個の `*Properties` クラスと `16` 個の `@AutoConfigurationBean` / `@ConfigurationProperties` クラス（`META-INF/spring-configuration-metadata.json` に `18` グループ定義）、`21` 個の国際化リソースバンドル（`classpath:i18n/messages*.properties`）、および `NwvmcRuntimeHintsRegistrar`（`META-INF/spring/aot.factories`）で構成されます。
+`controller-to-api-framework` は `60` 種類の Pure Java 宣言的アノテーション（DB 駆動 RBAC を含む）、`9` 個の合成可能なコントローラー機能インターフェース（`AutoReadApi`..`AutoAiApi`）、型安全な `@ConfigurationProperties` メタデータ（`META-INF/spring-configuration-metadata.json`）、多言語リソースバンドル（`classpath:i18n/messages*.properties`）、および GraalVM AOT 用 `RuntimeHints`（`META-INF/spring/aot.factories`）を提供します。
 
 - **2ディレクトリ契約（`entity/` と `controller/`）**: アプリケーションは `BaseAuditEntity`（`@Version` 楽観的ロックによる `409 Conflict` 応答および `JpaAssociationReferenceUtil` FK 参照解決付き）を継承する JPA エンティティと、`AutoApiController<E>` または `AutoReadApi<E>` 等の合成インターフェースを継承するインターフェースを定義します（`@AutoRestController(readDto, createDto, updateDto)` および標準 Spring MVC の `@RequestBody`/`@RequestParam`/`@PathVariable` も併用可能）。フレームワーク側でも静的 Spring import は AOT とプロパティ定義（計10行）に限定されています。
 - **`MethodHandle` 高速ディスパッチ**: `MethodHandleCacheUtil` と `LambdaAccessorUtil` が実行時リフレクション呼び出しを置換します。
@@ -182,7 +182,7 @@ app:
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
 
-CycloneDX `1.6` SBOM（`target/bom.json`, `128` コンポーネント）生成コマンド:
+CycloneDX `1.6` SBOM（`target/bom.json`）生成コマンド:
 
 ```bash
 mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyclonedx.skipNotDeployed=false" "-Dmaven.deploy.skip=false" -f controller-to-api-framework/pom.xml

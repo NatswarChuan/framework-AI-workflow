@@ -29,7 +29,7 @@ Always follow strict SDD (Spec-Driven) + TDD (Test-Driven) delivery and verified
 
 === 3. 2-DIRECTORY CONTRACT & 9 REAL COMPOSABLE INTERFACES (40 ROUTES) ===
 - entity/: JPA @Entity extending BaseAuditEntity (UUIDv7 id, soft-delete, audit, @Version built-in; NO @Data, NO @SoftDelete).
-- controller/: @AutoRestController(basePath = "...") interface extending AutoApiController<E> (40 routes, 38 visible by default in Swagger UI)
+- controller/: @AutoRestController(basePath = "...") interface extending AutoApiController<E> (40 auto-mounted routes)
   OR narrow real interfaces: AutoReadApi<E> (5), AutoKeysetApi<E> (1), AutoAnalyticsApi<E> (4), AutoSchemaApi<E> (5),
   AutoWriteApi<E> (6), AutoBatchApi<E> (4), AutoExportImportApi<E> (4), AutoWorkflowApi<E> (9), AutoAiApi<E> (2).
   (NEVER invent AutoAuditApi or AutoStateApi!)

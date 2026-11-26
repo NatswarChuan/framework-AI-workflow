@@ -9,7 +9,7 @@
 
 ## 1. Architecture & Core Design
 
-`controller-to-api-framework` comprises `593` main Java source files (`257` test files, `586` passing unit tests), `60` Pure Java declarative `@interface` annotations (`54` in `core/annotation/` + `6` in `module/*/annotation/`, including `18` database-driven RBAC annotations), `9` composable controller capability interfaces (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), `16` `@AutoConfigurationBean` / `@ConfigurationProperties` classes (`18` groups in `META-INF/spring-configuration-metadata.json` across `20` `*Properties` classes), `21` i18n message bundles (`classpath:i18n/messages*.properties`), and AOT hints registered via `NwvmcRuntimeHintsRegistrar` (`META-INF/spring/aot.factories`).
+`controller-to-api-framework` provides `60` Pure Java declarative annotations (`54` in `core/annotation/` and `6` in `module/*/annotation/`, including database-driven RBAC), `9` composable controller capability interfaces (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), typed `@ConfigurationProperties` metadata (`META-INF/spring-configuration-metadata.json`), 20-language UI/i18n bundles (`classpath:i18n/messages*.properties`), and GraalVM Native Image `RuntimeHints` (`META-INF/spring/aot.factories`).
 
 - **Decoupled Domain Contract**: Application code declares JPA `entity/` classes extending `BaseAuditEntity` (`@Version` optimistic locking returning `409 Conflict` on stale updates, `JpaAssociationReferenceUtil` FK reference resolution on detached stubs) and `controller/` interfaces extending `AutoApiController<E>` or composable subsets such as `AutoReadApi<E>` without static Spring MVC imports or generated boilerplate (standard Spring `@RequestBody`, `@RequestParam`, and `@PathVariable` bindings are also supported alongside `@AutoBody`/`@AutoParam`/`@AutoVariable`, plus `@AutoRestController(readDto, createDto, updateDto)`). Only Spring AOT (`autoconfigure/`, `common/constant/AotConstant`, `common/util/AotRuntimeHintsUtil`) and property metadata (`config/properties/`) retain compile-time Spring annotations (`10` imports across the entire framework).
 - **`MethodHandle` Hot-Path Dispatch**: `MethodHandleCacheUtil` and `LambdaAccessorUtil` replace reflective `Method.invoke` overhead on controller routing and entity field mutations.
@@ -216,7 +216,7 @@ Measured throughput via `DynamicProxyThroughputBenchmarkTest` (`Mode.Throughput`
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
 
-Generate CycloneDX `1.6` SBOM (`target/bom.json`, `128` components):
+Generate CycloneDX `1.6` SBOM (`target/bom.json`):
 
 ```bash
 mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyclonedx.skipNotDeployed=false" "-Dmaven.deploy.skip=false" -f controller-to-api-framework/pom.xml

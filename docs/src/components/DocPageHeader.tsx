@@ -16,7 +16,6 @@ export const DocPageHeader: React.FC<DocPageHeaderProps> = ({
   topicId,
   currentLang,
   onNavigateTopic,
-  badges = [],
 }) => {
   const stage = NAVIGATION_STAGES.find((s) => s.items.some((i) => i.id === topicId));
   const item = stage?.items.find((i) => i.id === topicId);
@@ -49,15 +48,6 @@ export const DocPageHeader: React.FC<DocPageHeaderProps> = ({
           </>
         )}
       </div>
-      {badges.length > 0 && (
-        <div className="badge-row">
-          {badges.map((b) => (
-            <span key={b.label} className={`badge badge-${b.tone ?? 'emerald'}`}>
-              {b.label}
-            </span>
-          ))}
-        </div>
-      )}
       <h1 className="page-title">{pickText(item.label, currentLang)}</h1>
       <p className="page-lead">{pickText(item.summary, currentLang)}</p>
       <StoryBanner topicId={topicId} currentLang={currentLang} />

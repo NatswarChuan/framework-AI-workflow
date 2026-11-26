@@ -11,7 +11,7 @@
 | Dosya / Dizin | Görev |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Mimari kılavuz: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` ve JitPack `v0.1.0`, 2 dizin sözleşmesi (`entity/` + `controller/`), 9 birleştirilebilir arayüz, 6 anotasyon paketi ve 6 yerleşik alt sistem |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Sıkı halüsinasyon önleyici koruma kuralları (`19.0 KB`, `24 KB` bütçesinin altında) ve doğrulanmış çalışma zamanı tuzakları |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Sıkı halüsinasyon önleyici koruma kuralları ve doğrulanmış çalışma zamanı tuzakları |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Aşamalı `spring-nwvmc-adoption` becerisi: 7 adım adım iş akışı ve 15 satırlık kök neden sorun giderme matrisi |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Teslim öncesi 7 aşamalı onay kapısı (Ön Kontrol -> Tasarım -> Çalışma Zamanı Tuzakları -> Üretim Kilitleme -> Performans -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | Makine doğrulamalı 6 (+ `templates/`) derin referans (60 anotasyon / 133 öznitelik, 40 uç nokta + 13 noktalı operatör, YAML + Çoklu Veri Kaynağı, `@MultiTenant` + 4 varlıklı DB-RBAC + `JwtTokenService` tarifleri, ve kesin anotasyon dışı sınıf/SPI import tablosu) |

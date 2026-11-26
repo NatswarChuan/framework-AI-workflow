@@ -11,7 +11,7 @@
 | 文件 / 目录 | 作用说明 |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | 架构总览：Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` 与 JitPack `v0.1.0`、双目录契约（`entity/` + `controller/`）、9 个可组合能力接口、6 个注解包、6 个内置子系统 |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 严格防幻觉护栏（`19.0 KB`，严控在 `24 KB` 规则预算内），收录所有实测验证的运行时陷阱 |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 严格防幻觉护栏，收录所有实测验证的运行时陷阱 |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | 渐进披露式 `spring-nwvmc-adoption` 技能手册（7 套落地工作流 + 15 行根因排障矩阵） |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7 阶段交付前核验闸门（前置检查 -> 领域设计 -> 运行时陷阱 -> 生产安全锁定 -> 性能 -> `mvn clean verify`） |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) 份机器校验深度参考（60 注解 / 133 属性、40 端点 + 13 点分运算符、YAML + 多数据源、含 `@MultiTenant` + 4 实体 DB-RBAC + `JwtTokenService` 的实战配方、非注解类/常量/SPI 精确导入表） |

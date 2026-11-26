@@ -11,7 +11,7 @@
 | فائل / ڈائریکٹری | کردار |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | آرکیٹیکچر تعارف: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` اور JitPack `v0.1.0`، دو ڈائریکٹری معاہدہ (`entity/` + `controller/`)، 9 قابلِ ترکیب انٹرفیس، 6 اینوٹیشن پیکجز، 6 بلٹ ان سب سسٹمز |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | سخت اینٹی ہیلوسینیشن گارڈ ریلز (`19.0 KB`، `24 KB` حد کے اندر) جن میں ہر تصدیق شدہ رن ٹائم احتیاط شامل ہے |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | سخت اینٹی ہیلوسینیشن گارڈ ریلز جن میں ہر تصدیق شدہ رن ٹائم احتیاط شامل ہے |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | تدریجی `spring-nwvmc-adoption` اسکل مع 7 مرحلہ وار ورک فلوز اور 15 بنیادی وجوہات کی ٹربل شوٹنگ جدول |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | حوالگی سے قبل 7 مرحلوں کی جانچ (Pre-Flight ← ڈیزائن ← رن ٹائم احتیاطیں ← پروڈکشن لاک ڈاؤن ← کارکردگی ← `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | مشین سے تصدیق شدہ 6 (+ `templates/`) گہرے حوالہ جات (60 اینوٹیشنز / 133 ایٹری بیوٹس، 40 اینڈپوائنٹس + 13 ڈاٹ آپریٹرز، YAML + ملٹی ڈیٹاسورس، `@MultiTenant` + 4-اینٹیٹی DB-RBAC + `JwtTokenService` ترکیبیں، اور درست نان-اینوٹیشن کلاس/SPI امپورٹس) |

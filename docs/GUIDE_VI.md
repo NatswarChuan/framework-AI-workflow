@@ -9,7 +9,7 @@
 
 ## 1. Kiến Trúc & Nguyên Lý Cốt Lõi
 
-`controller-to-api-framework` gồm `593` tệp Java chính (`257` tệp kiểm thử, `586` unit test đạt 100%), `60` annotation `@interface` Pure Java (`54` trong `core/annotation/` + `6` trong `module/*/annotation/`, gồm `18` annotation RBAC từ Database), `9` capability interface có thể ghép nối (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), `16` lớp `@AutoConfigurationBean` / `@ConfigurationProperties` (`18` nhóm cấu hình trong `META-INF/spring-configuration-metadata.json` trải trên `20` lớp `*Properties`), `21` gói ngôn ngữ (`classpath:i18n/messages*.properties`) và chỉ dẫn AOT trong `NwvmcRuntimeHintsRegistrar` (`META-INF/spring/aot.factories`).
+`controller-to-api-framework` cung cấp `60` annotation `@interface` Pure Java (`54` trong `core/annotation/` + `6` trong `module/*/annotation/`, gồm đầy đủ RBAC từ Database), `9` capability interface có thể ghép nối (`AutoReadApi`, `AutoKeysetApi`, `AutoAnalyticsApi`, `AutoSchemaApi`, `AutoExportImportApi`, `AutoWriteApi`, `AutoBatchApi`, `AutoWorkflowApi`, `AutoAiApi`), metadata cấu hình `@ConfigurationProperties` (`META-INF/spring-configuration-metadata.json`), bộ ngôn ngữ i18n (`classpath:i18n/messages*.properties`) và chỉ dẫn GraalVM AOT (`META-INF/spring/aot.factories`).
 
 - **Tách Biệt Domain (`entity/` & `controller/`)**: Ứng dụng tiêu thụ khai báo JPA Entity kế thừa `BaseAuditEntity` (tích hợp `@Version` Optimistic Locking trả `409 Conflict` khi xung đột và `JpaAssociationReferenceUtil` phân giải khóa ngoại từ JSON stub) và interface Controller kế thừa `AutoApiController<E>` hoặc các giao diện thành phần như `AutoReadApi<E>` không cần `import org.springframework.web.*` (hỗ trợ song song `@RequestBody`/`@RequestParam`/`@PathVariable` chuẩn Spring MVC và `@AutoRestController(readDto, createDto, updateDto)`). Trong toàn bộ framework, chỉ tầng AOT (`autoconfigure/`, `common/constant/AotConstant`, `common/util/AotRuntimeHintsUtil`) và metadata cấu hình (`config/properties/`) dùng `import org.springframework.*` (`10` dòng import tĩnh).
 - **Điều Phối Hot-Path Bằng `MethodHandle`**: `MethodHandleCacheUtil` và `LambdaAccessorUtil` thay thế lời gọi reflection `Method.invoke` tại hot-path proxy và truy xuất thuộc tính thực thể.
@@ -214,7 +214,7 @@ Kết quả đo thông lượng bằng `DynamicProxyThroughputBenchmarkTest` (`M
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
 
-Sinh tệp CycloneDX `1.6` SBOM (`target/bom.json`, `128` thành phần):
+Sinh tệp CycloneDX `1.6` SBOM (`target/bom.json`):
 
 ```bash
 mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyclonedx.skipNotDeployed=false" "-Dmaven.deploy.skip=false" -f controller-to-api-framework/pom.xml

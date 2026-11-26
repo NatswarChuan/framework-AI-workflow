@@ -285,18 +285,11 @@ curl -s "http://localhost:8080/api/v1/public/products?skuCode=NVM-DOC-MAC-M3" \\
             label: pickText(STAGE1_CONTENT.qsTabVerifyFile, currentLang),
             language: 'bash',
             fileName: 'verify-build.sh',
-            code: `# 1. Run NovaMart reference integration & unit test suite against Maven Central 0.1.0 (23/23 tests)
-mvn clean verify -f controller-to-api-implementation/pom.xml
+            code: `# 1. Run unit & integration tests and verify the build
+mvn clean verify
 
-# 2. (Optional) Run Apache JMeter smoke load test (1,003 reqs, 0.0% err) against the running dev server
-mvn -Pjmeter jmeter:configure jmeter:jmeter jmeter:results -f controller-to-api-implementation/pom.xml
-
-# 3. (Framework contributors) Run framework unit tests (586/586) & local install
-mvn clean install -f controller-to-api-framework/pom.xml
-
-# 4. Generate CycloneDX 1.6 SBOM (target/bom.json)
-mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom \\
-  "-Dcyclonedx.skipNotDeployed=false" "-Dmaven.deploy.skip=false" -f controller-to-api-framework/pom.xml`,
+# 2. (Optional) Run Apache JMeter load test against the running dev server
+mvn -Pjmeter jmeter:configure jmeter:jmeter jmeter:results`,
           },
         ]}
       />

@@ -9,7 +9,7 @@
 
 ## 1. 架构设计与核心机制
 
-`controller-to-api-framework` 包含 `593` 个主源码 Java 文件（测试文件 `257` 个、`586` 项单元测试）、`60` 个声明式注解（含 `18` 个数据库驱动动态 RBAC 注解）、`9` 个可组合能力接口（`AutoReadApi`..`AutoAiApi`）、`16` 个 `@AutoConfigurationBean` / `@ConfigurationProperties` 类（对应 `META-INF/spring-configuration-metadata.json` 中 `18` 个配置组与 `20` 个 `*Properties` 类）、`21` 个多语言资源包（`classpath:i18n/messages*.properties`）以及通过 `NwvmcRuntimeHintsRegistrar`（`META-INF/spring/aot.factories`）注册的 GraalVM Native Image AOT 提示。
+`controller-to-api-framework` 提供 `60` 个 Pure Java 声明式注解（含数据库驱动动态 RBAC）、`9` 个可组合能力接口（`AutoReadApi`..`AutoAiApi`）、强类型 `@ConfigurationProperties` 配置元数据（`META-INF/spring-configuration-metadata.json`）、多语言资源包（`classpath:i18n/messages*.properties`）以及 GraalVM Native Image `RuntimeHints`（`META-INF/spring/aot.factories`）。
 
 - **双目录极简业务模型（`entity/` 与 `controller/`）**: 应用层仅需继承 `BaseAuditEntity`（内置 `@Version` 乐观锁冲突返回 `409 Conflict` 及 `JpaAssociationReferenceUtil` 外键引用解析）声明 JPA 实体，以及继承 `AutoApiController<E>` 或只读/按需组合接口（如 `AutoReadApi<E>`）声明控制器接口（支持 `@AutoRestController(readDto, createDto, updateDto)` 及标准 Spring MVC 的 `@RequestBody`/`@RequestParam`/`@PathVariable`）。整个框架仅在 AOT（`autoconfigure/`、`common/constant/AotConstant`、`common/util/AotRuntimeHintsUtil`）与配置元数据（`config/properties/`）中保留 `10` 行静态 Spring 导入。
 - **`MethodHandle` 热路径调用**: `MethodHandleCacheUtil` 与 `LambdaAccessorUtil` 消除动态代理热路径的反射 `Method.invoke` 开销。
@@ -182,7 +182,7 @@ app:
 | `measureDynamicProxyServiceOverrideDispatch` | `68.267 ops/ms` |
 | `measureDynamicProxyDefaultDispatch` | `52.730 ops/ms` |
 
-生成 CycloneDX `1.6` SBOM 报告（`target/bom.json`，含 `128` 个组件）：
+生成 CycloneDX `1.6` SBOM 报告（`target/bom.json`）：
 
 ```bash
 mvn -Ppublish org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom "-Dcyclonedx.skipNotDeployed=false" "-Dmaven.deploy.skip=false" -f controller-to-api-framework/pom.xml

@@ -11,7 +11,7 @@
 | फ़ाइल / डायरेक्टरी | भूमिका |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | आर्किटेक्चर परिचय: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` व JitPack `v0.1.0`, 2-डायरेक्टरी अनुबंध (`entity/` + `controller/`), 9 संयोज्य इंटरफ़ेस, 6 एनोटेशन पैकेज, 6 अंतर्निहित सबसिस्टम |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | सख्त एंटी-हैलुसिनेशन नियम (`19.0 KB`, `24 KB` बजट के भीतर) जो हर सत्यापित रनटाइम सावधानी दर्ज करते हैं |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | सख्त एंटी-हैलुसिनेशन नियम जो हर सत्यापित रनटाइम सावधानी दर्ज करते हैं |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | प्रगतिशील `spring-nwvmc-adoption` कौशल: 7 चरणबद्ध वर्कफ़्लो और 15 मूल-कारण समस्या निवारण तालिका |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | हैंडओवर से पहले 7-चरणीय सत्यापन द्वार (Pre-Flight -> डिज़ाइन -> रनटाइम सावधानियाँ -> प्रोडक्शन लॉकडाउन -> प्रदर्शन -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | मशीन-सत्यापित 6 (+ `templates/`) गहन संदर्भ (60 एनोटेशन / 133 एट्रिब्यूट, 40 एंडपॉइंट + 13 डॉट ऑपरेटर, YAML + मल्टी-डेटासोर्स, `@MultiTenant` + 4-एंटिटी DB-RBAC + `JwtTokenService` कुकबुक, और सटीक नॉन-एनोटेशन क्लास/SPI इम्पोर्ट्स) |

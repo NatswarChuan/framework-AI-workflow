@@ -11,7 +11,7 @@
 | 파일 / 디렉터리 | 역할 |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | 아키텍처 안내: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, 2-디렉터리 계약(`entity/` + `controller/`), 9개 조합 인터페이스, 6개 애노테이션 패키지, 6개 내장 서브시스템 |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 엄격한 환각 방지 가드레일(`19.0 KB`, `24 KB` 예산 이내) 및 검증된 런타임 함정 총정리 |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | 엄격한 환각 방지 가드레일 및 검증된 런타임 함정 총정리 |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | 점진적 공개형 `spring-nwvmc-adoption` 스킬(7단계 도입 워크플로 + 15항목 원인별 트러블슈팅 매트릭스) |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7단계 배포 전 최종 점검 게이트(사전 점검 -> 설계 -> 런타임 주의점 -> 프로덕션 잠금 -> 성능 -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 기계 검증된 6 (+ `templates/`)개 심층 레퍼런스(60 애노테이션 / 133 속성, 40 API + 13 점 문법 연산자, YAML + 멀티 DB, `@MultiTenant` + 4-엔티티 DB-RBAC + `JwtTokenService` 쿡북, 비애노테이션 클래스/상수/SPI import 표) |

@@ -11,7 +11,7 @@
 | ファイル / ディレクトリ | 役割 |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | アーキテクチャ概要：Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`、2 ディレクトリ契約（`entity/` + `controller/`）、9 合成インターフェース、6 アノテーションパッケージ、6 組み込みサブシステム |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ハルシネーション防止ガードレール（`19.0 KB`、`24 KB` 上限内）と実証済みランタイム落とし穴 |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ハルシネーション防止ガードレールと実証済みランタイム落とし穴 |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | 段階的開示型 `spring-nwvmc-adoption` スキル（7 導入ワークフロー + 15 項目トラブルシューティング表） |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7 段階引き渡し前チェックリスト（事前確認 -> 設計 -> ランタイム注意点 -> 本番ロックダウン -> 性能 -> `mvn clean verify`） |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 機械検証済み 6 (+ `templates/`) 詳細リファレンス（60 アノテーション / 133 属性、40 API + 13 ドット演算子、YAML + マルチ DB、`@MultiTenant` + 4 エンティティ DB-RBAC + `JwtTokenService` 実装レシピ、非アノテーション import / SPI 契約一覧） |

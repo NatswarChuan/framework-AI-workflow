@@ -11,7 +11,7 @@
 | الملف / المجلد | الدور |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | نظرة معمارية: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` وJitPack `v0.1.0`، عقد المجلدين (`entity/` + `controller/`)، 9 واجهات قابلة للتركيب، 6 حزم تعليقات، 6 نظامًا فرعيًا مدمجًا |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ضوابط صارمة ضد الهلوسة (`19.0 KB`، دون سقف `24 KB`) توثق كل فخ تشغيلي مُثبت عمليًا |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | ضوابط صارمة ضد الهلوسة توثق كل فخ تشغيلي مُثبت عمليًا |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | مهارة `spring-nwvmc-adoption` التدريجية مع 7 مسارات عمل خطوة بخطوة ومصفوفة تشخيص لـ 15 أسباب جذرية |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | بوابة تحقق من 7 مراحل قبل التسليم (ما قبل البدء ← التصميم ← فخاخ التشغيل ← إغلاق الإنتاج ← الأداء ← `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) مراجع معمقة محققة آليًا (60 تعليقًا / 133 خاصية، 40 نقطة نهاية + 13 عاملًا بالنقطة، YAML + تعدد قواعد البيانات، وصفات عملية تشمل `@MultiTenant` + DB-RBAC من 4 كيانات + `JwtTokenService`، وجدول استيرادات الفئات وSPI الدقيقة) |

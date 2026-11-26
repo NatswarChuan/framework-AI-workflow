@@ -33,28 +33,6 @@ export const STORY_UI = {
     "fa": "راهنمای پیوسته بازارچه B2C2B2C",
     "pl": "Ciągły przewodnik po B2C2B2C Marketplace"
   },
-  "verifiedPill": {
-      "en": "Verified on Spring-NWVMC 0.1.0 (586 framework tests + NovaMart 23/23 & JMeter 0.0% err)",
-      "zh": "已在 Spring-NWVMC 0.1.0 实测通过（586 项框架测试 + NovaMart 23/23 与 JMeter 0.0% 错误）",
-      "hi": "Spring-NWVMC 0.1.0 पर सत्यापित (586 फ्रेमवर्क टेस्ट + NovaMart 23/23 व JMeter 0.0% त्रुटि)",
-      "es": "Verificado en Spring-NWVMC 0.1.0 (586 pruebas framework + NovaMart 23/23 y JMeter 0.0% error)",
-      "fr": "Vérifié sur Spring-NWVMC 0.1.0 (586 tests framework + NovaMart 23/23 et JMeter 0,0 % erreur)",
-      "ar": "تم التحقق على Spring-NWVMC 0.1.0 (586 اختباراً للإطار + NovaMart 23/23 وJMeter بنسبة خطأ 0.0%)",
-      "bn": "Spring-NWVMC 0.1.0-এ যাচাইকৃত (586 ফ্রেমওয়ার্ক টেস্ট + NovaMart 23/23 ও JMeter 0.0% ত্রুটি)",
-      "pt": "Verificado no Spring-NWVMC 0.1.0 (586 testes framework + NovaMart 23/23 e JMeter 0,0% erro)",
-      "ru": "Проверено на Spring-NWVMC 0.1.0 (586 тестов фреймворка + NovaMart 23/23 и JMeter 0,0% ошибок)",
-      "ur": "Spring-NWVMC 0.1.0 پر تصدیق شدہ (586 فریم ورک ٹیسٹ + NovaMart 23/23 اور JMeter 0.0% خرابی)",
-      "id": "Terverifikasi di Spring-NWVMC 0.1.0 (586 tes framework + NovaMart 23/23 & JMeter 0,0% error)",
-      "de": "Auf Spring-NWVMC 0.1.0 verifiziert (586 Framework-Tests + NovaMart 23/23 & JMeter 0,0 % Fehler)",
-      "ja": "Spring-NWVMC 0.1.0 で検証済み（フレームワーク 586 テスト + NovaMart 23/23・JMeter 0.0%）",
-      "vi": "Đã kiểm chứng trên Spring-NWVMC 0.1.0 (586 test framework + NovaMart 23/23 & JMeter 0.0% lỗi)",
-      "ko": "Spring-NWVMC 0.1.0 검증 완료 (프레임워크 586 테스트 + NovaMart 23/23 및 JMeter 오류 0.0%)",
-      "tr": "Spring-NWVMC 0.1.0 üzerinde doğrulandı (586 framework testi + NovaMart 23/23 ve JMeter %0,0 hata)",
-      "it": "Verificato su Spring-NWVMC 0.1.0 (586 test framework + NovaMart 23/23 e JMeter 0,0% errori)",
-      "th": "ตรวจสอบแล้วบน Spring-NWVMC 0.1.0 (586 เทสต์เฟรมเวิร์ก + NovaMart 23/23 และ JMeter 0.0%)",
-      "fa": "تأییدشده در Spring-NWVMC 0.1.0 (۵۸۶ آزمون فریم‌ورک + NovaMart ۲۳/۲۳ و JMeter خطای ۰٫۰٪)",
-      "pl": "Zweryfikowano w Spring-NWVMC 0.1.0 (586 testów frameworka + NovaMart 23/23 i JMeter 0,0% błędów)"
-  },
   "stepLabel": {
     "en": "Step",
     "zh": "步骤",

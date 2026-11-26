@@ -11,7 +11,7 @@ Das **Spring-NWVMC AI-Agent Adoption Kit** ([`ai-agent-kit/`](../../../ai-agent-
 | Datei / Verzeichnis | Aufgabe |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Architektur-Orientierung: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, Zwei-Verzeichnis-Vertrag (`entity/` + `controller/`), 9 kombinierbare Interfaces, 6 Annotations-Packages, 6 integrierte Subsysteme |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strenge Anti-Halluzinations-Leitplanken (`19.0 KB`, strikt unter dem `24 KB`-Limit) für jede verifizierte Laufzeitfalle |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Strenge Anti-Halluzinations-Leitplanken für jede verifizierte Laufzeitfalle |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Progressive-Disclosure-Skill `spring-nwvmc-adoption` mit 7 Schritt-für-Schritt-Workflows + 15-zeiliger Fehlerdiagnose-Matrix |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7-stufige Übergabe-Checkliste (Pre-Flight -> Design -> Laufzeitfallen -> Produktions-Lockdown -> Performance -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) maschinell geprüfte Tiefenreferenzen (60 Annotationen / 133 Attribute, 40 Endpunkte + 13 Punkt-Operatoren, YAML + Multi-Datasource, Cookbook inkl. `@MultiTenant` + 4-Entitäten-DB-RBAC + `JwtTokenService`, sowie exakte Nicht-Annotations-Imports & SPIs) |

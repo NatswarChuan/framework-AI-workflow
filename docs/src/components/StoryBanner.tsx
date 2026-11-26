@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, CheckCircle2, FileCode2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, FileCode2 } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { ALL_NAV_ITEMS } from '../data/navigation';
 import { STORY_STEPS, STORY_UI } from '../data/storySteps';
@@ -31,10 +31,6 @@ export const StoryBanner: React.FC<StoryBannerProps> = ({ topicId, currentLang }
         </span>
         <span className="story-banner-title">
           {pickText(STORY_UI.bannerTitle, currentLang)}
-        </span>
-        <span className="story-verified-pill">
-          <CheckCircle2 size={13} aria-hidden="true" />
-          <span>{pickText(STORY_UI.verifiedPill, currentLang)}</span>
         </span>
       </div>
 

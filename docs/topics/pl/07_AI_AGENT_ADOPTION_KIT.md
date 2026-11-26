@@ -11,7 +11,7 @@
 | Plik / Katalog | Rola |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Przegląd architektury: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` i JitPack `v0.1.0`, kontrakt 2 katalogów (`entity/` + `controller/`), 9 składalnych interfejsów, 6 pakietów adnotacji i 6 wbudowanych podsystemów |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Ścisłe reguły anty-halucynacyjne (`19.0 KB`, poniżej budżetu `24 KB`) opisujące każdą sprawdzoną pułapkę runtime |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Ścisłe reguły anty-halucynacyjne opisujące każdą sprawdzoną pułapkę runtime |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Progresywna umiejętność `spring-nwvmc-adoption` z 7 procedurami krok po kroku i 15-wierszową macierzą diagnostyki błędów |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | 7-etapowa bramka weryfikacyjna przed oddaniem (Pre-Flight -> Projekt -> Pułapki Runtime -> Blokada Produkcji -> Wydajność -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) zweryfikowanych maszynowo dokumentów referencyjnych (60 adnotacji / 133 atrybuty, 40 endpointów + 13 operatorów kropkowych, YAML + Multi-Datasource, przepisy z `@MultiTenant` + 4-encyjnym DB-RBAC + `JwtTokenService`, oraz dokładne importy klas i SPI) |

@@ -11,7 +11,7 @@
 | ফাইল / ডিরেক্টরি | ভূমিকা |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | আর্কিটেকচার পরিচিতি: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` ও JitPack `v0.1.0`, ২-ডিরেক্টরি চুক্তি (`entity/` + `controller/`), ৯টি কম্পোজেবল ইন্টারফেস, ৬টি অ্যানোটেশন প্যাকেজ, ৬টি বিল্ট-ইন সাবসিস্টেম |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | কঠোর হ্যালুসিনেশন-বিরোধী নিয়ম (`19.0 KB`, `24 KB` সীমার নিচে) যা প্রতিটি প্রমাণিত রানটাইম সতর্কতা নথিভুক্ত করে |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | কঠোর হ্যালুসিনেশন-বিরোধী নিয়ম যা প্রতিটি প্রমাণিত রানটাইম সতর্কতা নথিভুক্ত করে |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | ধাপে ধাপে `spring-nwvmc-adoption` স্কিল: ৭টি অ্যাডপশন ওয়ার্কফ্লো এবং ১৫টি মূল-কারণ ট্রাবলশুটিং ম্যাট্রিক্স |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | হ্যান্ডওভারের আগে ৭-ধাপের যাচাই গেট (Pre-Flight -> ডিজাইন -> রানটাইম সতর্কতা -> প্রোডাকশন লকডাউন -> পারফরম্যান্স -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | মেশিন-যাচাইকৃত ৬ (+ `templates/`)টি গভীর রেফারেন্স (৬০ অ্যানোটেশন / ১৩৩ অ্যাট্রিবিউট, ৪০ এন্ডপয়েন্ট + ১৩ ডট অপারেটর, YAML + মাল্টি-ডেটাসোর্স, `@MultiTenant` + ৪-এনটিটি DB-RBAC + `JwtTokenService` কুকবুক, এবং সঠিক নন-অ্যানোটেশন ক্লাস/SPI ইমপোর্ট) |

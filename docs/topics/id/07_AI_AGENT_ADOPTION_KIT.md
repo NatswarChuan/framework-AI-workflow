@@ -11,7 +11,7 @@
 | Berkas / Direktori | Peran |
 | :--- | :--- |
 | [`ai-agent-kit/INTRO.md`](../../../ai-agent-kit/INTRO.md) | Orientasi arsitektur: Maven Central `io.github.natswarchuan:spring-nwvmc:0.1.0` & JitPack `v0.1.0`, kontrak 2 direktori (`entity/` + `controller/`), 9 antarmuka komposabel, 6 paket anotasi, 6 subsistem bawaan |
-| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Pagar ketat anti-halusinasi (`19.0 KB`, di bawah batas `24 KB`) yang merangkum setiap jebakan runtime terverifikasi |
+| [`ai-agent-kit/RULES.md`](../../../ai-agent-kit/RULES.md) | Pagar ketat anti-halusinasi yang merangkum setiap jebakan runtime terverifikasi |
 | [`ai-agent-kit/SKILL.md`](../../../ai-agent-kit/SKILL.md) | Skill progresif `spring-nwvmc-adoption` berisi 7 alur kerja langkah demi langkah + matriks pemecahan masalah 15 akar penyebab |
 | [`ai-agent-kit/CHECKLIST.md`](../../../ai-agent-kit/CHECKLIST.md) | Gerbang pemeriksaan 7 tahap sebelum serah terima (Pre-Flight -> Desain -> Jebakan Runtime -> Penguncian Produksi -> Performa -> `mvn clean verify`) |
 | [`ai-agent-kit/references/01..06`](../../../ai-agent-kit/references/) | 6 (+ `templates/`) referensi mendalam terverifikasi mesin (60 anotasi / 133 atribut, 40 endpoint + 13 operator bertitik, YAML + Multi-Datasource, resep terverifikasi termasuk `@MultiTenant` + DB-RBAC 4 entitas + `JwtTokenService`, dan tabel impor kelas non-anotasi / SPI) |

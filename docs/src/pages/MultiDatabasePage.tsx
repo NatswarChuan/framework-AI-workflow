@@ -77,7 +77,7 @@ public class RoutingDataSourceConfig {
     registryHelper.registerCluster(DataSourceConstant.DATASOURCE_PRIMARY, primaryDataSource, "POSTGRESQL", false);
     registryHelper.registerCluster(DataSourceConstant.DATASOURCE_REPLICA, replicaDataSource, "POSTGRESQL", true);
     final DynamicRoutingDataSource routing = new DynamicRoutingDataSource();
-    routing.setTargetDataSources(Map.of(
+    routing.setTargetDataSources(Map.<Object, Object>of(
         DataSourceConstant.DATASOURCE_PRIMARY, primaryDataSource,
         DataSourceConstant.DATASOURCE_REPLICA, replicaDataSource));
     routing.setDefaultTargetDataSource(primaryDataSource);
@@ -127,7 +127,7 @@ public interface ProductCatalogController extends AutoApiController<ProductCatal
             label: 'MarketplaceAnalyticsServiceImpl.java',
             language: 'java',
             fileName: 'src/main/java/com/example/implementation/service/impl/MarketplaceAnalyticsServiceImpl.java',
-            highlightLines: [16, 17, 18, 25, 26, 27, 28, 36],
+            highlightLines: [15, 16, 17, 25, 26, 27],
             code: `package com.example.implementation.service.impl;
 
 import com.example.implementation.dto.MarketplaceAnalyticsSummaryDto;
@@ -136,9 +136,7 @@ import com.example.implementation.service.MarketplaceAnalyticsService;
 import io.github.natswarchuan.core.annotation.AutoCacheEvict;
 import io.github.natswarchuan.core.annotation.AutoCacheable;
 import io.github.natswarchuan.module.datasource.annotation.TargetDataSource;
-import io.github.natswarchuan.module.datasource.annotation.TargetDatabasePlatform;
 import io.github.natswarchuan.module.datasource.constant.DataSourceConstant;
-import io.github.natswarchuan.module.datasource.constant.DatabasePlatformConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -147,6 +145,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Lazy // Ensures framework AOP aspects register before proxy creation
 @Service
 @TargetDataSource(DataSourceConstant.DATASOURCE_REPLICA)
+// Bind @TargetDataSource on an outer controller/facade so routing runs BEFORE @Transactional borrows a connection
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MarketplaceAnalyticsServiceImpl implements MarketplaceAnalyticsService {
@@ -155,7 +154,6 @@ public class MarketplaceAnalyticsServiceImpl implements MarketplaceAnalyticsServ
 
   @Override
   @TargetDataSource(DataSourceConstant.DATASOURCE_REPLICA)
-  @TargetDatabasePlatform(platform = DatabasePlatformConstant.PLATFORM_H2, cluster = DatabasePlatformConstant.CLUSTER_REPLICA, readOnly = true)
   @AutoCacheable(value = "marketplaceCatalogAnalytics", key = "'CAT_' + #category")
   public MarketplaceAnalyticsSummaryDto summarizeCatalogByCategory(final String category) {
     return analyticsHelper.computeCategorySummary(category);

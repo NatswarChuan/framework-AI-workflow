@@ -200,6 +200,29 @@ public final class EnterpriseSecurityIdentityCustomizer implements SecurityIdent
 }`,
           },
           {
+            id: 'security-yaml',
+            label: pickText(STAGE5_CONTENT.srTabYaml, currentLang),
+            language: 'yaml',
+            fileName: 'src/main/resources/application-prod.yml (Security & @HumanPolicy)',
+            highlightLines: [4, 5, 6, 7, 10, 11, 15, 16],
+            code: `app:
+  framework:
+    security:
+      default-deny-unannotated-entities: true
+      require-authenticated-api-paths: true
+      fail-fast-weak-jwt-secret: true
+      jwt-secret: \${JWT_SECRET} # >= 32 UTF-8 bytes (HS256) or >= 64 bytes (HS512)
+      jwt-expiration-ms: 3600000
+    studio:
+      enabled: false
+      demo-token-endpoint-enabled: false
+
+# Optional @HumanPolicy declarative override (paired with JwtTokenService.generateToken(username, userId, roles))
+spring-nwvmc:
+  human-policies:
+    enabled: true`,
+          },
+          {
             id: 'security-curl',
             label: 'Try Live (curl)',
             language: 'bash',

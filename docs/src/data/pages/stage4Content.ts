@@ -728,9 +728,9 @@ export const STAGE4_CONTENT: Record<string, FullLocalizedText> = {
     "pl": "2. Konfiguracja YAML wielu baz i @TargetDataSource"
   },
   "mdbDistributedNote": {
-    "en": "Routing happens at Spring transaction boundaries (`AbstractRoutingDataSource`). Spring-NWVMC does NOT run distributed XA 2-Phase Commit across databases, and cross-database SQL JOINs are unsupported: synchronize separate clusters via `@PublishCloudEvent` / Transactional Outbox instead.",
-    "zh": "数据源切换发生在 Spring 事务边界（`AbstractRoutingDataSource`），本框架不启用分布式 XA 两阶段提交，也不支持跨物理库 SQL JOIN；跨库一致性请通过 `@PublishCloudEvent` 或事务发件箱（Outbox）事件同步。",
-    "hi": "डेटासोर्स रूटिंग Spring ट्रांज़ैक्शन सीमा पर होती है (`AbstractRoutingDataSource`); क्रॉस-DB XA 2PC और क्रॉस-DB JOIN समर्थित नहीं हैं। इसके बजाय Outbox या `@PublishCloudEvent` चुनें।",
+    "en": "Routing happens at Spring transaction boundaries (`DynamicRoutingDataSource`). Spring-NWVMC does NOT run distributed XA 2-Phase Commit across databases, and cross-database SQL JOINs are unsupported: synchronize separate clusters via `@PublishCloudEvent` / Transactional Outbox instead.",
+    "zh": "数据源切换发生在 Spring 事务边界（`DynamicRoutingDataSource`），本框架不启用分布式 XA 两阶段提交，也不支持跨物理库 SQL JOIN；跨库一致性请通过 `@PublishCloudEvent` 或事务发件箱（Outbox）事件同步。",
+    "hi": "डेटासोर्स रूटिंग Spring ट्रांज़ैक्शन सीमा पर होती है (`DynamicRoutingDataSource`); क्रॉस-DB XA 2PC और क्रॉस-DB JOIN समर्थित नहीं हैं। इसके बजाय Outbox या `@PublishCloudEvent` चुनें।",
     "es": "El cambio ocurre al inicio de la transacción Spring; Spring-NWVMC no ejecuta XA 2PC ni JOINs entre bases físicas: sincroniza dominios mediante Outbox o `@PublishCloudEvent`.",
     "fr": "Le routage s’effectue à la frontière transactionnelle ; aucun XA 2PC ni JOIN inter-bases n’est exécuté. Utilisez `@PublishCloudEvent` ou Outbox pour la cohérence inter-domaines.",
     "ar": "يتم التوجيه عند حدود المعاملة فقط بدون XA 2PC أو JOIN بين قواعد منفصلة؛ استخدم `@PublishCloudEvent` أو Outbox للتكامل.",

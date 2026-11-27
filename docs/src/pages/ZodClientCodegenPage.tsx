@@ -3,7 +3,7 @@ import { SupportedLanguage } from '../types/docs';
 import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { RichDocText } from '../components/RichDocText';
 import { STAGE4_CONTENT } from '../data/pages/stage4Content';
 import { STAGE8_CONTENT } from '../data/pages/stage8Content';
@@ -195,6 +195,9 @@ curl -s "http://localhost:8080/api/v1/product-catalogs/schema/client"     -H "Au
         ]}
       />
 
+      <h2 id="zod-codegen-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="tip" currentLang={currentLang}>
         <RichDocText text={STAGE8_CONTENT.zcCalloutTip} currentLang={currentLang} />
       </Callout>

@@ -697,7 +697,7 @@ export const STAGE6_CONTENT: Record<string, FullLocalizedText> = {
     "id": "3. Contoh Implementasi Rate Limit, Circuit Breaker & ETag",
     "de": "3. Beispiel für Hochlast mit Rate Limit & ETag",
     "ja": "3. 高負荷対応 Rate Limit・Circuit Breaker・ETag 実装例",
-    "vi": "3. Mã Mẫu Chịu Tải Cao Với `@RateLimit`, Circuit Breaker & `@HttpCacheable`",
+    "vi": "3. Mã Mẫu Chịu Tải Cao Với @RateLimit, Circuit Breaker & @HttpCacheable",
     "ko": "3. 고부하 처리율 제한·서킷 브레이커·ETag 구현 예",
     "tr": "3. Yüksek Yük Altında Hız Sınırı ve Devre Kesici Örneği",
     "it": "3. Esempio ad Alto Carico con Rate Limit e ETag",

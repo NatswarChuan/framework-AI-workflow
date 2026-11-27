@@ -72,7 +72,7 @@ export const ENDPOINTS_DATA: EndpointSpec[] = [
       pl: 'Paginacja kursorowa UUIDv7 w czasie O(1) bez degradacji skanowania SQL OFFSET na dużych tabelach.',
     },
     sampleRequest: `GET /api/v1/product-catalogs/keyset?afterId=0194e1a0-0000-7000-8000-000000000001&size=20`,
-    sampleResponse: `{ "code": "SUCCESS", "data": { "content": [], "pageNumber": 0, "pageSize": 20, "totalElements": 0, "totalPages": 0, "hasNext": false, "nextCursorId": null } }`,
+    sampleResponse: `{ "code": "SUCCESS", "data": { "content": [], "pageNumber": 0, "pageSize": 20, "totalElements": 0, "totalPages": 1, "hasNext": false, "nextCursorId": null } }`,
   },
   {
     id: 'getAll',
@@ -591,7 +591,7 @@ export const ProductCatalogClient = {
     },
     sampleRequest: `POST /api/v1/product-catalogs
 { "skuCode": "SKU-DOC-MAC-M3", "productName": "MacBook Pro M3 16 Docs", "category": "ELECTRONICS", "vendorStoreCode": "VND-HANOI-01", "retailPrice": 2499.00, "b2bWholesalePrice": 2150.00, "active": true }`,
-    sampleResponse: `{ "code": "SUCCESS", "data": { "id": "0194e1a0-...", "code": "PRD-8831", "slug": "enterprise-switch" } }`,
+    sampleResponse: `{ "code": "SUCCESS", "data": { "id": "0194e1a0-...", "skuCode": "SKU-DOC-MAC-M3", "slug": "macbook-pro-m3-16-docs" } }`,
   },
   {
     id: 'createBatch',
@@ -876,7 +876,7 @@ export const ProductCatalogClient = {
       pl: 'Miękko usuwa rekord po weryfikacji deleteRoles z @EntitySecurity oraz deletableStates z @StateMachine.',
     },
     sampleRequest: `DELETE /api/v1/product-catalogs/{id}`,
-    sampleResponse: `{ "code": "SUCCESS", "message": "Deleted successfully" }`,
+    sampleResponse: `{ "code": "SUCCESS", "message": "Operation completed successfully" }`,
   },
   {
     id: 'restoreById',
@@ -938,7 +938,7 @@ export const ProductCatalogClient = {
       pl: 'Wykonuje zwalidowane przejście @StateMachine do targetState i emituje zdarzenia audytu oraz webhooka.',
     },
     sampleRequest: `POST /api/v1/e-commerce-orders/{id}/transition?targetState=PENDING_PAYMENT`,
-    sampleResponse: `{ "code": "SUCCESS", "data": { "status": "PAID" } }`,
+    sampleResponse: `{ "code": "SUCCESS", "data": { "status": "PENDING_PAYMENT" } }`,
   },
   {
     id: 'cloneEntity',
@@ -1065,7 +1065,7 @@ data: {"entity":"ProductCatalog","id":"0194e1a0-..."}`,
     },
     sampleRequest: `POST /api/v1/product-catalogs/ai/query
 { "prompt": "products priced below 500" }`,
-    sampleResponse: `{ "code": "SUCCESS", "data": { "interpretedQuery": "Natural language query translated for ProductCatalog with filter count: 2", "appliedFilters": [{ "fieldPath": "category", "operator": "eq", "rawValue": "ELECTRONICS" }, { "fieldPath": "retailPrice", "operator": "lt", "rawValue": "3000" }], "pageData": { "content": [], "pageNumber": 0, "pageSize": 5, "totalElements": 1 } } }`,
+    sampleResponse: `{ "code": "SUCCESS", "data": { "interpretedQuery": "Natural language query translated for ProductCatalog with filter count: 2", "appliedFilters": [{ "fieldPath": "category", "operator": "eq", "rawValue": "ELECTRONICS" }, { "fieldPath": "retailPrice", "operator": "lt", "rawValue": "500" }], "pageData": { "content": [], "pageNumber": 0, "pageSize": 5, "totalElements": 1 } } }`,
   },
   {
     id: 'getPolicySummary',

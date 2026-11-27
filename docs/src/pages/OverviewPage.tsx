@@ -109,15 +109,15 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
         </div>
         <div className="core-insight-grid">
           <div className="core-insight-card">
-            <h3>{pickText(STAGE1_CONTENT.ovBento1Title, currentLang)}</h3>
+            <div className="core-insight-title">{pickText(STAGE1_CONTENT.ovBento1Title, currentLang)}</div>
             <p><RichDocText text={STAGE1_CONTENT.ovBento1Body} currentLang={currentLang} /></p>
           </div>
           <div className="core-insight-card">
-            <h3>{pickText(STAGE1_CONTENT.ovBento2Title, currentLang)}</h3>
+            <div className="core-insight-title">{pickText(STAGE1_CONTENT.ovBento2Title, currentLang)}</div>
             <p><RichDocText text={STAGE1_CONTENT.ovBento2Body} currentLang={currentLang} /></p>
           </div>
           <div className="core-insight-card">
-            <h3>{pickText(STAGE1_CONTENT.ovBento3Title, currentLang)}</h3>
+            <div className="core-insight-title">{pickText(STAGE1_CONTENT.ovBento3Title, currentLang)}</div>
             <p><RichDocText text={STAGE1_CONTENT.ovBento3Body} currentLang={currentLang} /></p>
           </div>
         </div>
@@ -209,12 +209,12 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({
             </tr>
             <tr>
               <td>{pickText(STAGE1_CONTENT.ovCompatRowCore, currentLang)}</td>
-              <td><code>web · data-jpa · validation · security · actuator</code></td>
+              <td><code>web · websocket · data-jpa · validation · security · cache · actuator</code></td>
               <td><RichDocText text={STAGE1_CONTENT.ovCompatRowCoreDesc} currentLang={currentLang} /></td>
             </tr>
             <tr>
               <td>{pickText(STAGE1_CONTENT.ovCompatRowOpt, currentLang)}</td>
-              <td><code>redis (optional=true) · spring-ai · s3/gcs</code></td>
+              <td><code>redis (optional=true) · built-in HttpClient S3 · pure-Java AI parser</code></td>
               <td><RichDocText text={STAGE1_CONTENT.ovCompatRowOptDesc} currentLang={currentLang} /></td>
             </tr>
           </tbody>

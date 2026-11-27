@@ -111,7 +111,7 @@ import io.github.natswarchuan.core.controller.AutoApiController;
 
 @AutoRestController
 @Idempotent(
-    headerName = HttpHeaderConstant.HEADER_IDEMPOTENCY_KEY,
+    headerName = HttpHeaderConstant.HEADER_X_IDEMPOTENCY_KEY,
     ttlSeconds = AopConstant.SECONDS_PER_DAY)
 public interface PaymentTransactionController extends AutoApiController<PaymentTransaction> {
   // Auto-mounted at /api/v1/payment-transactions; duplicate X-Idempotency-Key returns 409 Conflict!

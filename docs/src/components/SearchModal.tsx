@@ -268,8 +268,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           {query && (
             <button
               type="button"
-              className="nav-icon-btn"
-              style={{ height: '28px', paddingInline: '0.4rem' }}
+              className="nav-icon-btn search-clear-btn"
               onClick={() => {
                 setQuery('');
                 inputRef.current?.focus();

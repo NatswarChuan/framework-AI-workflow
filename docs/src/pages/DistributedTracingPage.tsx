@@ -4,7 +4,7 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { RichDocText } from '../components/RichDocText';
 import { STAGE7_CONTENT } from '../data/pages/stage7Content';
 
@@ -105,6 +105,9 @@ export const DistributedTracingPage: React.FC<PageProps> = ({ currentLang, theme
 # }`}
       />
 
+      <h2 id="tracing-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="note" currentLang={currentLang}>
         <RichDocText text={STAGE7_CONTENT.trCalloutNote} currentLang={currentLang} />
       </Callout>

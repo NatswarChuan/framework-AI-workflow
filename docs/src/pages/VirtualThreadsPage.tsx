@@ -72,7 +72,7 @@ app:
             label: 'ProductCatalogReadOnlyController.java (Resilience + ETag)',
             language: 'java',
             fileName: 'src/main/java/com/example/implementation/controller/ProductCatalogReadOnlyController.java',
-            highlightLines: [18, 19, 20, 21, 22, 23, 24, 25, 29, 30, 31],
+            highlightLines: [19, 20, 21, 22, 25, 26, 27, 28],
             code: `package com.example.implementation.controller;
 
 import com.example.implementation.dto.ProductReadDto;
@@ -81,6 +81,7 @@ import com.example.implementation.helper.ProductCatalogShowcaseHelper;
 import io.github.natswarchuan.common.response.ApiResponse;
 import io.github.natswarchuan.core.annotation.AutoGet;
 import io.github.natswarchuan.core.annotation.AutoRestController;
+import io.github.natswarchuan.core.annotation.AutoVariable;
 import io.github.natswarchuan.core.annotation.EntityCircuitBreaker;
 import io.github.natswarchuan.core.annotation.EntityRetry;
 import io.github.natswarchuan.core.annotation.RateLimit;
@@ -89,7 +90,6 @@ import io.github.natswarchuan.core.controller.AutoReadApi;
 import io.github.natswarchuan.module.cache.http.annotation.HttpCacheable;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @AutoRestController(basePath = "/api/v1/readonly/product-catalogs", readDto = ProductReadDto.class)
 @RateLimit(requests = 120, windowSeconds = 60, partitionKey = "IP")
@@ -100,7 +100,7 @@ public interface ProductCatalogReadOnlyController extends AutoReadApi<ProductCat
   @AutoGet("/cached/{id}")
   @HttpCacheable(maxAgeSeconds = 60, isPrivate = true, mustRevalidate = true, generateETag = true)
   @ServiceOverride(targetBean = ProductCatalogShowcaseHelper.class, methodName = "getCachedProductById")
-  ResponseEntity<ApiResponse<ProductReadDto>> getCachedProductById(@PathVariable("id") UUID id);
+  ResponseEntity<ApiResponse<ProductReadDto>> getCachedProductById(@AutoVariable("id") UUID id);
 }`,
           },
           {

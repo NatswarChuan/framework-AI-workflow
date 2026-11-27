@@ -147,7 +147,7 @@ export const EndpointsPage: React.FC<EndpointsHubProps> = ({
 
       <div className="feature-grid grid-2col">
         <div className="feature-card">
-          <h3><code>GET /api/v1/system/studio</code></h3>
+          <h3><code>GET /system/studio</code></h3>
           <p><RichDocText text={STAGE3_CONTENT.epSysStudio} currentLang={currentLang} /></p>
         </div>
         <div className="feature-card">

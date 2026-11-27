@@ -53,20 +53,24 @@ Quy chuẩn này bổ sung các ràng buộc đặc thù cho `io.github.natswarc
    - Tuyệt đối **KHÔNG** hiển thị tab, banner (như `TopicFocusBanner`), badge, tiêu đề mục hay nhãn chú thích phân loại đối tượng người đọc trên `docs/` hay các tệp Markdown. Mọi nội dung phải hòa trộn liền mạch theo trình tự *Progressive Disclosure*: *Bản chất bài toán & Cơ chế -> Cấu hình tối thiểu -> Ví dụ thực thi đối chiếu -> Phân tích nội tại (`MethodHandle`, O(1) Cache, Thread-safety) -> Anti-patterns & Production Guardrails*.
 4. **Hỗ Trợ Đầy Đủ 20 Ngôn Ngữ & RTL**:
    - Tài liệu web (`docs/`) và tài liệu cấu hình `/system/studio` phải đồng bộ 20 mã ngôn ngữ (`ar`, `bn`, `de`, `en`, `es`, `fa`, `fr`, `hi`, `id`, `it`, `ja`, `ko`, `pl`, `pt`, `ru`, `th`, `tr`, `ur`, `vi`, `zh`), tự động kích hoạt `dir="rtl"` cho `ar`, `fa`, `ur`.
+5. **Bắt Buộc Gọi 7 Sub-Agent Đánh Giá Độc Lập (Framework Code -> Document)**:
+   - Bổ trợ cho nguyên tắc cấm lộ nhãn ở mục (3) bên trên: mọi đợt cập nhật mã nguồn Framework (`controller-to-api-framework/`), ứng dụng triển khai (`controller-to-api-implementation/`), `ai-agent-kit/` hoặc cổng tài liệu (`docs/`, `README.md`, `docs/GUIDE_*.md`, `docs/topics/`) **BẮT BUỘC** phải chạy **7 Sub-Agent độc lập** (CTO/OSS Maintainer, Principal Technical Architect, Senior Java & Spring Engineer, System Engineer/SRE/AppSec/QA, Giảng viên Back-end/Tech Writer, Kỹ sư mới tốt nghiệp DX, Tân sinh viên CNTT & Kiểm toán 20 ngôn ngữ/UI-UX) để đối chiếu chéo 1:1 từ mã nguồn Framework đến tài liệu và khắc phục toàn bộ lỗi P0/P1 trước khi nghiệm thu/phát hành.
 
 ---
 
-## 5. KHÓA PHIÊN BẢN TẠI `0.0.x` (STRICT `0.0.x` VERSION LOCK)
+## 5. CHÍNH SÁCH PHIÊN BẢN NGHIÊM NGẶT `0.1.xxx` (STRICT `0.1.x` PATCH-ONLY VERSION POLICY)
 
-1. **Cấm Bump Version Lên `1.0.0` Hoặc `0.1.0`**:
-   - Mọi tệp cấu hình, mã nguồn, tài liệu và kiểm thử (`pom.xml`, `DevStudioConstant`, `DevExConstant`, `Navbar.tsx`, `docs/package.json`, `CHANGELOG.md`, `README.md`, `docs/GUIDE_*.md`, `docs/topics/`, Javadoc `@version`, JUnit/Integration test constants) **bắt buộc duy trì chuỗi phiên bản `0.0.x`** (phiên bản phát hành hiện tại: `0.0.3` / tag `v0.0.3`).
+1. **Chỉ Cho Phép Nâng Patch `0.1.xxx` — Cấm Tự Ý Lên `0.2.x`**:
+   - Phiên bản phát hành hiện hành của `io.github.natswarchuan:spring-nwvmc` là **`0.1.0`** (`pom.xml` & tag `v0.1.0`).
+   - Mỗi lần cập nhật Framework, Agent **CHỈ ĐƯỢC PHÉP** tăng số patch trong nhánh **`0.1.xxx`** (`0.1.0` -> `0.1.1` -> `0.1.2` -> ...).
+   - **TUYỆT ĐỐI CẤM** tự ý nâng phiên bản lên **`0.2.x`** hoặc **`1.0.x`** trên mọi tệp cấu hình, mã nguồn, tài liệu và kiểm thử (`pom.xml`, constants, `Navbar.tsx`, `docs/package.json`, `CHANGELOG.md`, `README.md`, `docs/GUIDE_*.md`, `docs/topics/`, Javadoc `@version`) nếu chưa có sự cho phép tường minh từ Người dùng.
 
 ---
 
 ## 6. GIAO DIỆN DOCS THUẦN TEXT & ZERO MIXED-LANGUAGE LEAKS (20 NGÔN NGỮ)
 
 1. **Pure-Text Header & Sidebar (`docs/`)**:
-   - Tuyệt đối không hiển thị pill badge / tag dư thừa cạnh logo trên `Navbar` (chỉ dùng text thuần `Spring-NWVMC 0.0.3`) và tuyệt đối không gắn pill badge bên phải các mục trong `Sidebar`.
+   - Tuyệt đối không hiển thị pill badge / tag dư thừa cạnh logo trên `Navbar` (chỉ dùng text thuần `Spring-NWVMC 0.1.x`) và tuyệt đối không gắn pill badge bên phải các mục trong `Sidebar`.
    - Độ rộng Sidebar phải đảm bảo menu items hiển thị gọn trên cùng dòng không bị bẻ gãy mất thẩm mỹ và không phát sinh thanh cuộn ngang (`overflow-x`).
 2. **Triệt Tiêu 100% Sót Tiếng Anh (Zero Mixed-Language Leaks Across All 20 Locales)**:
    - Tất cả đoạn văn diễn giải, nội dung trong `<Callout>` (cả tiêu đề và body), caption/tab của `CodeBlock`, tiêu đề/nội dung bảng tham số, kết quả tìm kiếm `Cmd+K`, Mục lục (`TOC`) và phân trang phải hiển thị trọn vẹn theo đúng ngôn ngữ đã chọn trên cả 20 locale.

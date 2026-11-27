@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import { SupportedLanguage } from '../types/docs';
 import { GLOSSARY_ENTRIES } from '../data/glossaryData';
-import { pickText } from '../data/locales';
+import { RichDocText } from './RichDocText';
 
 interface GlossaryTermProps {
   termKey: keyof typeof GLOSSARY_ENTRIES;
@@ -11,7 +11,10 @@ interface GlossaryTermProps {
 
 export const GlossaryTerm: React.FC<GlossaryTermProps> = ({ termKey, currentLang }) => {
   const entry = GLOSSARY_ENTRIES[termKey];
-  const [open, setOpen] = useState(false);
+  const popoverId = useId();
+  const [hovered, setHovered] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const open = hovered || pinned;
   const wrapRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -20,12 +23,14 @@ export const GlossaryTerm: React.FC<GlossaryTermProps> = ({ termKey, currentLang
     }
     const handleOutside = (event: MouseEvent) => {
       if (wrapRef.current && !wrapRef.current.contains(event.target as Node)) {
-        setOpen(false);
+        setHovered(false);
+        setPinned(false);
       }
     };
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setOpen(false);
+        setHovered(false);
+        setPinned(false);
       }
     };
     document.addEventListener('mousedown', handleOutside);
@@ -44,21 +49,30 @@ export const GlossaryTerm: React.FC<GlossaryTermProps> = ({ termKey, currentLang
     <span
       ref={wrapRef}
       className="glossary-term-wrap"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <button
         type="button"
         className="glossary-term-btn"
         aria-expanded={open}
-        onClick={() => setOpen((prev) => !prev)}
+        aria-describedby={open ? popoverId : undefined}
+        onClick={() => {
+          setPinned((prev) => {
+            const next = !prev;
+            if (!next) {
+              setHovered(false);
+            }
+            return next;
+          });
+        }}
       >
-        <span>{entry.term}</span>
+        <bdi dir="ltr">{entry.term}</bdi>
         <HelpCircle size={12} aria-hidden="true" />
       </button>
       {open && (
-        <span className="glossary-popover" role="tooltip">
-          {pickText(entry.definition, currentLang)}
+        <span id={popoverId} className="glossary-popover" role="tooltip">
+          <RichDocText text={entry.definition} currentLang={currentLang} />
         </span>
       )}
     </span>

@@ -32,7 +32,7 @@ export const DocFooter: React.FC<DocFooterProps> = ({ currentLang }) => {
           <span>{pickText(UI_CONTROLS.footerLicense, currentLang)}</span>
         </a>
         <a
-          href="https://github.com/NatswarChuan/Spring-NWVMC-document/blob/main/SECURITY.md"
+          href="https://github.com/NatswarChuan/Spring-NWVMC/blob/main/SECURITY.md"
           target="_blank"
           rel="noopener noreferrer"
           className="doc-footer-link"

@@ -4,7 +4,7 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { UI_CONTROLS } from '../data/uiControls';
 import { STAGE3_CONTENT } from '../data/pages/stage3Content';
 import { STAGE6_CONTENT } from '../data/pages/stage6Content';
@@ -176,6 +176,9 @@ curl -i -X POST "http://localhost:8080/api/v1/inventory-stocks/reserve?sku=STK-D
         ]}
       />
 
+      <h2 id="distributed-lock-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="note" currentLang={currentLang}>
         <RichDocText text={STAGE6_CONTENT.dlCalloutNote} currentLang={currentLang} />
       </Callout>

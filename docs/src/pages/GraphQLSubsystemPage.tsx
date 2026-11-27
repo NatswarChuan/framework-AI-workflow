@@ -4,7 +4,7 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { STAGE4_CONTENT } from '../data/pages/stage4Content';
 
 interface PageProps {
@@ -108,6 +108,9 @@ curl -s -X POST "http://localhost:8080/api/v1/graphql" \\
         ]}
       />
 
+      <h2 id="graphql-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="note" currentLang={currentLang}>
         <RichDocText text={STAGE4_CONTENT.gqlCalloutNote} currentLang={currentLang} />
       </Callout>

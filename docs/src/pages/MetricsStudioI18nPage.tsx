@@ -136,7 +136,7 @@ export const MetricsStudioI18nPage: React.FC<PageProps> = ({ currentLang, theme 
     rules:
       - alert: HighEntityErrorRate
         expr: |
-          sum(rate(dynamic_entity_requests_total{status=~"5..|ERROR"}[5m])) by (entity)
+          sum(rate(dynamic_entity_requests_total{status="FAILED"}[5m])) by (entity)
           / clamp_min(sum(rate(dynamic_entity_requests_total[5m])) by (entity), 1) > 0.05
         for: 3m
       - alert: HighEntityP99Latency
@@ -217,7 +217,7 @@ export const MetricsStudioI18nPage: React.FC<PageProps> = ({ currentLang, theme 
             fileName: 'src/main/resources/i18n/messages_vi.properties',
             code: `# Override any framework validation or error message without modifying the starter JAR
 # I18nConfig gives the application classpath resource priority before framework bundles
-error.query.guardrail.join.depth.exceeded=Độ sâu liên kết vượt quá giới hạn cho phép
+error.parameter.invalid=Tham số truy vấn hoặc giới hạn guardrail không hợp lệ
 studio.tagline=Cổng Quản Trị API Động Doanh Nghiệp (Java 21 LTS · v0.1.0)`,
           },
         ]}

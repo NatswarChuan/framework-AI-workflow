@@ -5,7 +5,7 @@ import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { MermaidDiagram } from '../components/MermaidDiagram';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { UI_CONTROLS } from '../data/uiControls';
 import { STAGE3_CONTENT } from '../data/pages/stage3Content';
 
@@ -184,6 +184,9 @@ curl -s "http://localhost:8080/api/v1/e-commerce-orders/quick-summary" \\
         ]}
       />
 
+      <h2 id="custom-endpoints-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="note" currentLang={currentLang}>
         <RichDocText text={STAGE3_CONTENT.ceCalloutNote} currentLang={currentLang} />
       </Callout>

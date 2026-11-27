@@ -4,7 +4,7 @@ import { DocPageHeader } from '../components/DocPageHeader';
 import { CodeBlock } from '../components/CodeBlock';
 import { Callout } from '../components/Callout';
 import { RichDocText } from '../components/RichDocText';
-import { UI_LABELS, pickText } from '../data/locales';
+import { UI_LABELS, formatStepHeading, pickText } from '../data/locales';
 import { STAGE6_CONTENT } from '../data/pages/stage6Content';
 
 interface PageProps {
@@ -101,6 +101,9 @@ source.addEventListener('UPDATED', (event) => {
         ]}
       />
 
+      <h2 id="websocket-guardrails" className="section-heading">
+        {formatStepHeading(4, UI_LABELS.stepNotes, currentLang)}
+      </h2>
       <Callout type="tip" currentLang={currentLang}>
         <RichDocText text={STAGE6_CONTENT.wsCalloutTip} currentLang={currentLang} />
       </Callout>
